@@ -3,8 +3,8 @@
 -- This module is an extention to the grid module and is able to place ores / oil in certain "Grid chunks"
 global.grid_ore = global.grid_ore or {}
 global.grid_ore.resource_chance = 40
-global.grid_ore.ore_start_amount = 75
-global.grid_ore.ore_random_addition_amount = 200
+global.grid_ore.ore_start_amount = 225
+global.grid_ore.ore_random_addition_amount = 600
 global.grid_ore.oil_start_amount = 10000
 global.grid_ore.oil_random_addition_amount = 20000
 global.grid_ore.oil_spout_chance = 1
