@@ -5,7 +5,7 @@
 
 
 --Function for when a rocket is launched
-function launchedRocket(event)
+function rocket_launched(event)
 	if event.rocket.get_item_count("satellite") == 0 then
 		if (#game.players <= 1) then
 			game.show_message_dialog{text = "Know what? You should put a satellite in it next time."}
@@ -41,7 +41,7 @@ Event.register(defines.events.on_built_entity, function(event)
 local entity = event.created_entity
 	if entity.name == "rocket-silo" then
 		entity.force = game.forces.Admins
-		--entity.minable = false
+		entity.minable = false
 		entity.destructible = false
 		--entity.operable = false
 	end
@@ -82,13 +82,13 @@ Event.register(defines.events.on_player_alt_selected_area, function(event)
 end)
 
 -- Functions for adding the silo to the table, or remove them. 
-local function on_creation(event)
+local function rocket_on_creation(event)
 	local ent = event.created_entity
 	if ent.type == "rocket-silo" then
 		table.insert(global.silos, ent)
 	end
 end
-local function on_destruction(event)
+local function rocket_on_destruction(event)
 	local ent = event.entity
 
 	if ent.type == "rocket-silo" then
@@ -119,26 +119,30 @@ Event.register(-1, function(event)
 	global.silos = global.silos or {}
 end)
 
-function rocket_player_joined(event)
+function rocket_create_button(event)
 	local player = game.players[event.player_index]
-	if player.admin then 
+	if player.admin == true then
+		if player.gui.top.rocket == nil then
+			player.gui.top.add { name = "rocket", type = "button", caption = "Get Rocket Tool" }
+		end
+	end
+end
+
+function rocket_on_gui_click(event)
+	if not (event and event.element and event.element.valid) then return end
+	local player = game.players[event.element.player_index]
+	local name = event.element.name
+	if (name == "rocket") then
 		player.insert { name = "dummy-selection-tool", count = 1 }
 	end
 end
 
 
-function rocket_player_respawned(event)
-	local player = game.players[event.player_index]
-	if player.admin then 
-		player.insert { name = "dummy-selection-tool", count = 1 }
-	end
-end
-
-Event.register(defines.events.on_entity_died, on_destruction)
-Event.register(defines.events.on_robot_pre_mined, on_destruction)
-Event.register(defines.events.on_preplayer_mined_item, on_destruction)
-Event.register(defines.events.on_built_entity, on_creation)
-Event.register(defines.events.on_robot_built_entity, on_creation)
-Event.register(defines.events.on_rocket_launched, launchedRocket)
-Event.register(defines.events.on_player_created, rocket_player_joined)
-Event.register(defines.events.on_player_respawned, rocket_player_respawned)
+Event.register(defines.events.on_entity_died, rocket_on_destruction)
+Event.register(defines.events.on_robot_pre_mined, rocket_on_destruction)
+Event.register(defines.events.on_preplayer_mined_item, rocket_on_destruction)
+Event.register(defines.events.on_built_entity, rocket_on_creation)
+Event.register(defines.events.on_robot_built_entity, rocket_on_creation)
+Event.register(defines.events.on_rocket_launched, rocket_launched)
+Event.register(defines.events.on_gui_click, rocket_on_gui_click)
+Event.register(defines.events.on_player_joined_game, rocket_create_tool_button)
