@@ -21,7 +21,8 @@ global.patreon.patreon_list = {
 		"LordKiwi",
 		"stik",
 		"Zirr",
-		"Nr42"
+		"Nr42",
+		"zerot"
 	}
 global.patreon.patreon_tag = {
 		"Lua Hero",
@@ -37,6 +38,7 @@ global.patreon.patreon_tag = {
 		"Spaghetti Monster",
 		"Biter Killer",
 		"Totally not a dragon!",
+		nil,
 		nil,
 		nil,
 		nil,
