@@ -1,8 +1,6 @@
 --require "locale/utils/event" --Yes this line is seriously commented out, and yes without this it won't even work. I guess you now HAVE TO change the settings to match what you need.
---require "config" --config which is mainly used by the announcements
 --require "locale/utils/admin"	--Admin module to give the admins spectate, commands and character modifications.
 --require "locale/utils/undecorator"	--Removes decorations
---require "locale/utils/utils"	--Old 3ra stuff... Dunno know
 --require "locale/utils/gravestone"	--Module to generate a chest on player death with his/hers items
 --require "announcements"	--Module to announce stuff ingame / give the players a welcome message
 --require "bps"	--BluePrintString a module in which the player can enter a string and a blueprint get generated out of it.
