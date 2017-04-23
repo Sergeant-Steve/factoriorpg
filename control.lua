@@ -10,6 +10,7 @@
 --require "grid" --Worldgenerator which devides the world into a grid.
 --require "void" --Worldgenerator which randomly generates holes in the world
 --require "stats" --Module to generate stats and print them to the filesystem
+--require "popup" --Module to create and display an popup in the center of all players their screens.
 
 
 -- Give player starting items.
