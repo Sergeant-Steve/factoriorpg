@@ -4,16 +4,16 @@
 Event.register(-1, function()
 	-- List of announcements that are printed periodically, going through the list.
 	global.announcements = {
-		"You can use underground belts/pipes to go under the holes!",
-		"Check out our patreon: http://patreon.com/factoriommo",
-		"Need an admin? Ask @hands in #mod-request."
+		"Someone was really f-ing lazy and forgot to change this. Shame on them.",
+--		"Check out our patreon: http://patreon.com/factoriommo",
+--		"Need an admin? Ask @hands or @crew in #moderation-request."
 	}
 
 	-- List of introductory messages that players are shown upon joining (in order).
 	global.intros = {
-		"This world is a bit broken..",
-		"Well we wil just have to live with it.",
-		"Have fun playing! -I_IBlackI_I"
+		"Someone was really f-ing lazy and forgot to change this. Shame on them.",
+		"",
+		""
 	}
 end)
 -- Go through the announcements, based on the delay set in config
