@@ -1,5 +1,6 @@
--- @module admin
+-- Module admin
 -- A 3Ra Gaming creation
+-- Modified by: I_IBlackI_I for FactorioMMO
 
 global.green = { r = 0, g = 1, b = 0 }
 global.red = { r = 1, g = 0, b = 0 }
