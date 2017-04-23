@@ -119,8 +119,15 @@ Event.register(-1, function(event)
 	global.silos = global.silos or {}
 end)
 
-function rocket_create_button(event)
+function rocket_player_joined(event)
 	local player = game.players[event.player_index]
+	if(player.admin) then
+		rocket_create_button(player.name)
+	end
+end
+
+function rocket_create_button(player_name)
+	local player = game.players[player_name]
 	if player.admin == true then
 		if player.gui.top.rocket == nil then
 			player.gui.top.add { name = "rocket", type = "button", caption = "Get Rocket Tool" }
@@ -145,4 +152,4 @@ Event.register(defines.events.on_built_entity, rocket_on_creation)
 Event.register(defines.events.on_robot_built_entity, rocket_on_creation)
 Event.register(defines.events.on_rocket_launched, rocket_launched)
 Event.register(defines.events.on_gui_click, rocket_on_gui_click)
-Event.register(defines.events.on_player_joined_game, rocket_create_tool_button)
+Event.register(defines.events.on_player_joined_game, rocket_player_joined)
