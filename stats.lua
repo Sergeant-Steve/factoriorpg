@@ -1,3 +1,8 @@
+-- Stats Module
+-- Made by: Viceroypenguin (@viceroypenguin#8303 on discord) for FactorioMMO
+-- This module generates stats and writes them to file in JSON format
+
+
 local function stats_generate_prod_stats()
     local str = ""
     local ips = game.forces["player"].item_production_statistics
