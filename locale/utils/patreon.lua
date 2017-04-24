@@ -4,45 +4,25 @@
 
 
 global.patreon = global.patreon or {}
-global.patreon.patreon_list = {
-		"I_IBlackI_I",
-		"psihius",
-		"Hornwitser",
-		"jordank321", 
-		"viceroypenguin",
-		"sikian",
-		"Lyfe",
-		"sniperczar",
-		"i-l-i",
-		"Uriopass",
-		"audigex",
-		"Sergeant_Steve",
-		"Zr4g0n",
-		"LordKiwi",
-		"stik",
-		"Zirr",
-		"Nr42",
-		"zerot"
-	}
-global.patreon.patreon_tag = {
-		"Lua Hero",
-		"SysAdmin",
-		"MoneyBags",
-		"Im not sure LMAO",
-		"MoneyBags",
-		"Sikjizz!",
-		"Is Alive",
-		"Behemoth Bait",
-		"Space Dolphin",
-		"Ratio Maniac",
-		"Spaghetti Monster",
-		"Biter Killer",
-		"Totally not a dragon!",
-		nil,
-		nil,
-		nil,
-		nil,
-		nil
+global.patreon.patreons = {
+		{name = "I_IBlackI_I", tag = "Lua Hero"},
+		{name = "psihius", tag = "SysAdmin"},
+		{name = "Hornwitser", tag = "MoneyBags"},
+		{name = "jordank321", tag = "Im not sure LMAO"},
+		{name = "viceroypenguin", tag = "MoneyBags"},
+		{name = "sikian", tag = "Sikjizz!"},
+		{name = "Lyfe", tag = "Is Alive"},
+		{name = "sniperczar", tag = "Behemoth Bait"},
+		{name = "i-l-i", tag = "Space Dolphin"},
+		{name = "Uriopass", tag = "Ratio Maniac"},
+		{name = "audigex", tag = "Spaghetti Monster"},
+		{name = "Sergeant_Steve", tag = "Biter Killer"},
+		{name = "Zr4g0n", tag = "Totally not a dragon!"},
+		{name = "LordKiwi", tag = nil},
+		{name = "stik", tag = nil},
+		{name = "Zirr", tag = nil},
+		{name = "Nr42", tag = nil},
+		{name = "zerot", tag = nil}
 	}
 global.patreon.player_spectator_state = global.patreon.player_spectator_state or {}
 global.patreon.player_spectator_character = global.patreon.player_spectator_character or {}
@@ -50,35 +30,35 @@ global.patreon.player_spectator_force = global.patreon.player_spectator_force or
 global.patreon.player_spectator_logistics_slots = global.patreon.player_spectator_logistics_slots or {}
 
 
-function shoutOut(event)
+function patreon_shoutout(event)
 	local player = game.players[event.player_index]
-	if checkPatreon(player) and player.admin == false then
+	if patreon_check(player) and player.admin == false then
 		game.print("Special shout out to our Patreon " .. player.name)
 	end
 end
 
 function patreon_joined(event)
 	local player = game.players[event.player_index]
-	if(checkPatreon(player)) then
-		create_patreon_top_gui(player.name)
+	if(patreon_check(player)) then
+		patreon_create_patreon_top_gui(player.name)
 	end
 end
 
-function checkPatreon(player)
-	for _, patreon in pairs(global.patreon.patreon_list) do
-		if(player.name == patreon) then
+function patreon_check(player)
+	for _, patreon in pairs(global.patreon.patreons) do
+		if(player.name == patreon.name) then
 			return true
 		end
 	end
 	return false
 end
-function create_patreon_top_gui(player_name)
+function patreon_create_patreon_top_gui(player_name)
 	local player = game.players[player_name]
 	if player.gui.top.patreon_menu == nil then
 		player.gui.top.add { name = "patreon_menu", type = "button", caption = "Open Patreon" }
 	end
 end
-function create_patreon_pane(player_name)
+function patreon_create_patreon_pane(player_name)
 	local player = game.players[player_name]
 	local index = player.index
 	local patreon_pane = nil
@@ -100,7 +80,7 @@ function create_patreon_pane(player_name)
 	end
 end
 
-function gui_click_patreon(event)
+function patreon_gui_click(event)
 	local i = event.player_index
 	local p = game.players[i]
 	local e = event.element
@@ -118,12 +98,12 @@ function gui_click_patreon(event)
 				p.print("Use the spectate in the admin tools")
 			end
 		elseif e.name == "unique_tag" and e.parent.name == "patreon_pane" then
-			apply_unique_tag(p)
+			patreon_apply_unique_tag(p)
 		elseif e.name == "patreon_tag" and e.parent.name == "patreon_pane" then
 			p.print("The general patreon tag has been applied!")
 			p.tag = " [Patreon]"
 		elseif e.name == "patreon_menu" and e.caption == "Open Patreon" then
-			create_patreon_pane(p.name)
+			patreon_create_patreon_pane(p.name)
 			p.gui.top.patreon_menu.caption = "Close Patreon"
 		elseif e.name == "patreon_menu" and e.caption == "Close Patreon" then
 			if p.gui.left.patreon_pane ~= nil then
@@ -134,11 +114,11 @@ function gui_click_patreon(event)
 	end
 end
 
-function apply_unique_tag(player)
-	for i, patreon in pairs(global.patreon.patreon_list) do
-		if(player.name == patreon) then
-			if(global.patreon.patreon_tag[i] ~= nil) then
-				player.tag = " [" .. global.patreon.patreon_tag[i] .. "]"
+function patreon_apply_unique_tag(player)
+	for i, patreon in pairs(global.patreon.patreons) do
+		if(player.name == patreon.name) then
+			if(patreon.tag ~= nil) then
+				player.tag = " [" .. patreon.tag .. "]"
 				player.print("Your unique tag has been applied!")
 			else 
 				player.print("O.o It seems you don't have a unique tag.. Please contact the admins to get one.")
@@ -210,7 +190,7 @@ Event.register(defines.events.on_force_created, function(event)
 	game.forces.Patreons.set_cease_fire(event.force, true)
 end)
 
-Event.register(defines.events.on_player_joined_game, shoutOut)
+Event.register(defines.events.on_player_joined_game, patreon_shoutout)
 Event.register(defines.events.on_player_joined_game, patreon_joined)
 Event.register(defines.events.on_tick, patreon_reveal)
-Event.register(defines.events.on_gui_click, gui_click_patreon)
+Event.register(defines.events.on_gui_click, patreon_gui_click)
