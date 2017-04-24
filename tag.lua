@@ -5,7 +5,7 @@
 function tag_create_gui(event)
 	local player = game.players[event.player_index]
 	if not player.gui.top.tag then
-		player.gui.top.add { name = "tag", type = "button", caption = "Tag" }
+		player.gui.top.add { name = "tag_button", type = "button", caption = "Tag" }
 	end
 end
 
