@@ -19,7 +19,7 @@ global.announcements.intros = {
 -- Go through the announcements, based on the delay set in config
 -- @param event on_tick event
 function announcement_show(event)
-	global.announcements.last_announcement = announcements.last_announcement or 0
+	global.announcements.last_announcement = global.announcements.last_announcement or 0
 	if (game.tick / 60 - global.announcements.last_announcement > global.announcements.announcement_delay) then
 		global.announcements.current_message = global.announcements.current_message or 1
 		game.print(global.announcements.announcements[global.announcements.current_message])

@@ -4,8 +4,8 @@
 
 function tag_create_gui(event)
 	local player = game.players[event.player_index]
-	if player.gui.top.tag == nil then
-		player.gui.top.add { name = "rules_tag", type = "button", caption = "Tag" }
+	if not player.gui.top.tag then
+		player.gui.top.add { name = "tag", type = "button", caption = "Tag" }
 	end
 end
 
@@ -35,7 +35,7 @@ function tag_expand_gui(player)
 		local frame = player.gui.left.add { type = "frame", name = "tag-panel", caption = "Choose Tag", direction = "vertical"}
 		local list = frame.add { name="tag_table", type = "table", colspan = 1}
 		for _, role in pairs(global.tag.tags) do
-			list.add { type = "button", caption = role.display_name, name = "rules_" .. role.display_name }
+			list.add { type = "button", caption = role.display_name, name = "tag_" .. role.display_name }
 		end
 	end
 end
@@ -46,18 +46,18 @@ function tag_on_gui_click(event)
 	if not (event and event.element and event.element.valid) then return end
 	local player = game.players[event.element.player_index]
 	local name = event.element.name
-	if (name == "rules_tag") then
+	if (name == "tag_button") then
 		tag_expand_gui(player)
 	end
 
-	if (name == "rules_Clear") then
+	if (name == "tag_Clear") then
 		player.tag = ""
 		tag_expand_gui(player)
 		return
 	end
 	
 	for _, role in pairs(global.tag.tags) do
-		if (name == "rules_" .. role.display_name) then
+		if (name == "tag_" .. role.display_name) then
 			player.tag = "[" .. role.display_name .. "]"
 			tag_expand_gui(player)
 		end
