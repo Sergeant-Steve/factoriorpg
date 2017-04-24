@@ -26,11 +26,10 @@ function rocket_launched(event)
 		global.satellite_sent[game.forces.player.name] = 1
 	end
 	for index, player in pairs(game.forces.player.players) do
-		if player.gui.left.rocket_score then
-			player.gui.left.rocket_score.rocket_count.caption = tostring(global.satellite_sent[game.forces.player.name])
-		else
-			local frame = player.gui.left.add{name = "rocket_score", type = "frame", direction = "horizontal", caption="score"}
-			frame.add{name="rocket_count_label", type = "label", caption={"", "rockets-sent", ":"}}
+		player.gui.left.rocket_score.destroy()
+		if player.gui.top.rocket_stats.caption == "Close Stats" then
+			local frame = player.gui.left.add{name = "rocket_score", type = "frame", direction = "horizontal", caption="Score"}
+			frame.add{name="rocket_count_label", type = "label", caption="Rockets sent: "}
 			frame.add{name="rocket_count", type = "label", caption=tostring(global.satellite_sent[game.forces.player.name])}
 		end
 	end
@@ -121,26 +120,43 @@ end)
 
 function rocket_player_joined(event)
 	local player = game.players[event.player_index]
-	if(player.admin) then
-		rocket_create_button(player.name)
-	end
+	rocket_create_button(player.name)
 end
 
 function rocket_create_button(player_name)
 	local player = game.players[player_name]
-	if player.admin == true then
-		if player.gui.top.rocket == nil then
-			player.gui.top.add { name = "rocket", type = "button", caption = "Get Rocket Tool" }
+	if player.admin then
+		if not player.gui.top.rocket then
+			player.gui.top.add { name = "rocket", type = "button", caption = "Rocket Tool" }
 		end
+	end
+	if not player.gui.top.rocket_stats then
+		player.gui.top.add { name = "rocket_stats", type = "button", caption = "Open Stats" }
 	end
 end
 
 function rocket_on_gui_click(event)
 	if not (event and event.element and event.element.valid) then return end
-	local player = game.players[event.element.player_index]
-	local name = event.element.name
-	if (name == "rocket") then
-		player.insert { name = "dummy-selection-tool", count = 1 }
+	local i = event.player_index
+	local p = game.players[i]
+	local e = event.element
+	
+	if e ~= nil then
+		if (e.name == "rocket") then
+			p.insert { name = "dummy-selection-tool", count = 1 }
+		elseif e.name == "rocket_stats" and e.caption == "Open Stats" then
+			e.caption = "Close Stats"
+			if p.gui.left.rocket_score then
+				p.gui.left.rocket_score.rocket_count.caption = tostring(global.satellite_sent[game.forces.player.name])
+			else
+				local frame = p.gui.left.add{name = "rocket_score", type = "frame", direction = "horizontal", caption="Score"}
+				frame.add{name="rocket_count_label", type = "label", caption="Rockets sent: "}
+				frame.add{name="rocket_count", type = "label", caption=tostring(global.satellite_sent[game.forces.player.name])}
+			end
+		elseif e.name == "rocket_stats" and e.caption == "Close Stats" then
+			e.caption = "Open Stats"
+			p.gui.left.rocket_score.destroy()
+		end
 	end
 end
 
