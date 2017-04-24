@@ -527,6 +527,7 @@ function force_spectators(index, teleport)
 	global.player_spectator_logistics_slots = global.player_spectator_logistics_slots or {}
 	if global.player_spectator_state[index] then
 		--remove spectator mode
+		player.cheat_mode = false
 		if player.character == nil then
 			local pos = player.position
 			if global.player_spectator_character[index] and global.player_spectator_character[index].valid then
