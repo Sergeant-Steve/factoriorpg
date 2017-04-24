@@ -1,7 +1,7 @@
 --require "locale/utils/event" --Yes this line is seriously commented out, and yes without this it won't even work. I guess you now HAVE TO change the settings to match what you need.
 --require "locale/utils/admin"	--Admin module to give the admins spectate, commands and character modifications.
 --require "locale/utils/undecorator"	--Removes decorations
---require "locale/utils/gravestone"	--Module to generate a chest on player death with his/hers items
+
 --require "announcements"	--Module to announce stuff ingame / give the players a welcome message
 --require "bps"	--BluePrintString a module in which the player can enter a string and a blueprint get generated out of it.
 --require "tag" --Module to let players set a tag behind their names to improve teamwork
@@ -12,6 +12,9 @@
 --require "stats" --Module to generate stats and print them to the filesystem
 --require "popup" --Module to create and display an popup in the center of all players their screens.
 --require "rules" --Module which displays a popup with the rules when a player joins, or presses the open rules button
+
+--OBSOLETE AS OF 0.15
+--require "locale/utils/gravestone"	--Module to generate a chest on player death with his/hers items
 
 
 
