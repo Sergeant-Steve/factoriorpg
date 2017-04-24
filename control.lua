@@ -11,6 +11,8 @@
 --require "void" --Worldgenerator which randomly generates holes in the world
 --require "stats" --Module to generate stats and print them to the filesystem
 --require "popup" --Module to create and display an popup in the center of all players their screens.
+--require "rules" --Module which displays a popup with the rules when a player joins, or presses the open rules button
+
 
 
 -- Give player starting items.
