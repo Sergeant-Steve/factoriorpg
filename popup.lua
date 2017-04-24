@@ -43,13 +43,15 @@ end
 
 function popup_create_popup(title, message)
 	for i, x in pairs(game.connected_players) do
-		if x.gui.center.popup == nil then
-			local popup = x.gui.center.add{type="frame", name="popup", caption=title, direction="vertical"}
-			popup.add{type="label", caption=message}
-			popup.add{type="button", name="popup_close", caption="Close this message"}
-		else
-			x.gui.center.popup.destroy()
+		local tick = game.tick
+		local popup = x.gui.center.add{type="frame", name="popup" .. tick, caption=title, direction="vertical"}
+		popup.style.maximal_width = 400
+		local message = " " .. message
+		for j = 0, math.floor(string.len(message) / 60) do
+			popup.add{type="label", caption=string.sub(message, string.find(message, " ", j * 60), string.find(message, " ", ((j+1) * 60)-1))}
 		end
+		local button = popup.add{type="button", name="popup_close", caption="Close this message"}
+		button.style.minimal_width = 350
 	end
 end
 
@@ -60,9 +62,7 @@ function popup_on_gui_click(event)
 	local e = event.element
 	if e ~= nil then
 		if e.name == "popup_close" then
-			if p.gui.center.popup ~= nil then
-				p.gui.center.popup.destroy()
-			end
+			e.parent.destroy()
 		elseif e.name == "popup_menu" and e.caption == "Open Popup" then
 			popup_create_popup_creator(p.name)
 			p.gui.top.popup_menu.caption = "Close Popup"
