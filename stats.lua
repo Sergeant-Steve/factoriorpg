@@ -10,7 +10,7 @@ global.stats_save_every_x_seconds = 10
 local function stats_build_stats_json(stats)
     local str = ""
     for k, v in pairs(stats.input_counts) do
-      str = str .. "{ \"type\": \"" .. k .. "\", \"amount\": " .. v .. " }, "
+      str = str .. "{ \"entity_name\": \"" .. k .. "\", \"amount\": " .. v .. " }, "
     end
 
     str = string.sub(str, 1, -3)
