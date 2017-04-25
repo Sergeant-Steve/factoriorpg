@@ -232,7 +232,7 @@ global.permissions.groups.patreons = {name = "patreons", permissions = {
 																	}}
 global.permissions.groups.admins = {name = "admins", permissions = {
 																	{action = defines.input_action.open_tutorials_gui, value = false}
-																}
+																}}
 
 function permissions_init()
 	for i, group in pairs(global.permissions.groups) do
