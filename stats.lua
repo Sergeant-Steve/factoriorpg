@@ -2,30 +2,15 @@
 -- Made by: Viceroypenguin (@viceroypenguin#8303 on discord) for FactorioMMO
 -- This module generates stats and writes them to file in JSON format
 
+global.stats_save_to_file = true
+global.stats_save_to_log = false
 
-local function stats_generate_prod_stats()
+global.stats_save_every_x_seconds = 10
+
+local function stats_build_stats_json(stats)
     local str = ""
-    local ips = game.forces["player"].item_production_statistics
-    for k, v in pairs(ips.input_counts) do
+    for k, v in pairs(stats.input_counts) do
       str = str .. "{ \"type\": \"" .. k .. "\", \"amount\": " .. v .. " }, "
-    end
-
-    local fps = game.forces["player"].fluid_production_statistics
-    for k, v in pairs(fps.input_counts) do
-      str = str .. "{ \"type\": \"" .. k .. "\", \"amount\": " .. v .. " }, "
-    end
-
-    str = string.sub(str, 1, -3)
-    return str
-end
-
-local function stats_generate_death_stats()
-    local str = ""
-    local deaths = global.deaths
-    global.deaths = {}
-
-    for _, v in pairs(deaths) do
-      str = str .. "{ \"player\": \"" .. v.player .. "\", \"cause\": \"" .. v.cause .. "\", \"tick\": " .. v.tick .. " }, "
     end
 
     str = string.sub(str, 1, -3)
@@ -33,18 +18,37 @@ local function stats_generate_death_stats()
 end
 
 local function stats_generate_stats()
-    local str = "{ \"tick\": " .. game.tick .. ", \"speed\": " .. game.speed .. ", \"deaths\": [" .. stats_generate_death_stats() .. "], \"statistics\": [" .. stats_generate_prod_stats() .. "] }"
-    local file_name = "stats_" .. game.tick .. ".json"
-    game.write_file(file_name, str, false)
+    local str = "{ \"tick\": " .. game.tick .. ", \"speed\": " .. game.speed .. ", "
+    local force = game.forces["player"]
+    
+    local prod_str = stats_build_stats_json(force.item_production_statistics) .. ", " .. stats_build_stats_json(force.fluid_production_statistics)
+    prod_str = string.sub(prod_str, 1, -3)
+    str = str .. "\"entities_produced\": [" .. prod_str .. "], "
+    
+    str = str .. "\"entities_killed\": [" .. stats_build_stats_json(force.kill_count_statistics) .. "], "
+    str = str .. "\"entities_placed\": [" .. stats_build_stats_json(force.entity_build_count_statistics) .. "] " .. "}"
+ 
+    if global.stats_save_to_file then
+        local file_name = "stats_" .. game.tick .. ".json"
+        game.write_file(file_name, str, false)
+    end
+
+    if global.stats_save_to_log then
+        print("##FMC STATS PROD " .. str)
+    end
 end
 
 Event.register(defines.events.on_player_died, function(event)
-    local death = {}
-    death.tick = event.tick
-    death.cause = "<unknown>"
-    death.player = game.players[event.player_index].name
+    local str = "{ \"tick\": " .. game.tick .. ", \"player\": " .. game.players[event.player_index].name .. ", \"cause\": " .. event.cause .. " }"
 
-    table.insert(global.deaths, death)
+    if global.stats_save_to_file then
+        local file_name = "death_" .. event.player_index .. "_" .. game.tick .. ".json"
+        game.write_file(file_name, str, false)
+    end
+
+    if global.stats_save_to_log then
+        print("##FMC STATS DEATH " .. str)
+    end
 end)
 
 local function second_to_tick(seconds)
@@ -54,16 +58,15 @@ end
 Event.register(defines.events.on_tick, function(event)
     local tick = game.tick
 
-    if (global.remaining_until_update < 1) then
-        global.remaining_until_update = second_to_tick(10) - 1
+    if (global.stats_remaining_until_update < 1) then
+        global.stats_remaining_until_update = second_to_tick(global.stats_save_every_x_seconds) - 1
         stats_generate_stats()
     else
-        global.remaining_until_update = global.remaining_until_update - 1
+        global.stats_remaining_until_update = global.stats_remaining_until_update - 1
     end
 end)
 
 Event.register(-1, function(event)
-    global.remaining_until_update = 0
-    global.deaths = {}
+    global.stats_remaining_until_update = 0
 end)
 
