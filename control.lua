@@ -1,4 +1,6 @@
 --require "locale/utils/event" --Yes this line is seriously commented out, and yes without this it won't even work. I guess you now HAVE TO change the settings to match what you need.
+--require "permissions" --Permission manager
+
 --require "locale/utils/admin"	--Admin module to give the admins spectate, commands and character modifications.
 --require "locale/utils/undecorator"	--Removes decorations
 

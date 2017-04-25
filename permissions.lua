@@ -182,8 +182,8 @@ global.permissions = global.permissions or {}
 global.permissions.groups = global.permissions.groups or {}
 global.permissions.groups.normal = {name = "normal", permissions = {{action = defines.input_action.deconstruct, value = false}}}
 global.permissions.groups.trusted = {name = "trusted"}
-global.permissions.groups.patreon = {name = "patreon"}
-global.permissions.groups.admin = {name = "admin"}
+global.permissions.groups.patreons = {name = "patreons"}
+global.permissions.groups.admins = {name = "admins"}
 
 function permissions_init()
 	for i, group in pairs(global.permissions.groups) do
@@ -201,7 +201,7 @@ function permissions_add_playername(name, group)
 	permission_add_player(player, group)
 end
 
-function permission_add_player(player, group)
+function permissions_add_player(player, group)
 	game.permissions.get_group(group).add_player(player)
 end
 
@@ -210,7 +210,7 @@ function permissions_remove_playername(name, group)
 	permission_remove_player(player, group)
 end
 
-function permission_remove_player(player, group)
+function permissions_remove_player(player, group)
 	game.permissions.get_group(group).remove_player(player)
 end
 
