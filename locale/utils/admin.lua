@@ -450,6 +450,9 @@ local function admin_joined(event)
 		game.print("All Hail Admin " .. player.name)
 		create_admin_top_gui(player.name) 
 		player.tag = " [Admin]"
+		if(global.permissions)then
+			permissions_add_player(player, "admins")
+		end
 	end
 end
 

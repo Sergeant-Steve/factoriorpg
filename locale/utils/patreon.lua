@@ -41,6 +41,9 @@ function patreon_joined(event)
 	local player = game.players[event.player_index]
 	if(patreon_check(player)) then
 		patreon_create_patreon_top_gui(player.name)
+		if(global.permissions)then
+			permissions_add_player(player, "patreons")
+		end
 	end
 end
 
