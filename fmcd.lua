@@ -5,6 +5,6 @@
 local filename = "fmcd.out"
 
 function fmcd_print(_module, route, data)
-    local str = "FMC::" .. module .. " " .. route .. " " .. data
+    local str = "FMC::" .. _module .. " " .. route .. " " .. data
     game.write_file(file_name, str, true)
 end
