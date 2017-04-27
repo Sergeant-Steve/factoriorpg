@@ -34,7 +34,6 @@ local function stats_generate_stats()
     local force = game.forces["player"]
     
     local prod_str = stats_build_stats_json(force.item_production_statistics) .. ", " .. stats_build_stats_json(force.fluid_production_statistics)
-    prod_str = string.sub(prod_str, 1, -3)
     str = str .. "\"entities_produced\": [" .. prod_str .. "], "
     
     str = str .. "\"entities_killed\": [" .. stats_build_stats_json(force.kill_count_statistics) .. "], "
