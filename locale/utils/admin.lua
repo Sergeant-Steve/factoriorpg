@@ -404,7 +404,7 @@ function update_follow_panel(player)
 			for _, follow_player in pairs(game.connected_players) do
 				if player.index ~= follow_player.index then
 					if player.gui.left.follow_panel.search_bar.text ~= nil then
-						if string.find(follow_player, player.gui.left.follow_panel.search_bar.text) ~= nil then
+						if string.find(follow_player.name, player.gui.left.follow_panel.search_bar.text) ~= nil then
 							local label = follow_list.add{name = follow_player.name, type = "button", caption = follow_player.name}
 							label.style.font = "default"
 						end
