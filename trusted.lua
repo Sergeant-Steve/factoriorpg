@@ -3,7 +3,7 @@
 -- This module adds trusted members to the correct permission group and gives a option to check if they are trusted
 
 global.trusted = global.trusted or {}
-global.trusted.list = {}
+global.trusted.list = {"Borga", "SockPuppet"}
 
 function trusted_add(command)
 	if game.players[command.player_index].admin then
