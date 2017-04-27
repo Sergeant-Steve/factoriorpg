@@ -25,6 +25,8 @@ function rules_create_top_gui(player_name)
 	local player = game.players[player_name]
 	if not player.gui.top.rules_menu then
 		player.gui.top.add { name = "rules_menu", type = "button", caption = "Close Rules" }
+	else
+		player.gui.top.rules_menu.caption = "Close Rules"
 	end
 end
 
@@ -40,7 +42,7 @@ function rules_show(player_name)
 		end
 		local e = rules.add{type="label", caption= "Click the button in the top-left to close this message"}
 		e.style.font_color = global.rules.color.hint
---		rules.add{type="button", name="rules_close", caption="Close this message"}
+		rules.add{type="button", name="rules_close", caption="Close this message"}
 	end
 end
 
