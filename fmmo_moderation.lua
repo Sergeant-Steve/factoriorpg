@@ -1,3 +1,6 @@
+-- fmmo_moderatrion Module
+-- Made by: I_IBlackI_I (Blackstone#4953 on discord) for FactorioMMO
+-- This module adds commands to warn/ban players and write to log.
 function fmmo_moderatrion_warn(command)
 	if game.players[command.player_index].admin then
 		local player = game.players[command.parameter]

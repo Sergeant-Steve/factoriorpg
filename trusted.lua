@@ -1,3 +1,7 @@
+-- Trusted Module
+-- Made by: I_IBlackI_I (Blackstone#4953 on discord) for FactorioMMO
+-- This module adds trusted members to the correct permission group and gives a option to check if they are trusted
+
 global.trusted = global.trusted or {}
 global.trusted.list = {}
 
