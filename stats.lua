@@ -2,8 +2,8 @@
 -- Made by: Viceroypenguin (@viceroypenguin#8303 on discord) for FactorioMMO
 -- This module generates stats and writes them to file in JSON format
 
-global.stats_save_to_file = true
-global.stats_save_to_log = false
+global.stats_save_to_file = false
+global.stats_save_to_log = true
 
 global.stats_save_every_x_seconds = 10
 
@@ -46,7 +46,7 @@ local function stats_generate_stats()
     end
 
     if global.stats_save_to_log then
-        print("##FMC STATS PROD " .. str)
+        fmcd_print("STATS", "PROD", str)
     end
 end
 
@@ -59,7 +59,7 @@ Event.register(defines.events.on_player_died, function(event)
     end
 
     if global.stats_save_to_log then
-        print("##FMC STATS DEATH " .. str)
+        fmcd_print("STATS", "DEATH", str)
     end
 end)
 
