@@ -17,16 +17,20 @@ local function stats_build_stats_json(stats)
     return str
 end
 
-local function get_player_online_count()
-    local counter = 0
-    for i, x in pairs(game.connected_players) do
-        counter = counter + 1
+local function get_player_count()
+    local tplayers = 0
+    local cplayers = 0
+    for i, x in pairs(game.players) do
+        tplayers = tplayers + 1
+        if x.connected then
+            cplayers = cplayers + 1
+        end
     end
-    return counter
+    return "\"players\":" .. tplayers .. ", \"players_online\":" .. cplayers .. ", "
 end
 
 local function stats_generate_stats()
-    local str = "{ \"tick\": " .. game.tick .. ", \"speed\": " .. game.speed .. ", \"players_online\":" .. get_player_online_count() .. ", "
+    local str = "{ \"tick\": " .. game.tick .. ", \"speed\": " .. game.speed .. ", " .. get_player_count()
     local force = game.forces["player"]
     
     local prod_str = stats_build_stats_json(force.item_production_statistics) .. ", " .. stats_build_stats_json(force.fluid_production_statistics)
