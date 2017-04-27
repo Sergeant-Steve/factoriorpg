@@ -16,7 +16,7 @@ function fmmo_moderatrion_ban(command)
 		local player = game.players[command.parameter]
 		if player ~= nil then
 			fmcd_print("MOD", "BAN".. player.name)
-			print("##FMC::MOD  ".. player.name)
+			game.print(player.name .. " has been banned!")
 		end
 	end
 end
