@@ -102,7 +102,7 @@ function gui_click(event)
 				end
 			end
 		elseif e.name == "clear_corpses" then
-			for _, entity in pairs(game.surfaces["nauvis"].find_entities_filtered{area = {{-1000,-1000}, {1000, 1000}}, type="corpse"}) do 
+			for _, entity in pairs(game.surfaces["nauvis"].find_entities_filtered{area = {{p.position.x-1000,p.position.y-1000}, {p.position.x+1000, p.position.y+1000}}, type="corpse"}) do 
 				entity.destroy() 
 			end
 		elseif e.name == "commands" then
@@ -235,6 +235,8 @@ function gui_click(event)
 			p.teleport(global.original_position[i], global.original_surface[i])
 			p.gui.left.follow_panel.follow_list.unfollow.destroy()
 			p.gui.left.follow_panel.follow_list.return_button.destroy()
+		elseif e.name == "admin_follow_search_button" then
+			update_follow_panel(p)
 		end
 		--set who to follow
 		for _, player in pairs(game.connected_players) do
@@ -256,12 +258,13 @@ end
 function create_character_gui(index)
 	local player = game.players[index]
 	local character_frame = player.gui.left.add { name = "character_panel", type = "frame", direction = "vertical", caption = "Character" }
-	character_frame.add { name = "character_pickup", type = "button", caption = "Pickup" }
-	character_frame.add { name = "character_reach", type = "button", caption = "Reach" }
-	character_frame.add { name = "character_craft", type = "button", caption = "Crafting" }
-	character_frame.add { name = "character_mine", type = "button", caption = "Mining" }
-	character_frame.add { name = "character_invincible", type = "button", caption = "Invincible" }
-	character_frame.add { name = "run_label", type = "label", caption = "Run speed control:" }
+	local button_table = character_frame.add { name= "character_buttons", type = "table", colspan = 1}
+	button_table.add { name = "character_pickup", type = "button", caption = "Pickup" }
+	button_table.add { name = "character_reach", type = "button", caption = "Reach" }
+	button_table.add { name = "character_craft", type = "button", caption = "Crafting" }
+	button_table.add { name = "character_mine", type = "button", caption = "Mining" }
+	button_table.add { name = "character_invincible", type = "button", caption = "Invincible" }
+	button_table.add { name = "run_label", type = "label", caption = "Run speed control:" }
 	local run_table = character_frame.add { name = "character_run", type = "table", colspan = 5, caption = "Run Speed" }
 	run_table.add { name = "run1_label", type = "label", caption = "1x" }
 	run_table.add { name = "run2_label", type = "label", caption = "2x" }
@@ -281,35 +284,35 @@ end
 function update_character_settings(index)
 	local char_gui = game.players[index].gui.left.character_panel
 	local settings = global.player_character_stats[index]
-
+	local button_table = char_gui.character_buttons
 	if settings.item_loot_pickup then
-		char_gui.character_pickup.style.font_color = global.green
+		button_table.character_pickup.style.font_color = global.green
 	else
-		char_gui.character_pickup.style.font_color = global.red
+		button_table.character_pickup.style.font_color = global.red
 	end
 
 	if settings.build_itemdrop_reach_resourcereach_distance then
-		char_gui.character_reach.style.font_color = global.green
+		button_table.character_reach.style.font_color = global.green
 	else
-		char_gui.character_reach.style.font_color = global.red
+		button_table.character_reach.style.font_color = global.red
 	end
 
 	if settings.crafting_speed then
-		char_gui.character_craft.style.font_color = global.green
+		button_table.character_craft.style.font_color = global.green
 	else
-		char_gui.character_craft.style.font_color = global.red
+		button_table.character_craft.style.font_color = global.red
 	end
 
 	if settings.mining_speed then
-		char_gui.character_mine.style.font_color = global.green
+		button_table.character_mine.style.font_color = global.green
 	else
-		char_gui.character_mine.style.font_color = global.red
+		button_table.character_mine.style.font_color = global.red
 	end
 
 	if settings.invincible then
-		char_gui.character_invincible.style.font_color = global.green
+		button_table.character_invincible.style.font_color = global.green
 	else
-		char_gui.character_invincible.style.font_color = global.red
+		button_table.character_invincible.style.font_color = global.red
 	end
 
 	local run_table = char_gui.character_run
@@ -378,13 +381,20 @@ When button is pressed, a key-value pair is added to global.follow_targets and e
 We also save the camera postion of the admin before they started following anyone, so that we can return to that position later.
 This panel is also updated when connected players change, such as play joins or disconnects.
 ]]
-local function update_follow_panel(player)
+function update_follow_panel(player)
 	local player_index = player.index
-
 	if player.gui.left.follow_panel then
+		if not player.gui.left.follow_panel.search_bar then
+			player.gui.left.follow_panel.add { name = "search_bar", type = "textfield"}
+		end
+		if not player.gui.left.follow_panel.admin_follow_search_button then
+			player.gui.left.follow_panel.add { name = "admin_follow_search_button", type = "button", caption = "filter"}
+		end
 		-- destroy the panel first to make sure we are not duplicating names.
 		if player.gui.left.follow_panel.follow_list then player.gui.left.follow_panel.follow_list.destroy() end
-
+		
+		
+		
 		local follow_list = player.gui.left.follow_panel.add { name = "follow_list", type = "scroll-pane" }
 		follow_list.style.maximal_height = 190
 
@@ -393,8 +403,15 @@ local function update_follow_panel(player)
 		else
 			for _, follow_player in pairs(game.connected_players) do
 				if player.index ~= follow_player.index then
-					local label = follow_list.add{name = follow_player.name, type = "button", caption = follow_player.name}
-					label.style.font = "default"
+					if player.gui.left.follow_panel.search_bar.text ~= nil then
+						if string.find(follow_player, player.gui.left.follow_panel.search_bar.text) ~= nil then
+							local label = follow_list.add{name = follow_player.name, type = "button", caption = follow_player.name}
+							label.style.font = "default"
+						end
+					else 
+						local label = follow_list.add{name = follow_player.name, type = "button", caption = follow_player.name}
+						label.style.font = "default"
+					end
 				end
 			end
 		end
