@@ -30,6 +30,7 @@ end
 
 function rules_show(player_name)
 	local p = game.players[player_name]
+	p.character_running_speed_modifier = -0.9
 	if not p.gui.center.rules then
 		local rules = p.gui.center.add{type="frame", name="rules", caption="FactorioMMO Rules", direction="vertical"}
 		local rules_table = p.gui.center.rules.add{type="table", name="rules_table", colspan=1}
@@ -57,6 +58,7 @@ function rules_on_gui_click(event)
 			rules_show(p.name)
 			p.gui.top.rules_menu.caption = "Close Rules"
 		elseif e.name == "rules_menu" and e.caption == "Close Rules" then
+			p.character_running_speed_modifier = 0
 			if p.gui.center.rules ~= nil then
 				p.gui.center.rules.destroy()
 			end
