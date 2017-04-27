@@ -396,7 +396,7 @@ function update_follow_panel(player)
 		
 		
 		local follow_list = player.gui.left.follow_panel.add { name = "follow_list", type = "scroll-pane" }
-		follow_list.style.maximal_height = 190
+		follow_list.style.maximal_height = 250
 
 		if #game.connected_players == 1 then
 			follow_list.add { name = "no_player_label", type = "label", caption = "There are no players to follow" }
