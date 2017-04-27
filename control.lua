@@ -1,15 +1,10 @@
 --require "locale/utils/event" --Yes this line is seriously commented out, and yes without this it won't even work. I guess you now HAVE TO change the settings to match what you need.
 --require "permissions" --Permission manager
-
+--require "trusted" --Module to add trusted players to a seperate permission group
 --require "locale/utils/admin"	--Admin module to give the admins spectate, commands and character modifications.
---require "locale/utils/undecorator"	--Removes decorations
-
---require "announcements"	--Module to announce stuff ingame / give the players a welcome message
---require "bps"	--BluePrintString a module in which the player can enter a string and a blueprint get generated out of it.
---require "tag" --Module to let players set a tag behind their names to improve teamwork
 --require "locale/utils/patreon" --Module to give patreons spectate and a nice unique tag
---require "rocket" --Module to stop people removing the rocket silo
---require "grid" --Worldgenerator which devides the world into a grid.
+--require "announcements"	--Module to announce stuff ingame / give the players a welcome message
+--require "tag" --Module to let players set a tag behind their names to improve teamwork
 --require "void" --Worldgenerator which randomly generates holes in the world
 --require "stats" --Module to generate stats and print them to the filesystem
 --require "popup" --Module to create and display an popup in the center of all players their screens.
@@ -17,7 +12,14 @@
 
 --OBSOLETE AS OF 0.15
 --require "locale/utils/gravestone"	--Module to generate a chest on player death with his/hers items
+--require "bps"	--BluePrintString a module in which the player can enter a string and a blueprint get generated out of it.
 
+--BROKEN?
+--require "locale/utils/undecorator"	--Removes decorations
+
+--NOT UPDATED YET
+--require "rocket" --Module to stop people removing the rocket silo
+--require "grid" --Worldgenerator which devides the world into a grid.
 
 
 -- Give player starting items.
