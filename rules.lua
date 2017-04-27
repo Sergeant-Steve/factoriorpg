@@ -35,6 +35,7 @@ function rules_show(player_name)
 	p.character_running_speed_modifier = -0.9
 	if not p.gui.center.rules then
 		local rules = p.gui.center.add{type="frame", name="rules", caption="FactorioMMO Rules", direction="vertical"}
+		rules.add{type="button", name="rules_close", caption="X"}
 		local rules_table = p.gui.center.rules.add{type="table", name="rules_table", colspan=1}
 		for i, r in pairs(global.rules.rules) do
 			local e = rules_table.add{type="label", caption= i .. ". " .. r}
@@ -42,7 +43,7 @@ function rules_show(player_name)
 		end
 		local e = rules.add{type="label", caption= "Click the button in the top-left to close this message"}
 		e.style.font_color = global.rules.color.hint
-		rules.add{type="button", name="rules_close", caption="Close this message"}
+		--rules.add{type="button", name="rules_close", caption="Close this message"}
 	end
 end
 
@@ -55,6 +56,10 @@ function rules_on_gui_click(event)
 		if e.name == "rules_close" then
 			if p.gui.center.rules ~= nil then
 				p.gui.center.rules.destroy()
+				if p.gui.top.rules_menu ~= nil then
+					p.gui.top.rules_menu.caption = "Open Rules"
+				end
+				p.character_running_speed_modifier = 0
 			end
 		elseif e.name == "rules_menu" and e.caption == "Open Rules" then
 			rules_show(p.name)
