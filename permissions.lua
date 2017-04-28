@@ -180,59 +180,71 @@
 -- } 
 global.permissions = global.permissions or {}
 global.permissions.groups = global.permissions.groups or {}
+
+
 global.permissions.groups.normal = {name = "normal", permissions = {{action = defines.input_action.deconstruct, value = false},
 
-																	{action = defines.input_action.launch_rocket, value = false},
-																	{action = defines.input_action.set_auto_launch_rocket, value = false},
-																	
-																	{action = defines.input_action.add_permission_group, value = false},
-																	{action = defines.input_action.delete_permission_group, value = false},
-																	{action = defines.input_action.edit_permission_group, value = false},
-																	{action = defines.input_action.server_command, value = false},
-																	{action = defines.input_action.set_allow_commands, value = false},
-																	
-																	{action = defines.input_action.cancel_research, value = false},
-																	
-																	{action = defines.input_action.open_trains_gui, value = false},
-																	{action = defines.input_action.open_train_gui, value = false},
-																	{action = defines.input_action.switch_to_rename_stop_gui, value = false},
-																	{action = defines.input_action.set_entity_color, value = false},
-																	
-																	{action = defines.input_action.open_tutorials_gui, value = false},
-																	
-																	{action = defines.input_action.change_programmable_speaker_parameters, value = false},
-																	{action = defines.input_action.change_programmable_speaker_alert_parameters, value = false},
-																	{action = defines.input_action.change_programmable_speaker_circuit_parameters, value = false},
-																	
-																	{action = defines.input_action.edit_custom_tag, value = false},
-																	{action = defines.input_action.delete_custom_tag, value = false},
-																	}}
-global.permissions.groups.trusted = {name = "trusted", permissions = {
-																	{action = defines.input_action.launch_rocket, value = false},
-																	{action = defines.input_action.set_auto_launch_rocket, value = false},
-	
-																	{action = defines.input_action.add_permission_group, value = false},
-																	{action = defines.input_action.delete_permission_group, value = false},
-																	{action = defines.input_action.edit_permission_group, value = false},
-																	{action = defines.input_action.server_command, value = false},
-																	{action = defines.input_action.set_allow_commands, value = false},
-																	
-																	{action = defines.input_action.open_tutorials_gui, value = false},
+{action = defines.input_action.launch_rocket, value = false},
+{action = defines.input_action.set_auto_launch_rocket, value = false},
 
-																	}}
+{action = defines.input_action.add_permission_group, value = false},
+{action = defines.input_action.delete_permission_group, value = false},
+{action = defines.input_action.edit_permission_group, value = false},
+{action = defines.input_action.server_command, value = false},
+{action = defines.input_action.set_allow_commands, value = false},
+
+{action = defines.input_action.cancel_research, value = false},
+
+{action = defines.input_action.open_trains_gui, value = false},
+{action = defines.input_action.open_train_gui, value = false},
+{action = defines.input_action.switch_to_rename_stop_gui, value = false},
+{action = defines.input_action.set_entity_color, value = false},
+
+{action = defines.input_action.open_tutorials_gui, value = false},
+
+{action = defines.input_action.change_programmable_speaker_parameters, value = false},
+{action = defines.input_action.change_programmable_speaker_alert_parameters, value = false},
+{action = defines.input_action.change_programmable_speaker_circuit_parameters, value = false},
+
+{action = defines.input_action.edit_custom_tag, value = false},
+{action = defines.input_action.delete_custom_tag, value = false},
+}}
+
+
+
+global.permissions.groups.trusted = {name = "trusted", permissions = {
+{action = defines.input_action.launch_rocket, value = false},
+{action = defines.input_action.set_auto_launch_rocket, value = false},
+
+{action = defines.input_action.add_permission_group, value = false},
+{action = defines.input_action.delete_permission_group, value = false},
+{action = defines.input_action.edit_permission_group, value = false},
+{action = defines.input_action.server_command, value = false},
+{action = defines.input_action.set_allow_commands, value = false},
+
+{action = defines.input_action.open_tutorials_gui, value = false},
+
+}}
+
+
+
 global.permissions.groups.patreons = {name = "patreons", permissions = {
-																	{action = defines.input_action.add_permission_group, value = false},
-																	{action = defines.input_action.delete_permission_group, value = false},
-																	{action = defines.input_action.edit_permission_group, value = false},
-																	{action = defines.input_action.server_command, value = false},
-																	{action = defines.input_action.set_allow_commands, value = false},
-																
-																	{action = defines.input_action.open_tutorials_gui, value = false},
-																	
-																	}}
+{action = defines.input_action.add_permission_group, value = false},
+{action = defines.input_action.delete_permission_group, value = false},
+{action = defines.input_action.edit_permission_group, value = false},
+{action = defines.input_action.server_command, value = false},
+{action = defines.input_action.set_allow_commands, value = false},
+
+{action = defines.input_action.open_tutorials_gui, value = false},
+
+}}
+
+
+
 global.permissions.groups.admins = {name = "admins", permissions = {
-																	{action = defines.input_action.open_tutorials_gui, value = false}
-																}}
+{action = defines.input_action.open_tutorials_gui, value = false}
+}}
+
 
 function permissions_init()
 	for i, group in pairs(global.permissions.groups) do
