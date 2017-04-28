@@ -65,7 +65,7 @@ end)
 Event.register(defines.events.on_tick, function(event)
     local tick = game.tick
         
-    if tick % 600 = 0 then
+    if tick % 600 == 0 then
         stats_generate_stats()
     end
 end)
