@@ -62,22 +62,14 @@ Event.register(defines.events.on_player_died, function(event)
     end
 end)
 
-local function second_to_tick(seconds)
-    return seconds * 60 * game.speed
-end
-
 Event.register(defines.events.on_tick, function(event)
     local tick = game.tick
-
-    if (global.stats_remaining_until_update < 1) then
-        global.stats_remaining_until_update = second_to_tick(global.stats_save_every_x_seconds) - 1
+        
+    if tick % 600 = 0 then
         stats_generate_stats()
-    else
-        global.stats_remaining_until_update = global.stats_remaining_until_update - 1
     end
 end)
 
 Event.register(-1, function(event)
-    global.stats_remaining_until_update = 0
 end)
 
