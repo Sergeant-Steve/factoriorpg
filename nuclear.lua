@@ -302,4 +302,4 @@ function initialize(event)
 	game.forces["player"].technologies["electric-energy-accumulators-1"].enabled = false
 end
 
-script.on_init(initialize)
+Event.register(-1, initialize)
