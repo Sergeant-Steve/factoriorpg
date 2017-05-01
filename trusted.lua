@@ -7,22 +7,30 @@ global.trusted.list = {"Borga", "SockPuppet"}
 
 function trusted_add(command)
 	if game.players[command.player_index].admin then
-		local player = game.players[command.parameter]
-		if player ~= nil then
-			table.insert(global.trusted.list, player.name)
+		if command.parameter ~= nil then
+			local player = game.players[command.parameter]
+			if player ~= nil then
+				table.insert(global.trusted.list, player.name)
+			end
+		else
+			game.players[command.player_index].print("Enter a username")
 		end
 	end
 end
 
 function trusted_remove(command)
 	if game.players[command.player_index].admin then
-		local player = game.players[command.parameter]
-		if player ~= nil then
-			for i, name in pairs(global.trusted.list) do
-				if player.name == name then
-					global.trusted.list[i] = nil
+		if command.parameter ~= nil then
+			local player = game.players[command.parameter]
+			if player ~= nil then
+				for i, name in pairs(global.trusted.list) do
+					if player.name == name then
+						global.trusted.list[i] = nil
+					end
 				end
 			end
+		else
+			game.players[command.player_index].print("Enter a username")
 		end
 	end
 end
@@ -39,7 +47,9 @@ end
 function trusted_joined(event)
 	local player = game.players[event.player_index]
 	if(global.permissions)then
-		permissions_add_player(player, "trusted")
+		if(trusted_check(player.name))
+			permissions_add_player(player, "trusted")
+		end
 	end
 end
 
