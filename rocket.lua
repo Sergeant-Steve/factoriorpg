@@ -36,49 +36,49 @@ function rocket_launched(event)
 end
 
 --Function to make silo's turn to the admin force and not be able to take damage. 
-Event.register(defines.events.on_built_entity, function(event)
-local entity = event.created_entity
-	if entity.name == "rocket-silo" then
-		entity.force = game.forces.Admins
-		entity.minable = false
-		entity.destructible = false
-		--entity.operable = false
-	end
-end)
+-- Event.register(defines.events.on_built_entity, function(event)
+-- local entity = event.created_entity
+	-- if entity.name == "rocket-silo" then
+		-- entity.force = game.forces.Admins
+		-- entity.minable = false
+		-- entity.destructible = false
+		-- --entity.operable = false
+	-- end
+-- end)
 
 --Function for when an admin uses the dummy-selection-tool to make a silo destructable again.
-Event.register(defines.events.on_player_selected_area, function(event)
-	local index = event.player_index
-	local player = game.players[index]
-	for i, entity in pairs(event.entities) do
-	    if entity.name == "rocket-silo" and player.admin then
-			if entity.minable == false then
-				entity.destructible = true
-				entity.operable = true
-				entity.minable = true
-				return
-			else
-				entity.destructible = false
-				entity.operable = false
-				entity.minable = false
-			end
-	   end
-	end
+-- Event.register(defines.events.on_player_selected_area, function(event)
+	-- local index = event.player_index
+	-- local player = game.players[index]
+	-- for i, entity in pairs(event.entities) do
+	    -- if entity.name == "rocket-silo" and player.admin then
+			-- if entity.minable == false then
+				-- entity.destructible = true
+				-- entity.operable = true
+				-- entity.minable = true
+				-- return
+			-- else
+				-- entity.destructible = false
+				-- entity.operable = false
+				-- entity.minable = false
+			-- end
+	   -- end
+	-- end
 	
-end)
+-- end)
 
 --Debug function to instantly end the game. 
-Event.register(defines.events.on_player_alt_selected_area, function(event)
-	local index = event.player_index
-	local player = game.players[index]
-	for i, entity in pairs(event.entities) do
-	    if entity.name == "rocket-silo" and player.admin and player.name == "I_IBlackI_I" then
-			game.set_game_state{game_finished=true, player_won=true, can_continue=true}
-			global.satellite_sent[game.forces.player.name] = 1
-	   end
-	end
+-- Event.register(defines.events.on_player_alt_selected_area, function(event)
+	-- local index = event.player_index
+	-- local player = game.players[index]
+	-- for i, entity in pairs(event.entities) do
+	    -- if entity.name == "rocket-silo" and player.admin and player.name == "I_IBlackI_I" then
+			-- game.set_game_state{game_finished=true, player_won=true, can_continue=true}
+			-- global.satellite_sent[game.forces.player.name] = 1
+	   -- end
+	-- end
 	
-end)
+-- end)
 
 -- Functions for adding the silo to the table, or remove them. 
 local function rocket_on_creation(event)
@@ -125,11 +125,11 @@ end
 
 function rocket_create_button(player_name)
 	local player = game.players[player_name]
-	if player.admin then
-		if not player.gui.top.rocket then
-			player.gui.top.add { name = "rocket", type = "button", caption = "Rocket Tool" }
-		end
-	end
+	-- if player.admin then
+		-- if not player.gui.top.rocket then
+			-- player.gui.top.add { name = "rocket", type = "button", caption = "Rocket Tool" }
+		-- end
+	-- end
 	if not player.gui.top.rocket_stats then
 		player.gui.top.add { name = "rocket_stats", type = "button", caption = "Open Stats" }
 	end
@@ -142,9 +142,10 @@ function rocket_on_gui_click(event)
 	local e = event.element
 	
 	if e ~= nil then
-		if (e.name == "rocket") then
-			p.insert { name = "dummy-selection-tool", count = 1 }
-		elseif e.name == "rocket_stats" and e.caption == "Open Stats" then
+		-- if (e.name == "rocket") then
+			-- p.insert { name = "dummy-selection-tool", count = 1 }
+		-- elseif REPLACE IF WITH ELSEIF
+		if e.name == "rocket_stats" and e.caption == "Open Stats" then
 			e.caption = "Close Stats"
 			if p.gui.left.rocket_score then
 				p.gui.left.rocket_score.rocket_count.caption = tostring(global.satellite_sent[game.forces.player.name])
