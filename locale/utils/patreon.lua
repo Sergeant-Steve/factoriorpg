@@ -185,12 +185,19 @@ function patreon_reveal(event)
 end
 
 Event.register(-1, function()
-	game.create_force("Patreons")
+	if not game.forces.Patreons then
+		game.create_force("Patreons")
+	end
 end)
 
 Event.register(defines.events.on_force_created, function(event)
-	event.force.set_cease_fire(game.forces.Patreons, true)
-	game.forces.Patreons.set_cease_fire(event.force, true)
+	if(event.force.name ~= "Patreons") then
+		if not game.forces.Patreons then
+			game.create_force("Patreons")
+		end
+		event.force.set_cease_fire(game.forces.Patreons, true)
+		game.forces.Patreons.set_cease_fire(event.force, true)
+	end
 end)
 
 Event.register(defines.events.on_player_joined_game, patreon_shoutout)

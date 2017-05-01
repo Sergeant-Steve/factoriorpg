@@ -24,14 +24,22 @@ local function update_position(event)
 end
 
 Event.register(defines.events.on_tick, update_position)
-Event.register(-1, function()
-	game.create_force("Admins")
-	game.forces.Admins.research_all_technologies()
-end)
+
+function admin_create_force()
+	if not game.forces.Admins then
+		game.create_force("Admins")
+		game.forces.Admins.research_all_technologies()
+	end
+end
+
+Event.register(-1, admin_create_force)
 
 Event.register(defines.events.on_force_created, function(event)
-	event.force.set_cease_fire(game.forces.Admins, true)
-	game.forces.Admins.set_cease_fire(event.force, true)
+	if(event.force.name ~= "Admins") then
+		admin_create_force()
+		event.force.set_cease_fire(game.forces.Admins, true)
+		game.forces.Admins.set_cease_fire(event.force, true)
+	end
 end)
 
 function entity_mined(event)
