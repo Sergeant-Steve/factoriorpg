@@ -11,6 +11,7 @@
 --require "stats" --Module to generate stats and print them to the filesystem
 --require "popup" --Module to create and display an popup in the center of all players their screens.
 --require "rules" --Module which displays a popup with the rules when a player joins, or presses the open rules button
+--require "rocket" --Module to stop people removing the rocket silo
 
 --OBSOLETE AS OF 0.15
 --require "locale/utils/gravestone"	--Module to generate a chest on player death with his/hers items
@@ -20,7 +21,7 @@
 --require "locale/utils/undecorator"	--Removes decorations
 
 --NOT UPDATED YET
---require "rocket" --Module to stop people removing the rocket silo
+
 --require "grid" --Worldgenerator which devides the world into a grid.
 
 
