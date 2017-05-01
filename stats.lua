@@ -50,7 +50,7 @@ local function stats_generate_stats()
 end
 
 Event.register(defines.events.on_player_died, function(event)
-    local str = "{ \"tick\": " .. game.tick .. ", \"player\": " .. game.players[event.player_index].name .. ", \"cause\": " .. event.cause .. " }"
+    local str = "{ \"tick\": " .. game.tick .. ", \"player\": " .. game.players[event.player_index].name .. ", \"cause\": " .. event.cause.name .. " }"
 
     if global.stats_save_to_file then
         local file_name = "death_" .. event.player_index .. "_" .. game.tick .. ".json"
