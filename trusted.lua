@@ -47,7 +47,7 @@ end
 function trusted_joined(event)
 	local player = game.players[event.player_index]
 	if(global.permissions)then
-		if(trusted_check(player.name))
+		if(trusted_check(player.name)) then
 			permissions_add_player(player, "trusted")
 		end
 	end
