@@ -67,10 +67,6 @@ function gui_click(event)
 	local i = event.player_index
 	local p = game.players[i]
 	local e = event.element
-	if e.name == "character" and event.element.caption == "Disabled" then
-		p.print("Character modification disabled in Spectator mode.")
-		return
-	end
 	if e.name == "spectate" and event.element.caption == "Spectating" then
 		p.print("Use a button in the spectate panel to stop spectating.")
 		return
@@ -86,6 +82,34 @@ function gui_click(event)
 		elseif e.name == "admin_tag" and e.parent.name == "admin_pane" then
 			p.print("Admin tag applied!")
 			p.tag = " [Admin]"
+		elseif e.name == "admin_compensation_mode" and e.parent.name == "admin_pane" then
+			if(global.player_character_stats[i].compensation_mode) then
+				global.player_character_stats[i].compensation_mode = false
+				update_character(i)
+				e.style.font_color = global.red
+				if p.gui.left.admin_pane.character then
+					p.gui.left.admin_pane.character.caption = "Character"
+				end
+			else
+				global.player_character_stats[i].compensation_mode = true
+				e.style.font_color = global.green
+				if p.gui.left.admin_pane.character then
+					p.gui.left.admin_pane.character.caption = "Disabled"
+					if p.gui.left.character_panel then
+						p.gui.left.character_panel.destroy()
+						global.player_character_stats[i] = {
+							item_loot_pickup = false,
+							build_itemdrop_reach_resourcereach_distance = false,
+							crafting_speed = false,
+							mining_speed = false,
+							invincible = false,
+							running_speed = 0,
+							compensation_mode = true
+						}
+					end
+				end
+				update_character(i)
+			end
 		elseif e.name == "teleport" and e.parent.name == "spectate_panel" then
 			force_spectators(i, true)
 		elseif e.name == "return_character" and e.parent.name == "spectate_panel" then
@@ -122,12 +146,14 @@ function gui_click(event)
 				create_command_gui(i)
 			end
 		elseif e.name == "character" then
-			if p.gui.left.character_panel then
+			if p.gui.left.character_panel and e.caption == "Close" then
 				p.gui.left.admin_pane.character.caption = "Character"
 				p.gui.left.character_panel.destroy()
-			else
+			elseif e.caption == "Character" then
 				p.gui.left.admin_pane.character.caption = "Close"
 				create_character_gui(i)
+			elseif e.caption == "Disabled" then
+				p.print("Character modification is currently disabled")
 			end
 		elseif e.name == "character_pickup" then
 			if global.player_character_stats[i].item_loot_pickup then
@@ -352,10 +378,17 @@ function update_character(index)
 	end
 
 	if settings.build_itemdrop_reach_resourcereach_distance then
+		player.character_build_distance_bonus = 125
 		player.character_item_drop_distance_bonus = 125
 		player.character_reach_distance_bonus = 125
 		player.character_resource_reach_distance_bonus = 125
+	elseif settings.compensation_mode then
+		player.character_build_distance_bonus = 5
+		player.character_item_drop_distance_bonus = 5
+		player.character_reach_distance_bonus = 5
+		player.character_resource_reach_distance_bonus = 5
 	else
+		player.character_build_distance_bonus = 0
 		player.character_item_drop_distance_bonus = 0
 		player.character_reach_distance_bonus = 0
 		player.character_resource_reach_distance_bonus = 0
@@ -363,12 +396,16 @@ function update_character(index)
 
 	if settings.crafting_speed then
 		player.character_crafting_speed_modifier = 60
+	elseif settings.compensation_mode then
+		player.character_crafting_speed_modifier = 0.5
 	else
 		player.character_crafting_speed_modifier = 0
 	end
 
 	if settings.mining_speed then
 		player.character_mining_speed_modifier = 150
+	elseif settings.compensation_mode then
+		player.character_mining_speed_modifier = 1
 	else
 		player.character_mining_speed_modifier = 0
 	end
@@ -512,6 +549,11 @@ function create_admin_gui(player_name)
 	if not player.gui.left.admin_pane.commands then
 		admin_pane.add { name = "commands", type = "button", caption = "Commands" }
 	end
+	
+	if not player.gui.left.admin_pane.admin_compensation_mode then
+		local a = admin_pane.add { name = "admin_compensation_mode", type = "button", caption = "Compensate" }
+		a.style.font_color = global.red
+	end
 	if global.player_character_stats[index] == nil then
 		global.player_character_stats[index] = {
 			item_loot_pickup = false,
@@ -519,7 +561,8 @@ function create_admin_gui(player_name)
 			crafting_speed = false,
 			mining_speed = false,
 			invincible = false,
-			running_speed = 0
+			running_speed = 0,
+			compensation_mode = false
 		}
 	end
 
