@@ -138,8 +138,8 @@ function gui_click(event)
 			else
 				global.player_character_stats[i].item_loot_pickup = true
 				event.element.style.font_color = global.green
-				p.character_item_pickup_distance_bonus = 125
-				p.character_loot_pickup_distance_bonus = 125
+				p.character_item_pickup_distance_bonus = 5
+				p.character_loot_pickup_distance_bonus = 5
 			end
 		elseif e.name == "character_reach" then
 			if global.player_character_stats[i].build_itemdrop_reach_resourcereach_distance then
@@ -344,8 +344,8 @@ function update_character(index)
 	local settings = global.player_character_stats[index]
 
 	if settings.item_loot_pickup then
-		player.character_item_pickup_distance_bonus = 125
-		player.character_loot_pickup_distance_bonus = 125
+		player.character_item_pickup_distance_bonus = 5
+		player.character_loot_pickup_distance_bonus = 5
 	else
 		player.character_item_pickup_distance_bonus = 0
 		player.character_loot_pickup_distance_bonus = 0
