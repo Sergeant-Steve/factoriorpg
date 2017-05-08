@@ -248,7 +248,7 @@ function gui_click(event)
 		end
 		--set who to follow
 		for _, player in pairs(game.connected_players) do
-			if e.name == player.name then
+			if e.name == "admin_follow_player_" .. player.name then
 				global.original_position[i] = p.position
 				global.original_surface[i] = p.surface
 				global.follow_targets[i] = player.index
@@ -413,11 +413,11 @@ function update_follow_panel(player)
 				if player.index ~= follow_player.index then
 					if player.gui.left.follow_panel.search_bar.text ~= nil then
 						if string.find(follow_player.name, player.gui.left.follow_panel.search_bar.text) ~= nil then
-							local label = follow_list.add{name = follow_player.name, type = "button", caption = follow_player.name}
+							local label = follow_list.add{name = follow_player.name, type = "button", caption = "admin_follow_player_" .. follow_player.name}
 							label.style.font = "default"
 						end
 					else 
-						local label = follow_list.add{name = follow_player.name, type = "button", caption = follow_player.name}
+						local label = follow_list.add{name = follow_player.name, type = "button", caption = "admin_follow_player_" .. follow_player.name}
 						label.style.font = "default"
 					end
 				end
