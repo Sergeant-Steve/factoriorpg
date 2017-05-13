@@ -85,6 +85,7 @@ function gui_click(event)
 		elseif e.name == "admin_compensation_mode" and e.parent.name == "admin_pane" then
 			if(global.player_character_stats[i].compensation_mode) then
 				global.player_character_stats[i].compensation_mode = false
+				global.player_character_stats[i].running_speed = 0
 				update_character(i)
 				e.style.font_color = global.red
 				if p.gui.left.admin_pane.character then
@@ -103,7 +104,7 @@ function gui_click(event)
 							crafting_speed = false,
 							mining_speed = false,
 							invincible = false,
-							running_speed = 0,
+							running_speed = 0.5,
 							compensation_mode = true
 						}
 					end
