@@ -451,11 +451,11 @@ function update_follow_panel(player)
 				if player.index ~= follow_player.index then
 					if player.gui.left.follow_panel.search_bar.text ~= nil then
 						if string.find(follow_player.name, player.gui.left.follow_panel.search_bar.text) ~= nil then
-							local label = follow_list.add{name = follow_player.name, type = "button", caption = "admin_follow_player_" .. follow_player.name}
+							local label = follow_list.add{name = "admin_follow_player_" .. follow_player.name, type = "button", caption = follow_player.name}
 							label.style.font = "default"
 						end
 					else 
-						local label = follow_list.add{name = follow_player.name, type = "button", caption = "admin_follow_player_" .. follow_player.name}
+						local label = follow_list.add{name = "admin_follow_player_" .. follow_player.name, type = "button", caption = follow_player.name}
 						label.style.font = "default"
 					end
 				end
