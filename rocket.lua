@@ -2,16 +2,17 @@
 --This module makes a rocket silo unable to be destroyed by regular players
 -- and gives admins a tool to make it destroyable again.
 -- the rocket auto-launches when there is a satellite in it.
+-- Edited by Mylon to be less condescending
 
 
 --Function for when a rocket is launched
 function rocket_launched(event)
 	if event.rocket.get_item_count("satellite") == 0 then
 		if (#game.players <= 1) then
-			game.show_message_dialog{text = "Know what? You should put a satellite in it next time."}
+			game.show_message_dialog{text = "Only rockets with satellites count"}
 		else
 			for index, player in pairs(game.forces.player.players) do
-				player.print("Know what? You should put a satellite in it next time.")
+				player.print("Only rockets with satellites count")
 			end
 		end
 	return

@@ -1,6 +1,7 @@
 -- Give players the option to set their preferred role as a tag
 -- A 3Ra Gaming creation
 -- Modified by I_IBlackI_I
+-- Tag list modified by Mylon
 
 function tag_create_gui(event)
 	local player = game.players[event.player_index]
@@ -13,16 +14,14 @@ end
 global.tag = global.tag or {}
 global.tag.tags = {
 	{ display_name = "Mining" },
-	{ display_name = "Oil" },
-	{ display_name = "Bus" },
 	{ display_name = "Smelting" },
+	{ display_name = "Oil" },
 	{ display_name = "Pest Control" },
 	{ display_name = "Automation" },
 	{ display_name = "Quality Control" },
 	{ display_name = "Power" },
 	{ display_name = "Trains" },
 	{ display_name = "Science" },
-	{ display_name = "Robotics"},
 	{ display_name = "AFK" },
 	{ display_name = "Clear" }
 }
