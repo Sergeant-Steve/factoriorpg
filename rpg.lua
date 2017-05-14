@@ -1,15 +1,16 @@
 --Factorio RPG, written by Mylon
 
-
 require "rpgdata" --Savedata
 --rpg_scale = 4.6
 
 --On player join, fetch exp.
 function rpg_loadsave(event)
 	local player = game.players[event.player_index]
-	global.rpg_exp[player.name] = {level=1, exp=0, online=0}
-	if rpg_save[player.name] then
-		rpg_addexp(rpg_save[player.name])
+	if not global.rpg_exp[player.name] then
+		global.rpg_exp[player.name] = {level=1, exp=0, online=0}
+		if rpg_save[player.name] then
+			rpg_addexp(player, rpg_save[player.name])
+		end
 	end
 end
 
@@ -33,9 +34,9 @@ function rpg_savedata()
 			if rpg_save[k] then
 				diff = v.exp - rpg_save[k]
 			end
-			local data = '"' ..
+			local data = '["' ..
 				k ..
-				'"=' ..
+				'"]=' ..
 				v.exp ..
 				', diff=' ..
 				diff ..
@@ -49,16 +50,18 @@ end
 --Add levelup gui
 function rpg_add_gui(event)
 	local player = game.players[event.player_index]
-	player.gui.top.add{type="frame", name="rpg", caption="Level 1"}
-	player.gui.top.rpg.add{type="progressbar", name="exp", size=200}
+	if not player.gui.top.rpg then
+		player.gui.top.add{type="frame", name="rpg", caption="Level 1"}
+		player.gui.top.rpg.add{type="progressbar", name="exp", size=200, tooltip="Kill biter bases or launch rockets to level up."}
+	end
 end
 
 -- Produces format { "player-name"=total exp }
-function rpg_export()
-	for name, data in pairs(global.rpg_exp) do
-		game.write_file("rpgsave.txt", "{ '" .. name .."'=" .. data.exp .. ",\n", true, 1)
-	end
-end
+-- function rpg_export()
+	-- for name, data in pairs(global.rpg_exp) do
+		-- game.write_file("rpgsave.txt", "{ '" .. name .."'=" .. data.exp .. ",\n", true, 1)
+	-- end
+-- end
 
 --TODO: During merge script, check if old exp is greater than new exp to prevent possible data loss.
 
@@ -66,15 +69,53 @@ function rpg_nest_killed(event)
 	--game.print("Entity died.")
 	if event.entity.type == "unit-spawner" then
 		--game.print("Spawner died.")
-		if event.cause and event.cause.player then
+		if event.cause and event.cause.type == "player" then
 			--game.print("Spawner died by player.  Awarding exp.")
-			rpg_addexp(event.cause.player, 10)
+			rpg_addexp(event.cause.player, 100)
 		else
 			if event.cause and event.cause.last_user then
-				rpg_addexp(event.cause.last_user, 10)
+				rpg_addexp(event.cause.last_user, 100)
 			end
 		end
 	end
+	if event.entity.type == "turret" and event.entity.force == "enemy" then
+		--Worm turret died.
+		if event.cause and event.cause.player then
+			rpg_addexp(event.cause.player, 50)
+		else
+			if event.cause and event.cause.last_user then
+				rpg_addexp(event.cause.last_user, 50)
+			end
+		end
+	end
+end
+
+--Award exp based on number of beakers
+function rpg_tech_researched(event)
+	local value = 0
+	--Space science packs aren't worth anything.  You already got exp for the rocket!
+	for _, ingredient in pairs(event.research.research_unit_ingredients) do
+		if ingredient.name == "science-pack-1" then
+			value = value + ingredient.amount * event.research.research_unit_count
+		elseif ingredient.name == "science-pack-2" then
+			value = value + ingredient.amount * event.research.research_unit_count
+		elseif ingredient.name == "science-pack-3" then
+			value = value + ingredient.amount * event.research.research_unit_count
+		elseif ingredient.name == "military-science-pack" then
+			value = value + ingredient.amount * event.research.research_unit_count
+		elseif ingredient.name == "production-science-pack" then
+			value = value + ingredient.amount * event.research.research_unit_count
+		elseif ingredient.name == "high-tech-science-pack" then
+			value = value + ingredient.amount * event.research.research_unit_count
+		end
+	end
+	value = value / 2
+	for _, player in pairs(game.players) do
+		if player.connected then
+			rpg_addexp(player, value)
+		end
+	end
+	-- Expected value of Logistic System: 150 * (5) / 2 =  375 exp
 end
 
 function rpg_satellite_launched(event)
@@ -82,9 +123,9 @@ function rpg_satellite_launched(event)
 	--Todo: Check for hard recipes mode.
 	if event.rocket.get_item_count("satellite") > 0 then
 		global.satellites_launched = global.satellites_launched + 1
-		bonus = math.max(10, 1500 / (global.satellites_launched^1.2))
+		bonus = math.max(10, 15000 / (global.satellites_launched^1.2))
 		for n, player in pairs(game.players) do
-			local fraction_online = global.rpg_exp[player.name].online / (game.tick * 60 * 60)
+			local fraction_online = player.online_time / game.tick
 			rpg_addexp(player, bonus * fraction_online)
 		end
 	end
@@ -108,6 +149,7 @@ function rpg_addexp(player, amount)
 	level = global.rpg_exp[player.name].level
 	--Update progress bar.
 	player.gui.top.rpg.exp.value = (global.rpg_exp[player.name].exp - rpg_exp_tnl(level-1)) / ( rpg_exp_tnl(level) - rpg_exp_tnl(level-1) )
+	player.gui.top.rpg.tooltip = math.floor(player.gui.top.rpg.exp.value * 10000)/100 .. "% to next level ( " .. global.rpg_exp[player.name].exp - rpg_exp_tnl(level-1) .. " / " .. rpg_exp_tnl(level) - rpg_exp_tnl(level-1) .. " )"
 	--game.print("Updating exp bar value to " .. player.gui.top.rpg.exp.value)
 end
 
@@ -127,7 +169,7 @@ function rpg_exp_tick(event)
 	if event.tick % (60 * 10) == 0 then
 		for n, player in pairs(game.players) do
 			game.print("Adding auto-exp")
-			rpg_addexp(player, 60)
+			rpg_addexp(player, 600)
 		end
 	end
 end
@@ -137,7 +179,7 @@ function rpg_exp_tnl(level)
 	if level == 0 then
 		return 0
 	end
-	return (math.ceil( (3.6 + level)^3 / 10) * 10)
+	return (math.ceil( (3.6 + level)^3 / 10) * 100)
 end
 
 --Possible benefits from leveling up:
@@ -172,7 +214,9 @@ function rpg_levelup(player)
 		--end
 	end
 	--Update GUI
-	player.gui.top.rpg.caption = "Level " .. global.rpg_exp[player.name].level
+	if player.connected then
+		player.gui.top.rpg.caption = "Level " .. global.rpg_exp[player.name].level
+	end
 end
 
 function rpg_init()
@@ -214,10 +258,11 @@ commands.add_command("export", "Export exp table for processing", function()
 	rpg_savedata()
 end)
 
-Event.register(defines.events.on_player_joined_game, rpg_loadsave)
 Event.register(defines.events.on_player_joined_game, rpg_add_gui)
+Event.register(defines.events.on_player_joined_game, rpg_loadsave)
 Event.register(defines.events.on_rocket_launched, rpg_satellite_launched)
 Event.register(defines.events.on_entity_died, rpg_nest_killed)
---Event.register(defines.events.on_tick, rpg_exp_tick)
-Event.register(defines.events.on_tick, rpg_time_tracker)
+Event.register(defines.events.on_research_finished, rpg_tech_researched)
+--Event.register(defines.events.on_tick, rpg_exp_tick) --For debug
+--Event.register(defines.events.on_tick, rpg_time_tracker) -- This is obsolete.  player.online_time already does this.
 Event.register(-1, rpg_init)

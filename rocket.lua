@@ -177,5 +177,5 @@ Event.register(defines.events.on_preplayer_mined_item, rocket_on_destruction)
 Event.register(defines.events.on_built_entity, rocket_on_creation)
 Event.register(defines.events.on_robot_built_entity, rocket_on_creation)
 Event.register(defines.events.on_rocket_launched, rocket_launched)
-Event.register(defines.events.on_gui_click, rocket_on_gui_click)
+Event.register(defines.events.on_gui_click, rocket_on_gui_click) --This is bugged.
 Event.register(defines.events.on_player_joined_game, rocket_player_joined)
