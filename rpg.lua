@@ -1,13 +1,15 @@
 --Factorio RPG, written by Mylon
+--Utility command for griefing.
+-- /silent-command do local hoarder = {amount=0} for k,v in pairs(game.players) do if v.get_item_count("uranium-235") > hoarder.amount then hoarder.name = v.name hoarder.amount = v.get_item_count("uranium-235") end end game.print(hoarder.name .. " is hoarding " .. hoarder.amount .. " uranium-235!") end
 
-require "rpgdata" --Savedata
+require "rpgdata" --Savedata.  This is externally generated.
 --rpg_scale = 4.6
 
 --On player join, fetch exp.
 function rpg_loadsave(event)
 	local player = game.players[event.player_index]
 	if not global.rpg_exp[player.name] then
-		global.rpg_exp[player.name] = {level=1, exp=0, online=0}
+		global.rpg_exp[player.name] = {level=1, exp=0}
 		if rpg_save[player.name] then
 			rpg_addexp(player, rpg_save[player.name])
 		end
@@ -15,8 +17,9 @@ function rpg_loadsave(event)
 end
 
 --Save the persistent data.
+
 function rpg_savedata()
-	local filename = "rpgdata.txt"
+	local filename = "rpgdata - " .. game.tick .. ".txt"
 	local target
 	--Are we on a dedicated server?
 	if game.players[0] then
@@ -24,28 +27,41 @@ function rpg_savedata()
 	else
 		target = 1
 	end
-	game.write_file(filename, "{\n", true, target)
-	for k, v in pairs(global.rpg_exp) do
-		--Sanitize inputs.  If your name contains these characters, too bad.
-		if rpg_is_sanitary(k) then
-			--Goal: "name"=exp, diff=delta_exp\n
-			--Store delta exp (diff) in case we need to merge 2 save files.
-			local diff = 0
-			if rpg_save[k] then
-				diff = v.exp - rpg_save[k]
-			end
-			local data = '["' ..
-				k ..
-				'"]=' ..
-				v.exp ..
-				', diff=' ..
-				diff ..
-				",\n"
-			game.write_file(filename, data, true, target)
-		end
-	end
-	game.write_file(filename, "}", true, target)
+	game.write_file(filename, serpent.block(global.rpg_exp), true, target)
 end
+
+--Old serializer.
+-- function rpg_savedata()
+	-- local filename = "rpgdata - " .. game.tick .. ".txt"
+	-- local target
+	-- --Are we on a dedicated server?
+	-- if game.players[0] then
+		-- target = 0
+	-- else
+		-- target = 1
+	-- end
+	-- game.write_file(filename, "{\n", true, target)
+	-- for k, v in pairs(global.rpg_exp) do
+		-- --Sanitize inputs.  If your name contains these characters, too bad.
+		-- if rpg_is_sanitary(k) then
+			-- --Goal: "name"=exp, diff=delta_exp\n
+			-- --Store delta exp (diff) in case we need to merge 2 save files.
+			-- local diff = 0
+			-- if rpg_save[k] then
+				-- diff = v.exp - rpg_save[k]
+			-- end
+			-- local data = '["' ..
+				-- k ..
+				-- '"]={' ..
+				-- math.floor(v.exp) ..
+				-- ', diff=' ..
+				-- diff ..
+				-- "},\n"
+			-- game.write_file(filename, data, true, target)
+		-- end
+	-- end
+	-- game.write_file(filename, "}", true, target)
+-- end
 
 --Add levelup gui
 function rpg_add_gui(event)
@@ -54,6 +70,15 @@ function rpg_add_gui(event)
 		player.gui.top.add{type="frame", name="rpg", caption="Level 1"}
 		player.gui.top.rpg.add{type="progressbar", name="exp", size=200, tooltip="Kill biter bases or launch rockets to level up."}
 	end
+end
+
+--Higher level players get more starting resources for an accelerated start!
+function rpg_starting_resources(event)
+	local player = game.players[event.player_index]
+	local bonuslevel = global.rpg_exp[player.name].level - 1
+	player.insert{name="iron-plate", count=bonuslevel * 10}
+	player.insert{name="copper-plate", count=math.floor(bonuslevel / 4) * 10}
+	player.insert{name="stone", count=math.floor(bonuslevel / 4) * 10}
 end
 
 -- Produces format { "player-name"=total exp }
@@ -109,7 +134,7 @@ function rpg_tech_researched(event)
 			value = value + ingredient.amount * event.research.research_unit_count
 		end
 	end
-	value = value / 2
+	value = math.floor(value / 2)
 	for _, player in pairs(game.players) do
 		if player.connected then
 			rpg_addexp(player, value)
@@ -123,10 +148,10 @@ function rpg_satellite_launched(event)
 	--Todo: Check for hard recipes mode.
 	if event.rocket.get_item_count("satellite") > 0 then
 		global.satellites_launched = global.satellites_launched + 1
-		bonus = math.max(10, 15000 / (global.satellites_launched^1.2))
+		bonus = math.max(10, 20000 / (global.satellites_launched^1.2))
 		for n, player in pairs(game.players) do
 			local fraction_online = player.online_time / game.tick
-			rpg_addexp(player, bonus * fraction_online)
+			rpg_addexp(player, math.floor(bonus * fraction_online))
 		end
 	end
 end
@@ -149,19 +174,8 @@ function rpg_addexp(player, amount)
 	level = global.rpg_exp[player.name].level
 	--Update progress bar.
 	player.gui.top.rpg.exp.value = (global.rpg_exp[player.name].exp - rpg_exp_tnl(level-1)) / ( rpg_exp_tnl(level) - rpg_exp_tnl(level-1) )
-	player.gui.top.rpg.tooltip = math.floor(player.gui.top.rpg.exp.value * 10000)/100 .. "% to next level ( " .. global.rpg_exp[player.name].exp - rpg_exp_tnl(level-1) .. " / " .. rpg_exp_tnl(level) - rpg_exp_tnl(level-1) .. " )"
+	player.gui.top.rpg.tooltip = math.floor(player.gui.top.rpg.exp.value * 10000)/100 .. "% to next level ( " .. math.floor(global.rpg_exp[player.name].exp) - rpg_exp_tnl(level-1) .. " / " .. rpg_exp_tnl(level) - rpg_exp_tnl(level-1) .. " )"
 	--game.print("Updating exp bar value to " .. player.gui.top.rpg.exp.value)
-end
-
---Every minute, increment the time tracker.
-function rpg_time_tracker(event)
-	if event.tick % ( 60 * 60 ) then
-		for n, player in pairs(game.players) do
-			if player.connected then
-				global.rpg_exp[player.name].online = global.rpg_exp[player.name].online + 1
-			end
-		end
-	end
 end
 	
 --Free exp.  For testing.
@@ -201,21 +215,35 @@ function rpg_levelup(player)
 		player.surface.create_entity{name="flying-text", text="Level up!", position={player.position.x, player.position.y-3}}
 	end
 	global.rpg_exp[player.name].level = global.rpg_exp[player.name].level + 1
-	local bonuslevel = global.rpg_exp[player.name].level
-	--Need to reset on respawn or reconnect.
-	if player.character then --Just in case player is in spectate mode or some other weird stuff is happening
-		player.character_health_bonus = 10 * bonuslevel
-		player.character_running_speed_modifier = 0.03 * bonuslevel
-		player.character_mining_speed_modifier = 0.07 * bonuslevel
-		player.character_crafting_speed_modifier = 0.07 * bonuslevel
-		--if global.rpg_exp[player.name].level % 4 == 0 then
-			player.character_reach_distance_bonus = math.floor(bonuslevel/4)
-			player.character_build_distance_bonus = math.floor(bonuslevel/4)
-		--end
-	end
+	
+	--Award bonuses
+	rpg_give_bonuses(player)
+	
 	--Update GUI
 	if player.connected then
 		player.gui.top.rpg.caption = "Level " .. global.rpg_exp[player.name].level
+	end
+end
+
+function rpg_respawn(event)
+	local player = game.players[event.player_index]
+	rpg_give_bonuses(player)
+end
+
+--Award bonuses
+function rpg_give_bonuses(player)
+	local bonuslevel = global.rpg_exp[player.name].level - 1
+	if player.character then --Just in case player is in spectate mode or some other weird stuff is happening
+		player.character_health_bonus = 10 * bonuslevel
+		player.character_running_speed_modifier = 0.015 * bonuslevel -- This seems multiplicative
+		player.character_mining_speed_modifier = 0.06 * bonuslevel
+		player.character_crafting_speed_modifier = 0.06 * bonuslevel
+		--if global.rpg_exp[player.name].level % 4 == 0 then
+			player.character_reach_distance_bonus = math.floor(bonuslevel/4)
+			player.character_build_distance_bonus = math.floor(bonuslevel/4)
+			player.character_inventory_slots_bonus = math.floor(bonuslevel/4)
+			player.character_maximum_following_robot_count_bonus = math.floor(bonuslevel/5)
+		--end
 	end
 end
 
@@ -253,16 +281,17 @@ function rpg_is_sanitary(name)
 	return true
 end
 
+--Replaced with serpent.block(global.rpg_data)
+-- commands.add_command("export", "Export exp table for processing", function()
+	-- rpg_savedata()
+-- end)
 
-commands.add_command("export", "Export exp table for processing", function()
-	rpg_savedata()
-end)
-
-Event.register(defines.events.on_player_joined_game, rpg_add_gui)
-Event.register(defines.events.on_player_joined_game, rpg_loadsave)
+Event.register(defines.events.on_player_created, rpg_add_gui)
+Event.register(defines.events.on_player_created, rpg_loadsave)
+Event.register(defines.events.on_player_created, rpg_starting_resources)
+Event.register(defines.events.on_player_respawned, rpg_respawn)
 Event.register(defines.events.on_rocket_launched, rpg_satellite_launched)
 Event.register(defines.events.on_entity_died, rpg_nest_killed)
 Event.register(defines.events.on_research_finished, rpg_tech_researched)
 --Event.register(defines.events.on_tick, rpg_exp_tick) --For debug
---Event.register(defines.events.on_tick, rpg_time_tracker) -- This is obsolete.  player.online_time already does this.
 Event.register(-1, rpg_init)
