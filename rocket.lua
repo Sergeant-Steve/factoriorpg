@@ -26,9 +26,9 @@ function rocket_launched(event)
 		global.satellite_sent[game.forces.player.name] = 1
 	end
 	for index, player in pairs(game.forces.player.players) do
-		player.gui.left.rocket_score.destroy()
-		if player.gui.top.rocket_stats.caption == "Close Stats" then
-			local frame = player.gui.left.add{name = "rocket_score", type = "frame", direction = "horizontal", caption="Score"}
+		mod_gui.get_frame_flow(player).rocket_score.destroy()
+		if mod_gui.get_button_flow(player).rocket_stats.caption == "Close Stats" then
+			local frame = mod_gui.get_frame_flow(player).add{name = "rocket_score", type = "frame", direction = "horizontal", caption="Score"}
 			frame.add{name="rocket_count_label", type = "label", caption="Rockets sent: "}
 			if global.satellite_sent[game.forces.player.name] > 0 then
 				frame.add{name="rocket_count", type = "label", caption=tostring(global.satellite_sent[game.forces.player.name])}
@@ -130,12 +130,12 @@ end
 function rocket_create_button(player_name)
 	local player = game.players[player_name]
 	-- if player.admin then
-		-- if not player.gui.top.rocket then
-			-- player.gui.top.add { name = "rocket", type = "button", caption = "Rocket Tool" }
+		-- if not mod_gui.get_button_flow(player).rocket then
+			-- mod_gui.get_button_flow(player).add { name = "rocket", type = "button", caption = "Rocket Tool" }
 		-- end
 	-- end
-	if not player.gui.top.rocket_stats then
-		player.gui.top.add { name = "rocket_stats", type = "button", caption = "Open Stats" }
+	if not mod_gui.get_button_flow(player).rocket_stats then
+		mod_gui.get_button_flow(player).add { name = "rocket_stats", type = "button", caption = "Open Stats" }
 	end
 end
 
@@ -151,10 +151,10 @@ function rocket_on_gui_click(event)
 		-- elseif REPLACE IF WITH ELSEIF
 		if e.name == "rocket_stats" and e.caption == "Open Stats" then
 			e.caption = "Close Stats"
-			if p.gui.left.rocket_score then
-				p.gui.left.rocket_score.rocket_count.caption = tostring(global.satellite_sent[game.forces.player.name])
+			if mod_gui.get_frame_flow(p).rocket_score then
+				mod_gui.get_frame_flow(p).rocket_score.rocket_count.caption = tostring(global.satellite_sent[game.forces.player.name])
 			else
-				local frame = p.gui.left.add{name = "rocket_score", type = "frame", direction = "horizontal", caption="Score"}
+				local frame = mod_gui.get_frame_flow(p).add{name = "rocket_score", type = "frame", direction = "horizontal", caption="Score"}
 				frame.add{name="rocket_count_label", type = "label", caption="Rockets sent: "}
 				if global.satellite_sent[game.forces.player.name] > 0 then
 					frame.add{name="rocket_count", type = "label", caption=tostring(global.satellite_sent[game.forces.player.name])}
@@ -164,7 +164,7 @@ function rocket_on_gui_click(event)
 			end
 		elseif e.name == "rocket_stats" and e.caption == "Close Stats" then
 			e.caption = "Open Stats"
-			p.gui.left.rocket_score.destroy()
+			mod_gui.get_frame_flow(p).rocket_score.destroy()
 		end
 	end
 end

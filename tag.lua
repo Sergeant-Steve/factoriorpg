@@ -4,8 +4,8 @@
 
 function tag_create_gui(event)
 	local player = game.players[event.player_index]
-	if not player.gui.top.tag_button then
-		player.gui.top.add { name = "tag_button", type = "button", caption = "Tag" }
+	if not mod_gui.get_button_flow(player).tag_button then
+		mod_gui.get_button_flow(player).add { name = "tag_button", type = "button", caption = "Tag" }
 	end
 end
 
@@ -28,11 +28,11 @@ global.tag.tags = {
 }
 
 function tag_expand_gui(player)
-	local frame = player.gui.left["tag-panel"]
+	local frame = mod_gui.get_frame_flow(player)["tag-panel"]
 	if (frame) then
 		frame.destroy()
 	else
-		local frame = player.gui.left.add { type = "frame", name = "tag-panel", caption = "Choose Tag"}
+		local frame = mod_gui.get_frame_flow(player).add { type = "frame", name = "tag-panel", caption = "Choose Tag"}
 		local scroll = frame.add { type = "scroll-pane", name = "tag-panel-scroll"}
 		scroll.style.maximal_height = 250
 		local list = scroll.add { name="tag_table", type = "table", colspan = 1}
