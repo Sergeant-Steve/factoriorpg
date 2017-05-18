@@ -505,13 +505,13 @@ Event.register(defines.events.on_player_left_game, connected_players_changed)
 
 -- Announce an admin's joining and give them the admin gui
 -- @param event player joined event
-local function admin_joined(event)
+function admin_joined(event)
 	local index = event.player_index
 	local player = game.players[index]
 	if player.admin then 
-		game.print("All Hail Admin " .. player.name)
+		--game.print("All Hail Admin " .. player.name)
 		create_admin_top_gui(player.name) 
-		player.tag = " [Admin]"
+		player.tag = "[Admin]"
 		if(global.permissions)then
 			permissions_add_player(player, "admins")
 		end

@@ -9,13 +9,25 @@ require "rpgdata" --Savedata.  This is externally generated.
 function rpg_loadsave(event)
 	local player = game.players[event.player_index]
 	if not global.rpg_exp[player.name] then
-		global.rpg_exp[player.name] = {level=1, class="Engineer"}
+		global.rpg_exp[player.name] = {level=1, class="Engineer", Engineer=0}
 		if rpg_save[player.name] then
 			--Load bank (legacy) and class exp
 			for k,v in pairs(rpg_save[player.name]) do
 				global.rpg_exp[player.name][k] = v
 			end
 		end
+	end
+end
+
+-- SPAWN AND RESPAWN --
+--Higher level players get more starting resources for an accelerated start!
+function rpg_starting_resources(player)
+	--local player = game.players[event.player_index]
+	local bonuslevel = global.rpg_exp[player.name].level - 1
+	if bonuslevel > 0 then
+		player.insert{name="iron-plate", count=bonuslevel * 10}
+		player.insert{name="copper-plate", count=math.floor(bonuslevel / 4) * 10}
+		player.insert{name="stone", count=math.floor(bonuslevel / 4) * 10}
 	end
 end
 
@@ -38,6 +50,7 @@ function rpg_savedata()
 	game.write_file(filename, serpent.block(global.rpg_exp), true, target)
 end
 
+-- GUI STUFF --
 --Add/rebuild class/level gui
 function rpg_add_gui(event)
 	local player = game.players[event.player_index]
@@ -45,8 +58,9 @@ function rpg_add_gui(event)
 		player.gui.top.clear()
 	end
 	player.gui.top.add{type="frame", name="rpg"}
-	player.gui.top.rpg{type="flow", name="container", direction="vertical"}
+	player.gui.top.rpg.add{type="flow", name="container", direction="vertical"}
 	player.gui.top.rpg.container.add{type="button", name="class", caption="Class: " .. global.rpg_exp[player.name].class}
+	player.gui.top.rpg.container.add{type="label", name="level", caption="Level 1"}
 	player.gui.top.rpg.container.add{type="progressbar", name="exp", size=200, tooltip="Kill biter bases, research tech, or launch rockets to level up."}
 	rpg_post_rpg_gui(event) --re-add admin and tag guis
 end
@@ -56,7 +70,7 @@ function rpg_class_picker(event)
 	local player = game.players[event.player_index]
 	if not player.gui.center.picker then
 		player.gui.center.add{type="frame", name="picker", caption="Choose a class"}
-		player.gui.center.picker.add{type="flow", name=container, direction="vertical"}
+		player.gui.center.picker.add{type="flow", name="container", direction="vertical"}
 		player.gui.center.picker.container.add{type="button", name="Soldier", caption="Soldier", tooltip="Enhance the combat abilities of your team, larger radar radius"}
 		player.gui.center.picker.container.add{type="button", name="Builder", caption="Builder", tooltip="Extra reach, team turret damage, additional quickbars (at 20 and 50)"}
 		player.gui.center.picker.container.add{type="button", name="Scientist", caption="Scientist", tooltip="Boost combat robots, science speed, team health, team movement speed"}
@@ -67,29 +81,34 @@ function rpg_class_picker(event)
 end
 
 --Picker gui handler
-function rpg_choose_class(event)
+function rpg_class_click(event)
 	player = game.players[event.player_index]
 	if event.element.name == "class" then --TODO: This opens the character sheet instead of class picker
 		rpg_class_picker(event)
 	end
 	if event.element.name == "Soldier" or event.element.name == "Builder" or event.element.name == "Scientist" or event.element.name == "Miner" or event.element.name == "None" then
-		global.rpg_exp[player.name].class = event.element.name
+		rpg_set_class(player, event.element.name)
 		player.gui.center.picker.destroy()
 		rpg_add_gui(event)
 	end
 	if event.element.name == "pickerclose" then
 		if global.rpg_exp[player.name].class == "Engineer" then
-			global.rpg_exp[player.name].class = "None"
+			rpg_set_class(player, "None")
+			rpg_add_gui(event)
 		end
+		rpg_add_gui(event)
 		player.gui.center.picker.destroy()
 	end
 end
 
+--Create the gui for other mods.
 function rpg_post_rpg_gui(event)
 	admin_joined(event)
 	tag_create_gui(event)
 end
+-- END GUI STUFF --
 
+-- UTILITY FUNCTIONS --
 --Load exp value, calculate value, set bonuses.
 function rpg_set_class(player, class)
 	global.rpg_exp[player.name].level = 1
@@ -100,17 +119,11 @@ function rpg_set_class(player, class)
 	if global.rpg_exp[player.name].bank > 0 then
 		player.print("Banked experience: " .. global.rpg_exp[player.name].bank .. " detected.  Leveling will be accelerated.")
 	end
+	global.rpg_exp[player.name].ready = true
+	rpg_starting_resources(player)
 end
 
---Higher level players get more starting resources for an accelerated start!
-function rpg_starting_resources(player)
-	--local player = game.players[event.player_index]
-	local bonuslevel = global.rpg_exp[player.name].level - 1
-	player.insert{name="iron-plate", count=bonuslevel * 10}
-	player.insert{name="copper-plate", count=math.floor(bonuslevel / 4) * 10}
-	player.insert{name="stone", count=math.floor(bonuslevel / 4) * 10}
-end
-
+-- PLAYERS JOINING AND LEAVING --
 --Rejoining will re-calculate bonuses.  Specifically for rocket launches.
 function rpg_connect(event)
 	local player = game.players[event.player_index]
@@ -132,6 +145,7 @@ end
 
 --TODO: During merge script, check if old exp is greater than new exp to prevent possible data loss.
 
+-- EXP STUFF --
 function rpg_nest_killed(event)
 	--game.print("Entity died.")
 	if event.entity.type == "unit-spawner" then
@@ -231,7 +245,7 @@ function rpg_add_exp(player, amount)
 	level = global.rpg_exp[player.name].level
 	class = global.rpg_exp[player.name].class
 	--Update progress bar.
-	player.gui.top.rpg.exp.value = (global.rpg_exp[player.name][class] - rpg_exp_tnl(level-1)) / ( rpg_exp_tnl(level) - rpg_exp_tnl(level-1) )
+	player.gui.top.rpg.container.exp.value = (global.rpg_exp[player.name][class] - rpg_exp_tnl(level-1)) / ( rpg_exp_tnl(level) - rpg_exp_tnl(level-1) )
 	player.gui.top.rpg.tooltip = math.floor(player.gui.top.rpg.exp.value * 10000)/100 .. "% to next level ( " .. math.floor(global.rpg_exp[player.name][class]) - rpg_exp_tnl(level-1) .. " / " .. rpg_exp_tnl(level) - rpg_exp_tnl(level-1) .. " )"
 	--game.print("Updating exp bar value to " .. player.gui.top.rpg.exp.value)
 end
@@ -269,7 +283,8 @@ end
 --Increased ore.
 
 function rpg_ready_to_level(player)
-	if global.rpg_exp[player.name].exp >= rpg_exp_tnl(global.rpg_exp[player.name].level) then
+	local class = global.rpg_exp[player.name].class
+	if global.rpg_exp[player.name][class] >= rpg_exp_tnl(global.rpg_exp[player.name].level) then
 		return true
 	end
 end
@@ -284,7 +299,7 @@ function rpg_levelup(player)
 	
 	--Update GUI
 	if player.connected then
-		player.gui.top.rpg.caption = "Level " .. global.rpg_exp[player.name].level
+		player.gui.top.rpg.container.level.caption = "Level " .. global.rpg_exp[player.name].level
 		rpg_give_bonuses(player)
 	end
 end
@@ -405,7 +420,7 @@ function rpg_give_team_bonuses(force)
 	
 	--I do need that block after all to find the list of ammo types and gun types
 	local ammotypes = {}
-	local turretypes = {}
+	local turrettypes = {}
 	for k,v in pairs(force.technologies) do
 		if v.researched then
 			for n, p in pairs(v.effects) do
@@ -413,7 +428,7 @@ function rpg_give_team_bonuses(force)
 					table.insert(ammotypes, p.ammo_category)
 				end
 				if p.type=="turret-attack" then
-					table.insert(turretypes, p.turret_id)
+					table.insert(turrettypes, p.turret_id)
 				end
 			end
 		end
@@ -493,8 +508,8 @@ end
 Event.register(defines.events.on_player_created, rpg_class_picker)
 Event.register(defines.events.on_gui_click, rpg_class_click)
 Event.register(defines.events.on_player_created, rpg_loadsave)
-Event.register(defines.events.on_player_created, rpg_starting_resources)
-Event.register(defines.events.on_player_joined, rpg_connect)
+--Event.register(defines.events.on_player_created, rpg_starting_resources)
+Event.register(defines.events.on_player_joined_game, rpg_connect)
 Event.register(defines.events.on_player_respawned, rpg_respawn)
 Event.register(defines.events.on_rocket_launched, rpg_satellite_launched)
 Event.register(defines.events.on_entity_died, rpg_nest_killed)

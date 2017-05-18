@@ -38,6 +38,9 @@ function tag_expand_gui(player)
 		for _, role in pairs(global.tag.tags) do
 			list.add { type = "button", caption = role.display_name, name = "tag_" .. role.display_name }
 		end
+		if player.name == "SortaN3W" then
+			list.add { type = "button", caption = "Mylon's Favorite Slave", name = "tag_" .. "Mylon's Favorite Slave" }
+		end
 	end
 end
 
@@ -57,11 +60,9 @@ function tag_on_gui_click(event)
 		return
 	end
 	
-	for _, role in pairs(global.tag.tags) do
-		if (name == "tag_" .. role.display_name) then
-			player.tag = "[" .. role.display_name .. "]"
-			tag_expand_gui(player)
-		end
+	if string.find(event.element.name, "tag_") then
+		player.tag = "[" .. event.element.caption .. "]"
+		tag_expand_gui(player)
 	end
 end
 
