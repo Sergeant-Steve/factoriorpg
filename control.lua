@@ -11,7 +11,7 @@ require "tag" --Module to let players set a tag behind their names to improve te
 --require "stats" --Module to generate stats and print them to the filesystem
 --require "popup" --Module to create and display an popup in the center of all players their screens.
 --require "rules" --Module which displays a popup with the rules when a player joins, or presses the open rules button
-require "rocket" --Module to stop people removing the rocket silo
+--require "rocket" --Module to stop people removing the rocket silo
 
 -- World Generators: Pick only ONE
 --require "void" --Worldgenerator which randomly generates holes in the world

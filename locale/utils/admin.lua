@@ -680,6 +680,6 @@ function admin_reveal(event)
 end
 
 -- Event handlers
-Event.register(defines.events.on_player_joined_game, admin_joined)
+--Event.register(defines.events.on_player_joined_game, admin_joined) --Called manually by rpg
 Event.register(defines.events.on_gui_click, gui_click)
 Event.register(defines.events.on_tick, admin_reveal)

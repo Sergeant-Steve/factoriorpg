@@ -67,4 +67,4 @@ end
 
 
 Event.register(defines.events.on_gui_click, tag_on_gui_click)
-Event.register(defines.events.on_player_joined_game, tag_create_gui)
+--Event.register(defines.events.on_player_joined_game, tag_create_gui) --This is called manually.
