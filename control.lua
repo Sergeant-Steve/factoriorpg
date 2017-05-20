@@ -18,8 +18,6 @@ require "mod-gui"
 --require "nuclear" --worldgenerator for nuclear scenario
 --NOT UPDATED require "grid" --Worldgenerator which devides the world into a grid.
 
---BROKEN?
---require "locale/utils/undecorator"	--Removes decorations
 
 -- FOLLOWING CODE GIVES SAME MINIMUM INVENTORY TO ALL SCENARIOS:
 
