@@ -23,10 +23,10 @@ end
 
 function rules_create_top_gui(player_name)
 	local player = game.players[player_name]
-	if not player.gui.top.rules_menu then
-		player.gui.top.add { name = "rules_menu", type = "button", caption = "Close Rules" }
+	if not mod_gui.get_button_flow(player).rules_menu then
+		mod_gui.get_button_flow(player).add { name = "rules_menu", type = "button", caption = "Close Rules" }
 	else
-		player.gui.top.rules_menu.caption = "Close Rules"
+		mod_gui.get_button_flow(player).rules_menu.caption = "Close Rules"
 	end
 end
 
@@ -56,20 +56,20 @@ function rules_on_gui_click(event)
 		if e.name == "rules_close" then
 			if p.gui.center.rules ~= nil then
 				p.gui.center.rules.destroy()
-				if p.gui.top.rules_menu ~= nil then
-					p.gui.top.rules_menu.caption = "Open Rules"
+				if mod_gui.get_button_flow(p).rules_menu ~= nil then
+					mod_gui.get_button_flow(p).rules_menu.caption = "Open Rules"
 				end
 				p.character_running_speed_modifier = 0
 			end
 		elseif e.name == "rules_menu" and e.caption == "Open Rules" then
 			rules_show(p.name)
-			p.gui.top.rules_menu.caption = "Close Rules"
+			mod_gui.get_button_flow(p).rules_menu.caption = "Close Rules"
 		elseif e.name == "rules_menu" and e.caption == "Close Rules" then
 			p.character_running_speed_modifier = 0
 			if p.gui.center.rules ~= nil then
 				p.gui.center.rules.destroy()
 			end
-			p.gui.top.rules_menu.caption = "Open Rules"
+			mod_gui.get_button_flow(p).rules_menu.caption = "Open Rules"
 		end
 	end
 end

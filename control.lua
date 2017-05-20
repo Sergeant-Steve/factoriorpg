@@ -1,4 +1,5 @@
 -- TOOLS: Recommend all be turned on
+require "mod-gui"
 --require "locale/utils/event" --Yes this line is seriously commented out, and yes without this it won't even work. I guess you now HAVE TO change the settings to match what you need.
 --require "permissions" --Permission manager
 --require "trusted" --Module to add trusted players to a seperate permission group
