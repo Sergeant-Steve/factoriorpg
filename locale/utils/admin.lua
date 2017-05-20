@@ -64,9 +64,11 @@ Event.register(defines.events.on_preplayer_mined_item, entity_mined)
 -- Handle various gui clicks, either spectate or character modification
 -- @param event gui click event
 function gui_click(event)
+	if not (event and event.element and event.element.valid) then return end
 	local i = event.player_index
 	local p = game.players[i]
 	local e = event.element
+	
 	if e.name == "spectate" and event.element.caption == "Spectating" then
 		p.print("Use a button in the spectate panel to stop spectating.")
 		return

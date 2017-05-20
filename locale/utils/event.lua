@@ -23,7 +23,8 @@ Event = {
 		_register = function(id)
 			if id == Event.core_events.init then
 				script.on_init(function()
-					Event.dispatch({ name = Event.core_events.init, tick = game.tick })
+					--Event.dispatch({ name = Event.core_events.init, tick = game.tick })
+					Event.dispatch({ name = Event.core_events.init, tick = -1 })
 				end)
 			elseif id == Event.core_events.load then
 				script.on_load(function()

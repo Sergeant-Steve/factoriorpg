@@ -15,6 +15,9 @@ function rpg_loadsave(event)
 			for k,v in pairs(rpg_save[player.name]) do
 				global.rpg_exp[player.name][k] = v
 			end
+			if not global.rpg_save[player.name].bank then 
+				global.rpg_save[player.name].bank = 0
+			end
 		end
 	end
 end
@@ -22,12 +25,16 @@ end
 -- SPAWN AND RESPAWN --
 --Higher level players get more starting resources for an accelerated start!
 function rpg_starting_resources(player)
-	--local player = game.players[event.player_index]
-	local bonuslevel = global.rpg_exp[player.name].level - 1
+	--maxlevel is the highest level this function has seen from this player.
+	if not global.rpg_exp[player.name].maxlevel then 
+		global.rpg_exp[player.name].maxlevel = 1
+	end
+	local bonuslevel = global.rpg_exp[player.name].level - global.rpg_exp[player.name].maxlevel
+	global.rpg_exp[player.name].maxlevel = math.max(global.rpg_exp[player.name].level, global.rpg_exp[player.name].maxlevel)
 	if bonuslevel > 0 then
 		player.insert{name="iron-plate", count=bonuslevel * 10}
-		player.insert{name="copper-plate", count=math.floor(bonuslevel / 4) * 10}
-		player.insert{name="stone", count=math.floor(bonuslevel / 4) * 10}
+		player.insert{name="copper-plate", count=math.max(1, math.floor(bonuslevel / 4) * 10) }
+		player.insert{name="stone", count=math.max(1, math.floor(bonuslevel / 4) * 10) }
 	end
 end
 
@@ -37,7 +44,8 @@ function rpg_respawn(event)
 end
 
 --Save the persistent data.
-
+-- Single line command for manual export:
+-- /silent-command game.write_file("rpgdata - 2017-05-19.txt", serpent.block(global.rpg_exp, {comment=false}), true, 1)
 function rpg_savedata()
 	local filename = "rpgdata - " .. game.tick .. ".txt"
 	local target
@@ -47,7 +55,7 @@ function rpg_savedata()
 	else
 		target = 1
 	end
-	game.write_file(filename, serpent.block(global.rpg_exp), true, target)
+	game.write_file(filename, serpent.block(global.rpg_exp, {comment=false}), true, target)
 end
 
 -- GUI STUFF --
@@ -89,15 +97,16 @@ function rpg_class_click(event)
 	if event.element.name == "Soldier" or event.element.name == "Builder" or event.element.name == "Scientist" or event.element.name == "Miner" or event.element.name == "None" then
 		rpg_set_class(player, event.element.name)
 		player.gui.center.picker.destroy()
-		rpg_add_gui(event)
+		rpg_update_gui(player)
+		return
 	end
 	if event.element.name == "pickerclose" then
 		if global.rpg_exp[player.name].class == "Engineer" then
 			rpg_set_class(player, "None")
-			rpg_add_gui(event)
+			rpg_update_gui(player)
 		end
-		rpg_add_gui(event)
 		player.gui.center.picker.destroy()
+		return
 	end
 end
 
@@ -106,6 +115,22 @@ function rpg_post_rpg_gui(event)
 	admin_joined(event)
 	tag_create_gui(event)
 end
+
+--Update gui
+function rpg_update_gui(player)
+	if not player.gui.top.rpg then
+		rpg_add_gui({player_index=player.index})
+	end
+	local level = global.rpg_exp[player.name].level
+	--Update progress bar.
+	local class = global.rpg_exp[player.name].class
+	player.gui.top.rpg.container.class.caption = "Class: " .. global.rpg_exp[player.name].class
+	player.gui.top.rpg.container.exp.value = (global.rpg_exp[player.name][class] - rpg_exp_tnl(level-1)) / ( rpg_exp_tnl(level) - rpg_exp_tnl(level-1) )
+	player.gui.top.rpg.container.tooltip = math.floor(player.gui.top.rpg.container.exp.value * 10000)/100 .. "% to next level ( " .. math.floor(global.rpg_exp[player.name][class]) - rpg_exp_tnl(level-1) .. " / " .. rpg_exp_tnl(level) - rpg_exp_tnl(level-1) .. " )"
+	player.gui.top.rpg.container.level.caption = "Level " .. level
+	--game.print("Updating exp bar value to " .. player.gui.top.rpg.exp.value)
+end
+
 -- END GUI STUFF --
 
 -- UTILITY FUNCTIONS --
@@ -113,13 +138,23 @@ end
 function rpg_set_class(player, class)
 	global.rpg_exp[player.name].level = 1
 	global.rpg_exp[player.name].class = class
+	if not global.rpg_exp[player.name][class] then
+		global.rpg_exp[player.name][class] = 0
+	end
 	while rpg_ready_to_level(player) do
 		rpg_levelup(player)
 	end
-	if global.rpg_exp[player.name].bank > 0 then
-		player.print("Banked experience: " .. global.rpg_exp[player.name].bank .. " detected.  Leveling will be accelerated.")
+	if not global.rpg_exp[player.name].bank then --Something went wrong
+		log("RPG: Bank does not exist.  Something went wrong.")
+		return
 	end
-	global.rpg_exp[player.name].ready = true
+	if global.rpg_exp[player.name].bank > 0 then
+		player.print("Banked experience: " .. math.floor(global.rpg_exp[player.name].bank) .. " detected.  Leveling will be accelerated.")
+	end
+	if not global.rpg_exp[player.name].ready then
+		global.rpg_exp[player.name].ready = 1
+	end
+	global.rpg_exp[player.name].ready = math.max(global.rpg_exp[player.name].level, global.rpg_exp[player.name].ready)
 	rpg_starting_resources(player)
 end
 
@@ -127,8 +162,10 @@ end
 --Rejoining will re-calculate bonuses.  Specifically for rocket launches.
 function rpg_connect(event)
 	local player = game.players[event.player_index]
-	rpg_give_bonuses(player)
-	rpg_give_team_bonuses(player.force)
+	if global.rpg_exp[player.name] and global.rpg_exp[player.name].ready then
+		rpg_give_bonuses(player)
+		rpg_give_team_bonuses(player.force)
+	end
 end
 
 --Leaving the game causes team bonuses to be re-calculated
@@ -217,16 +254,19 @@ end
 
 --Display exp, check for level up, update gui
 function rpg_add_exp(player, amount)
+	
+	local level = global.rpg_exp[player.name].level
+	local class = global.rpg_exp[player.name].class
+	
 	--Bonus exp from legacy
-	if global.rpg_exp[player.name].bank > 0 then
-		local bonus = math.min(global.rpg_exp[player.name].bank, amount)
+	if global.rpg_exp[player.name].bank and global.rpg_exp[player.name].bank > 0 then
+		local bonus = math.ceil(math.min(global.rpg_exp[player.name].bank, amount))
 		if bonus > 0 then
 			global.rpg_exp[player.name].bank = global.rpg_exp[player.name].bank - bonus
 			amount = amount + bonus
 		end
 	end
-	global.rpg_exp[player.name][global.rpg_exp.class] = math.floor(global.rpg_exp[player.name][global.rpg_exp.class] + amount)
-	local level = global.rpg_exp[player.name].level
+	global.rpg_exp[player.name][class] = math.floor(global.rpg_exp[player.name][class] + amount)	
 	--Now check for levelup.
 	local levelled = false
 	while rpg_ready_to_level(player) do
@@ -243,11 +283,8 @@ function rpg_add_exp(player, amount)
 	end
 	--Parent value updated so update our local value.
 	level = global.rpg_exp[player.name].level
-	class = global.rpg_exp[player.name].class
-	--Update progress bar.
-	player.gui.top.rpg.container.exp.value = (global.rpg_exp[player.name][class] - rpg_exp_tnl(level-1)) / ( rpg_exp_tnl(level) - rpg_exp_tnl(level-1) )
-	player.gui.top.rpg.tooltip = math.floor(player.gui.top.rpg.exp.value * 10000)/100 .. "% to next level ( " .. math.floor(global.rpg_exp[player.name][class]) - rpg_exp_tnl(level-1) .. " / " .. rpg_exp_tnl(level) - rpg_exp_tnl(level-1) .. " )"
-	--game.print("Updating exp bar value to " .. player.gui.top.rpg.exp.value)
+	
+	rpg_update_gui(player)
 end
 	
 --Free exp.  For testing.
@@ -282,6 +319,7 @@ end
 --Force gets a damage boost (function of cumulative offense bonus of online players)
 --Increased ore.
 
+--Functions for handling levels
 function rpg_ready_to_level(player)
 	local class = global.rpg_exp[player.name].class
 	if global.rpg_exp[player.name][class] >= rpg_exp_tnl(global.rpg_exp[player.name].level) then
@@ -296,11 +334,9 @@ function rpg_levelup(player)
 	global.rpg_exp[player.name].level = global.rpg_exp[player.name].level + 1
 	
 	--Award bonuses
-	
-	--Update GUI
 	if player.connected then
-		player.gui.top.rpg.container.level.caption = "Level " .. global.rpg_exp[player.name].level
 		rpg_give_bonuses(player)
+		rpg_give_team_bonuses(player.force)
 	end
 end
 
@@ -345,8 +381,8 @@ function rpg_give_team_bonuses(force)
 	local scientistbonus = 0
 	local builderbonus = 0
 	local minerbonus = 0
-	for k,v in pairs(game.players) do
-		if v.connected and v.force == force then
+	for k,v in pairs(force.players) do
+		if v.connected then
 			if global.rpg_exp[v.name].class == "Soldier" then
 				soldierbonus = soldierbonus + global.rpg_exp[v.name].level
 			end
@@ -363,7 +399,10 @@ function rpg_give_team_bonuses(force)
 	end
 	
 	--That entire code block for calculating base bonus can be replaced by this:
+	--For some reason this stops current research.  So let's save and reset it.
+	local current_research = force.current_research
 	force.reset_technology_effects()
+	force.current_research = current_research
 	
 	--Calculate base bonuses.
 	-- local baseammobonus = {}
@@ -372,7 +411,7 @@ function rpg_give_team_bonuses(force)
 	-- local baselabspeed = 0
 	-- local baseworkerspeed = 0
 	-- for k,v in pairs(force.technologies) do
-		-- if v.researched then
+		-- if v.researched then	
 			-- for n, p in pairs(v.effects) do
 				-- if p.type=="ammo-damage" then
 					-- if not baseammobonus[p.ammo_category] then
@@ -422,33 +461,33 @@ function rpg_give_team_bonuses(force)
 	local ammotypes = {}
 	local turrettypes = {}
 	for k,v in pairs(force.technologies) do
-		if v.researched then
+		--if v.researched then
 			for n, p in pairs(v.effects) do
 				if p.type=="ammo-damage" then
-					table.insert(ammotypes, p.ammo_category)
+					ammotypes[p.ammo_category]=true
 				end
 				if p.type=="turret-attack" then
-					table.insert(turrettypes, p.turret_id)
+					turrettypes[p.turret_id]=true
 				end
 			end
-		end
+		--end
 	end
 		
 	
 	-- Malus for ammo is base * 0.8 - 0.2
 	for k, v in pairs(ammotypes) do
-		if string.find(v, "turret") then
-			force.set_ammo_damage_modifier(v, builderbonus / 100 + force.get_ammo_damage_modifier(v) * 0.8 - 0.2)
-		elseif string.find(v, "robot") then
-			force.set_ammo_damage_modifier(v, scientistbonus / 100 + force.get_ammo_damage_modifier(v) * 0.8 - 0.2)
-		elseif string.find(v, "grenade") then
-			force.set_ammo_damage_modifier(v, minerbonus / 100 + force.get_ammo_damage_modifier(v) * 0.8 - 0.2)
+		if string.find(k, "turret") then
+			force.set_ammo_damage_modifier(k, builderbonus / 100 + force.get_ammo_damage_modifier(k) * 0.85 - 0.15)
+		elseif string.find(k, "robot") then
+			force.set_ammo_damage_modifier(k, scientistbonus / 100 + force.get_ammo_damage_modifier(k) * 0.8 - 0.2)
+		elseif string.find(k, "grenade") then
+			force.set_ammo_damage_modifier(k, minerbonus / 100 + force.get_ammo_damage_modifier(k) * 0.8 - 0.2)
 		else --Bullets, shells, flamethrower
-			force.set_ammo_damage_modifier(v, soldierbonus / 100 + force.get_ammo_damage_modifier(v) * 0.8 - 0.2)
+			force.set_ammo_damage_modifier(k, soldierbonus / 100 + force.get_ammo_damage_modifier(k) * 0.8 - 0.2)
 		end
 	end
 	for k,v in pairs(turrettypes) do
-		force.set_turret_attack_modifier(v, builderbonus / 100 + force.set_turret_attack_modifier(v) * 0.8 - 0.2)
+		force.set_turret_attack_modifier(k, builderbonus / 100 + force.get_turret_attack_modifier(k) * 0.8 - 0.2)
 	end
 	
 	force.character_health_bonus = scientistbonus / 40 --Base health is 250, so this is caled up similarly
@@ -467,6 +506,7 @@ end
 
 function rpg_init()
 	global.rpg_exp = {}
+	global.rpg_temp = {} --For non-persistent data.
 	--Players can give bonuses to the team, so let's nerf the base values so players can re-buff them.
 	game.forces.player.manual_crafting_speed_modifier = -0.3
 
@@ -505,9 +545,9 @@ end
 -- end)
 
 --Event.register(defines.events.on_player_created, rpg_add_gui) --We'll do this after a class is chosen.
+Event.register(defines.events.on_player_created, rpg_loadsave)
 Event.register(defines.events.on_player_created, rpg_class_picker)
 Event.register(defines.events.on_gui_click, rpg_class_click)
-Event.register(defines.events.on_player_created, rpg_loadsave)
 --Event.register(defines.events.on_player_created, rpg_starting_resources)
 Event.register(defines.events.on_player_joined_game, rpg_connect)
 Event.register(defines.events.on_player_respawned, rpg_respawn)

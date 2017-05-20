@@ -1,7 +1,7 @@
 -- frontier_silo.lua
 -- Nov 2016
 
-require("config")
+require("oarc_config")
 require("locale/oarc_utils")
 
 -- Create a rocket silo

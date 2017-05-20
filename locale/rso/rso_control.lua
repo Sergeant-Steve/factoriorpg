@@ -2,7 +2,7 @@ require("locale/rso/rso_config")
 require("util")
 require("locale/rso/rso_resource_config")
 require("locale/oarc_utils")
-require("config")
+require("oarc_config")
 
 local MB=require("locale/rso/metaball")
 local drand = require("locale/rso/drand")

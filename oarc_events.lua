@@ -25,7 +25,7 @@
 
 -- Generic Utility Includes
 require("locale/oarc_utils")
-require("locale/rso/rso_control")
+--require("locale/rso/rso_control")
 require("locale/frontier_silo")
 require("locale/tag")
 
@@ -102,10 +102,6 @@ require("separate_spawns_guis")
         -- CreateGameSurface(VANILLA_MODE)
     -- end
 
-    -- if ENABLE_SEPARATE_SPAWNS then
-        -- InitSpawnGlobalsAndForces()
-    -- end
-
     -- if ENABLE_RANDOM_SILO_POSITION then
         -- SetRandomSiloPosition()
     -- else
@@ -116,10 +112,19 @@ require("separate_spawns_guis")
         -- ChartRocketSiloArea(game.forces[MAIN_FORCE], game.surfaces[GAME_SURFACE_NAME])
     -- end
 
-    -- -- Configures the map settings for enemies
-    -- -- This controls evolution growth factors and enemy expansion settings.
-    -- ConfigureAlienStartingParams()
+    -- Configures the map settings for enemies
+    -- This controls evolution growth factors and enemy expansion settings.
 
+Event.register(-1, oarc_init)
+
+function oarc_init()
+    ConfigureAlienStartingParams()
+
+	if ENABLE_SEPARATE_SPAWNS then
+        InitSpawnGlobalsAndForces()
+    end
+end
+	
     -- SetServerWelcomeMessages()
 -- end)
 
@@ -165,7 +170,9 @@ end
 ----------------------------------------
 -- Gui Click
 ----------------------------------------
-script.on_event(defines.events.on_gui_click, function(event)
+Event.register(defines.events.on_gui_click, oarc_on_gui_click)
+
+function oarc_on_gui_click(event)
     if ENABLE_TAGS then
         TagGuiClick(event)
     end
@@ -181,7 +188,7 @@ script.on_event(defines.events.on_gui_click, function(event)
         SharedSpwnOptsGuiClick(event)
     end
 
-end)
+end
 
 
 ----------------------------------------

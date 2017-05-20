@@ -6,7 +6,7 @@
 function tag_create_gui(event)
 	local player = game.players[event.player_index]
 	if not player.gui.top.tag_button then
-		player.gui.top.add { name = "tag_button", type = "button", caption = "Tag" }
+		player.gui.top.add { name = "tag-button", type = "button", caption = "Tag" }
 	end
 end
 
@@ -50,7 +50,7 @@ function tag_on_gui_click(event)
 	if not (event and event.element and event.element.valid) then return end
 	local player = game.players[event.element.player_index]
 	local name = event.element.name
-	if (name == "tag_button") then
+	if (name == "tag-button") then
 		tag_expand_gui(player)
 	end
 

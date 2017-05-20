@@ -6,7 +6,9 @@ global.announcements.announcement_delay = 60 * 60 * 20
 -- List of announcements that are printed periodically, going through the list.
 global.announcements.announcements = {
 --	"Someone was really f-ing lazy and forgot to change this. Shame on them.",
-	"Thank you for playing FactorioRPG!"
+	"Thank you for playing FactorioRPG!",
+	"Join us on the Factorio RPG discord! https://discord.gg/KD3Twh",
+	
 }
 
 -- List of introductory messages that players are shown upon joining (in order).
@@ -18,11 +20,11 @@ global.announcements.intros = {
 -- @param event on_tick event
 function announcement_show(event)
 	global.announcements.last_announcement = global.announcements.last_announcement or 0
-	if (game.tick / 60 - global.announcements.last_announcement > global.announcements.announcement_delay) then
+	if (game.tick - global.announcements.last_announcement > global.announcements.announcement_delay) then
 		global.announcements.current_message = global.announcements.current_message or 1
 		game.print(global.announcements.announcements[global.announcements.current_message])
 		global.announcements.current_message = (global.announcements.current_message == #global.announcements.announcements) and 1 or global.announcements.current_message + 1
-		global.announcements.last_announcement = game.tick / 60
+		global.announcements.last_announcement = game.tick
 	end
 end
 

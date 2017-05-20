@@ -14,7 +14,7 @@ require "tag" --Module to let players set a tag behind their names to improve te
 --require "rocket" --Module to stop people removing the rocket silo
 
 -- World Generators: Pick only ONE
-require "oarc_events"
+-- require "oarc_events" --Oarc's separate spawn scenario.  Not working yet.
 --require "void" --Worldgenerator which randomly generates holes in the world
 --require "nuclear" --worldgenerator for nuclear scenario
 --require "island_spawn" --worldgenerator for island spawn scenario
