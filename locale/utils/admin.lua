@@ -98,7 +98,9 @@ function gui_click(event)
 					mod_gui.get_frame_flow(p).admin_pane.character.caption = "Disabled"
 					if mod_gui.get_frame_flow(p).character_panel then
 						mod_gui.get_frame_flow(p).character_panel.destroy()
-						global.player_character_stats[i] = {
+					end
+				end
+				global.player_character_stats[i] = {
 							item_loot_pickup = false,
 							build_itemdrop_reach_resourcereach_distance = false,
 							crafting_speed = false,
@@ -107,8 +109,6 @@ function gui_click(event)
 							running_speed = 0.5,
 							compensation_mode = true
 						}
-					end
-				end
 				update_character(i)
 			end
 		elseif e.name == "teleport" and e.parent.name == "spectate_panel" then
@@ -533,28 +533,6 @@ function create_admin_gui(player_name)
 	local index = player.index
 	local admin_pane = nil
 	global.player_character_stats = global.player_character_stats or {}
-	if not mod_gui.get_frame_flow(player).admin_pane then
-		admin_pane = mod_gui.get_frame_flow(player).add { name = "admin_pane", type = "frame", direction = "vertical", caption = "Admin Tools" }
-	else
-		admin_pane = mod_gui.get_frame_flow(player).admin_pane
-	end
-	if not mod_gui.get_frame_flow(player).admin_pane.spectate then
-		admin_pane.add { name = "spectate", type = "button", caption = "Spectate" }
-	end
-	if not mod_gui.get_frame_flow(player).admin_pane.character then
-		admin_pane.add { name = "character", type = "button", caption = "Character" }
-	end
-	if not mod_gui.get_frame_flow(player).admin_pane.admin_tag then
-		admin_pane.add { name = "admin_tag", type = "button", caption = "Admin Tag" }
-	end
-	if not mod_gui.get_frame_flow(player).admin_pane.commands then
-		admin_pane.add { name = "commands", type = "button", caption = "Commands" }
-	end
-	
-	if not mod_gui.get_frame_flow(player).admin_pane.admin_compensation_mode then
-		local a = admin_pane.add { name = "admin_compensation_mode", type = "button", caption = "Compensate" }
-		a.style.font_color = global.red
-	end
 	if global.player_character_stats[index] == nil then
 		global.player_character_stats[index] = {
 			item_loot_pickup = false,
@@ -566,6 +544,36 @@ function create_admin_gui(player_name)
 			compensation_mode = false
 		}
 	end
+	if not mod_gui.get_frame_flow(player).admin_pane then
+		admin_pane = mod_gui.get_frame_flow(player).add { name = "admin_pane", type = "frame", direction = "vertical", caption = "Admin Tools" }
+	else
+		admin_pane = mod_gui.get_frame_flow(player).admin_pane
+	end
+	if not mod_gui.get_frame_flow(player).admin_pane.spectate then
+		admin_pane.add { name = "spectate", type = "button", caption = "Spectate" }
+	end
+	if not mod_gui.get_frame_flow(player).admin_pane.character then
+		if global.player_character_stats[index].compensation_mode then
+			admin_pane.add { name = "character", type = "button", caption = "Disabled" }
+		else
+			admin_pane.add { name = "character", type = "button", caption = "Character" }
+		end
+	end
+	if not mod_gui.get_frame_flow(player).admin_pane.admin_tag then
+		admin_pane.add { name = "admin_tag", type = "button", caption = "Admin Tag" }
+	end
+	if not mod_gui.get_frame_flow(player).admin_pane.commands then
+		admin_pane.add { name = "commands", type = "button", caption = "Commands" }
+	end
+	if not mod_gui.get_frame_flow(player).admin_pane.admin_compensation_mode then
+		local a = admin_pane.add { name = "admin_compensation_mode", type = "button", caption = "Compensate" }
+		if global.player_character_stats[index].compensation_mode then
+			a.style.font_color = global.green
+		else
+			a.style.font_color = global.red
+		end
+	end
+	
 
 end
 
