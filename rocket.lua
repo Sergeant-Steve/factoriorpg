@@ -2,8 +2,7 @@
 --This module makes a rocket silo unable to be destroyed by regular players
 -- and gives admins a tool to make it destroyable again.
 -- the rocket auto-launches when there is a satellite in it.
-
-
+global.satellite_sent = global.satellite_sent or {}
 --Function for when a rocket is launched
 function rocket_launched(event)
 	if event.rocket.get_item_count("satellite") == 0 then
@@ -30,11 +29,10 @@ function rocket_launched(event)
 		if mod_gui.get_button_flow(player).rocket_stats.caption == "Close Stats" then
 			local frame = mod_gui.get_frame_flow(player).add{name = "rocket_score", type = "frame", direction = "horizontal", caption="Score"}
 			frame.add{name="rocket_count_label", type = "label", caption="Rockets sent: "}
-			if global.satellite_sent[game.forces.player.name] > 0 then
-				frame.add{name="rocket_count", type = "label", caption=tostring(global.satellite_sent[game.forces.player.name])}
-			else
-				frame.add{name="rocket_count", type = "label", caption="0"}
+			if global.satellite_sent[game.forces.player.name] == nil then
+				global.satellite_sent[game.forces.player.name] = 0
 			end
+			frame.add{name="rocket_count", type = "label", caption=tostring(global.satellite_sent[game.forces.player.name])}
 		end
 	end
 end
@@ -156,11 +154,10 @@ function rocket_on_gui_click(event)
 			else
 				local frame = mod_gui.get_frame_flow(p).add{name = "rocket_score", type = "frame", direction = "horizontal", caption="Score"}
 				frame.add{name="rocket_count_label", type = "label", caption="Rockets sent: "}
-				if global.satellite_sent[game.forces.player.name] > 0 then
-					frame.add{name="rocket_count", type = "label", caption=tostring(global.satellite_sent[game.forces.player.name])}
-				else
-					frame.add{name="rocket_count", type = "label", caption="0"}
+				if global.satellite_sent[game.forces.player.name] == nil then
+					global.satellite_sent[game.forces.player.name] = 0
 				end
+				frame.add{name="rocket_count", type = "label", caption=tostring(global.satellite_sent[game.forces.player.name])}
 			end
 		elseif e.name == "rocket_stats" and e.caption == "Close Stats" then
 			e.caption = "Open Stats"

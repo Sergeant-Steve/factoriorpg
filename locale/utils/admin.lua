@@ -73,16 +73,11 @@ function gui_click(event)
 	end
 	if e.name ~= nil then
 		if e.name == "spectate" and e.parent.name == "admin_pane" then
-			--if not p.admin then
-			--	mod_gui.get_button_flow(p).spectate.destroy()
-			--	p.print("You are no longer an admin.")
-			--	return
-			--end
 			force_spectators(i, nil)
 		elseif e.name == "admin_tag" and e.parent.name == "admin_pane" then
 			p.print("Admin tag applied!")
 			p.tag = " [Admin]"
-		elseif e.name == "admin_compensation_mode" and e.parent.name == "admin_pane" then
+		elseif e.name == "admin_compensation_mode" and e.parent.name == "admin_pane" and e.caption == "Compensate" then
 			if(global.player_character_stats[i].compensation_mode) then
 				global.player_character_stats[i].compensation_mode = false
 				global.player_character_stats[i].running_speed = 0
@@ -274,6 +269,7 @@ function gui_click(event)
 			update_follow_panel(p)
 		end
 		--set who to follow
+		if not (e.valid) then return end
 		for _, player in pairs(game.connected_players) do
 			if e.name == "admin_follow_player_" .. player.name then
 				global.original_position[i] = p.position
@@ -642,6 +638,10 @@ function force_spectators(index, teleport)
 		if mod_gui.get_frame_flow(player).admin_pane.character ~= nil then
 			mod_gui.get_frame_flow(player).admin_pane.character.caption = "Character"
 		end
+		if mod_gui.get_frame_flow(player).admin_pane.admin_compensation_mode ~= nil then
+			mod_gui.get_frame_flow(player).admin_pane.admin_compensation_mode.caption = "Compensate"
+		end
+		
 		update_character(index)
 	else
 		--put player in spectator mode
@@ -670,15 +670,18 @@ function force_spectators(index, teleport)
 
 		if mod_gui.get_frame_flow(player).character_panel ~= nil then
 			mod_gui.get_frame_flow(player).character_panel.destroy()
-			mod_gui.get_frame_flow(player).admin_pane.character.caption = "Disabled"
 		end
 		if mod_gui.get_frame_flow(player).admin_pane.character ~= nil then
 			mod_gui.get_frame_flow(player).admin_pane.character.caption = "Disabled"
+		end
+		if mod_gui.get_frame_flow(player).admin_pane.admin_compensation_mode ~= nil then
+			mod_gui.get_frame_flow(player).admin_pane.admin_compensation_mode.caption = "Disabled"
 		end
 		-- adds an option to follow another player.
 		if spectate_panel.follow_panel == nil then
 			spectate_panel.add { name = "follow", type = "button", caption = "Follow" }
 		end
+		
 	end
 end
 
