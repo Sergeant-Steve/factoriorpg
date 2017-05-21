@@ -17,7 +17,7 @@ SPAWN_MSG3 = ""
 -- Disable everything between this...
 WELCOME_MSG = ""
 GAME_MODE_MSG = ""
-MODULES_ENABLED = "Mods Enabled: Separate Spawns, RSO, Long-Reach, Autofill, Undecorator, Player List"
+MODULES_ENABLED = "Seperate Spawns enabled, Autofill enabled"
 
 WELCOME_MSG_TITLE = ""
 WELCOME_MSG1 = "Rules: Be polite. Ask before changing other players's stuff. Have fun!"

@@ -201,37 +201,37 @@ end
 ----------------------------------------
 -- Player Events
 ----------------------------------------
--- script.on_event(defines.events.on_player_joined_game, function(event)
+script.on_event(defines.events.on_player_joined_game, function(event)
 
-    -- PlayerJoinedMessages(event)
+    PlayerJoinedMessages(event)
 
-    -- if ENABLE_TAGS then
-        -- CreateTagGui(event)
-    -- end
+    if ENABLE_TAGS then
+        CreateTagGui(event)
+    end
 
-    -- if ENABLE_PLAYER_LIST then
-        -- CreatePlayerListGui(event)
-    -- end
--- end)
+    if ENABLE_PLAYER_LIST then
+        CreatePlayerListGui(event)
+    end
+end)
 
-Event.register(defines.events.on_player_created, oarc_player_created)
+-- Event.register(defines.events.on_player_created, oarc_player_created)
 
-function oarc_player_created(event)
+-- function oarc_player_created(event)
     
-    -- Move the player to the game surface immediately.
-    -- May change this to Lobby in the future.
-    game.players[event.player_index].teleport(game.forces[MAIN_FORCE].get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME)
+    -- -- Move the player to the game surface immediately.
+    -- -- May change this to Lobby in the future.
+    -- game.players[event.player_index].teleport(game.forces[MAIN_FORCE].get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME)
 
-    if ENABLE_LONGREACH then
-        GivePlayerLongReach(game.players[event.player_index])
-    end
+    -- if ENABLE_LONGREACH then
+        -- GivePlayerLongReach(game.players[event.player_index])
+    -- end
 
-    if not ENABLE_SEPARATE_SPAWNS then
-        PlayerSpawnItems(event)
-    else
-        SeparateSpawnsPlayerCreated(event)
-    end
-end
+    -- if not ENABLE_SEPARATE_SPAWNS then
+        -- PlayerSpawnItems(event)
+    -- else
+        -- SeparateSpawnsPlayerCreated(event)
+    -- end
+-- end
 
 Event.register(defines.events.on_player_respawned, oarc_player_respawned)
 
@@ -271,20 +271,18 @@ function oarc_autofill(event)
     end
 end
 
-local tick_counter = 0
-Event.register(defines.events.on_tick, oarc_on_tick)
+-- local global.vision_tick = 0
+-- Event.register(defines.events.on_tick, oarc_on_tick)
 
-function oarc_on_tick(event)
-    -- Every few seconds, chart all players to "share vision"
-    if ENABLE_SHARED_TEAM_VISION then
-        if (tick_counter >= (TICKS_PER_SECOND*5)) then
-            ShareVisionBetweenPlayers()
-            tick_counter = 0
-        else
-            tick_counter = tick_counter + 1
-        end
-    end
-end
+-- function oarc_on_tick(event)
+    -- -- Every few seconds, chart all players to "share vision"
+    -- if ENABLE_SHARED_TEAM_VISION then
+        -- if (game.tick >= global.vision_tick + (60 * 5)) then
+            -- ShareVisionBetweenPlayers()
+            -- global.vision_tick = game.tick
+        -- end
+    -- end
+-- end
 
 
 ---------------------------------------

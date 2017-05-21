@@ -35,7 +35,7 @@ function rpg_starting_resources(player)
 		global.rpg_tmp[player.name].maxlevel = 1
 	end
 	local bonuslevel = global.rpg_exp[player.name].level - global.rpg_tmp[player.name].maxlevel
-	global.rpg_exp[player.name].maxlevel = math.max(global.rpg_exp[player.name].level, global.rpg_exp[player.name].maxlevel)
+	global.rpg_tmp[player.name].maxlevel = math.max(global.rpg_exp[player.name].level, global.rpg_tmp[player.name].maxlevel)
 	if bonuslevel > 0 then
 		player.insert{name="iron-plate", count=bonuslevel * 10}
 		player.insert{name="copper-plate", count=math.max(1, math.floor(bonuslevel / 4) * 10) }
@@ -79,7 +79,8 @@ function rpg_add_gui(event)
 end
 
 --Create class pick / change gui
-function rpg_class_picker(player)
+function rpg_class_picker(event)
+	local player = game.players[event.player_index]
 	if player.gui.center.sheet then
 		player.gui.center.sheet.destroy()
 	end
@@ -99,7 +100,7 @@ end
 function rpg_class_click(event)
 	player = game.players[event.player_index]
 	if event.element.name == "class_picker" then
-		rpg_class_picker(player)
+		rpg_class_picker(event)
 		return
 	end
 	if event.element.name == "class" then
@@ -151,46 +152,49 @@ function rpg_character_sheet(player)
 	if not player.gui.center.sheet then
 		if player.controller_type == defines.controllers.character then --Make sure player has a character
 			player.gui.center.add{type="frame", name="sheet", caption="Level " ..global.rpg_exp[player.name].level .. " " .. global.rpg_exp[player.name].class}
-			player.gui.center.add{type"button", name="class_picker", caption="Change Class"}
-			player.gui.center.add{type"button", name="close_character", caption="x"}
+			player.gui.center.sheet.add{type="flow", name="container", direction="vertical"}
+			player.gui.center.sheet.container.add{type="flow", name="control", direction="horizontal"}
+			player.gui.center.sheet.container.add{type="flow", name="stats", direction="horizontal"}
+			player.gui.center.sheet.container.control.add{type="button", name="class_picker", caption="Change Class"}
+			player.gui.center.sheet.container.control.add{type="button", name="close_character", caption="x"}
 			
-			player.gui.center.sheet.add{type="flow", name="column_one", direction="vertical"} --Label
-			player.gui.center.sheet.add{type="flow", name="column_two", direction="vertical"} --Total bonus
-			player.gui.center.sheet.add{type="flow", name="column_three", direction="vertical"} --Personal bonus
+			local column_one = player.gui.center.sheet.container.stats.add{type="flow", name="column_one", direction="vertical"} --Label
+			local column_two = player.gui.center.sheet.container.stats.add{type="flow", name="column_two", direction="vertical"} --Total bonus
+			local column_three = player.gui.center.sheet.container.stats.add{type="flow", name="column_three", direction="vertical"} --Personal bonus
 			
 			--Header
-			player.gui.center.sheet.column_one.add{type="label", name="header_one"}
-			player.gui.center.sheet.column_two.add{type="label", name="header_two", caption="Bonus:"}
-			player.gui.center.sheet.column_three.add{type="label", name="header_three", caption="(personal)"}
+			column_one.add{type="label", name="header_one", caption="-*-"}
+			column_two.add{type="label", name="header_two", caption="Bonus:"}
+			column_three.add{type="label", name="header_three", caption="(personal)"}
 			
 			--Start info
-			player.gui.center.sheet.column_one.add{type="label", caption="Health:"}
-			player.gui.center.sheet.column_two.add{type="label", caption=player.character.prototype.max_health+player.character_health_bonus + player.force.character_health_bonus}
-			player.gui.center.sheet.column_three.add{type="label", caption=player.character_health_bonus}
+			column_one.add{type="label", caption="Health:"}
+			column_two.add{type="label", caption=player.character.prototype.max_health+player.character_health_bonus + player.force.character_health_bonus}
+			column_three.add{type="label", caption=player.character_health_bonus}
 			
-			player.gui.center.sheet.column_one.add{type="label", caption="Running Speed:"}
-			player.gui.center.sheet.column_two.add{type="label",  caption="+" .. (1+player.character_running_speed_modifier)*(1+player.force.character_running_speed_modifier)-1 .. "%" }
-			player.gui.center.sheet.column_three.add{type="label", caption="+" .. player.character_running_speed_modifier}
+			column_one.add{type="label", caption="Running Speed:"}
+			column_two.add{type="label",  caption="+" .. math.floor(((1+player.character_running_speed_modifier)*(1+player.force.character_running_speed_modifier)-1) * 100) .. "%" }
+			column_three.add{type="label", caption="+" .. math.floor(player.character_running_speed_modifier * 100) .. "%"}
 			
-			player.gui.center.sheet.column_one.add{type="label", caption="Crafting Speed:"}
-			player.gui.center.sheet.column_two.add{type="label", caption="+" .. (1+player.character_crafting_speed_modifier)*(1+player.force.character_crafting_speed_modifier)-1 .. "%" }
-			player.gui.center.sheet.column_three.add{type="label", caption="+" .. player.character_crafting_speed_modifier}
+			column_one.add{type="label", caption="Crafting Speed:"}
+			column_two.add{type="label", caption="+" .. math.floor(((1+player.character_crafting_speed_modifier)*(1+player.force.manual_crafting_speed_modifier)-1) * 100) .. "%" }
+			column_three.add{type="label", caption="+" .. math.floor(player.character_crafting_speed_modifier * 100) .. "%"}
 			
-			player.gui.center.sheet.column_one.add{type="label", caption="Mining Speed:"}
-			player.gui.center.sheet.column_two.add{type="label", caption="+" .. (1+player.character_mining_speed_modifier)*(1+player.force.character_mining_speed_modifier)-1 .. "%" }
-			player.gui.center.sheet.column_three.add{type="label", caption="+" .. player.character_mining_speed_modifier}
+			column_one.add{type="label", caption="Mining Speed:"}
+			column_two.add{type="label", caption="+" .. math.floor(((1+player.character_mining_speed_modifier)-1) * 100 ) .. "%" }
+			column_three.add{type="label", caption="+" .. math.floor(player.character_mining_speed_modifier*100) .. "%"}
 			
-			player.gui.center.sheet.column_one.add{type="label", caption="Reach:"}
-			player.gui.center.sheet.column_two.add{type="label", caption="+" .. (player.character_reach_distance_bonus + player.force.character_reach_distance_bonus)}
-			player.gui.center.sheet.column_three.add{type="label", caption="+" .. player.character_reach_distance_bonus}
+			column_one.add{type="label", caption="Reach:"}
+			column_two.add{type="label", caption="+" .. (player.character_reach_distance_bonus + player.force.character_reach_distance_bonus)}
+			column_three.add{type="label", caption="+" .. player.character_reach_distance_bonus}
 			
-			player.gui.center.sheet.column_one.add{type="label", caption="Bonus Inventory:"}
-			player.gui.center.sheet.column_two.add{type="label", caption="+" .. player.character_inventory_slots_bonus + player.force.character_inventory_slots_bonus}
-			player.gui.center.sheet.column_three.add{type="label", caption="+" .. player.character_inventory_slots_bonus }
+			column_one.add{type="label", caption="Bonus Inventory:"}
+			column_two.add{type="label", caption="+" .. player.character_inventory_slots_bonus + player.force.character_inventory_slots_bonus}
+			column_three.add{type="label", caption="+" .. player.character_inventory_slots_bonus }
 			
-			player.gui.center.sheet.column_one.add{type="label", caption="Combat Robots:"}
-			player.gui.center.sheet.column_two.add{type="label", caption=player.character_maximum_following_robot_count_bonus + player.force.character_maximum_following_robot_count_bonus}
-			player.gui.center.sheet.column_three.add{type="label", caption=player.character_maximum_following_robot_count_bonus }
+			column_one.add{type="label", caption="Combat Robots:"}
+			column_two.add{type="label", caption=player.character_maximum_following_robot_count_bonus + player.force.maximum_following_robot_count}
+			column_three.add{type="label", caption=player.character_maximum_following_robot_count_bonus }
 		end
 		
 	else
@@ -475,11 +479,13 @@ function rpg_give_team_bonuses(force)
 	
 	--That entire code block for calculating base bonus can be replaced by this:
 	--For some reason this stops current research.  So let's save and reset it.
-	global.force_to_fix = force
-	global.current_research = force.current_research
-	global.research_progress = force.research_progress
-	force.reset_technology_effects()
-	force.current_research = current_research
+	if force.current_research then
+		global.force_to_fix = force
+		global.current_research = force.current_research
+		global.research_progress = force.research_progress
+		force.reset_technology_effects()
+		force.current_research = current_research
+	end
 	--This step must be done next tick.
 	--force.research_progress = research_progress
 	
@@ -585,7 +591,7 @@ end
 
 function rpg_fix_tech()
 	if global.force_to_fix then
-		global.force_to_fix.current_progress = global.current_progress
+		global.force_to_fix.research_progress = global.research_progress
 		global.force_to_fix = nil
 		global.force_to_fix = nil
 		global.force_to_fix = nil
