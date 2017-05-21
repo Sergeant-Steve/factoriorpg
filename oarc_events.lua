@@ -115,7 +115,6 @@ require("separate_spawns_guis")
     -- Configures the map settings for enemies
     -- This controls evolution growth factors and enemy expansion settings.
 
--- script.on_init(function(event)
     -- ConfigureAlienStartingParams()
 	
 	-- --CreateGameSurface(VANILLA_MODE)
@@ -124,16 +123,19 @@ require("separate_spawns_guis")
         -- InitSpawnGlobalsAndForces()
     -- end
 -- end)
-
---Event.register(-1, oarc_init)	
 	
  function oarc_init()
-    ConfigureAlienStartingParams()
+	if not global.oarc_init then 
+		global.oarc_init = true
+		ConfigureAlienStartingParams()
 
-	if ENABLE_SEPARATE_SPAWNS then
-        InitSpawnGlobalsAndForces()
-    end
+		if ENABLE_SEPARATE_SPAWNS then
+			InitSpawnGlobalsAndForces()
+		end
+	end
  end
+ 
+ Event.register(defines.events.on_player_created, oarc_init)
 
 ----------------------------------------
 -- Freeplay rocket launch info
@@ -149,12 +151,7 @@ require("separate_spawns_guis")
 ----------------------------------------
 -- Chunk Generation
 ----------------------------------------
--- Event.register(defines.events.on_chunk_generated, oarc_chunk_generated)
-
 function oarc_chunk_generated(event)
-    if ENABLE_UNDECORATOR then
-        UndecorateOnChunkGenerate(event)
-    end
 
     if ENABLE_RSO then
         RSO_ChunkGenerated(event)
@@ -169,15 +166,14 @@ function oarc_chunk_generated(event)
         SeparateSpawnsGenerateChunk(event)
     end
 
-    CreateHoldingPenGenerateChunk(event);
+    --CreateHoldingPenGenerateChunk(event);
 end
 
+Event.register(defines.events.on_chunk_generated, oarc_chunk_generated)
 
 ----------------------------------------
 -- Gui Click
 ----------------------------------------
-Event.register(defines.events.on_gui_click, oarc_on_gui_click)
-
 function oarc_on_gui_click(event)
 	-- if ENABLE_TAGS then
         -- TagGuiClick(event)
@@ -196,6 +192,7 @@ function oarc_on_gui_click(event)
 
 end
 
+Event.register(defines.events.on_gui_click, oarc_on_gui_click)
 
 ----------------------------------------
 -- Player Events
@@ -213,17 +210,17 @@ end
     -- end
 -- end)
 
-Event.register(defines.events.on_player_created, oarc_player_created)
+
 
 function oarc_player_created(event)
     
     -- Move the player to the game surface immediately.
     -- May change this to Lobby in the future.
-    game.players[event.player_index].teleport(game.forces[MAIN_FORCE].get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME)
+    --game.players[event.player_index].teleport(game.forces[MAIN_FORCE].get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME)
 
-    if ENABLE_LONGREACH then
-        GivePlayerLongReach(game.players[event.player_index])
-    end
+    -- if ENABLE_LONGREACH then
+        -- GivePlayerLongReach(game.players[event.player_index])
+    -- end
 
     if not ENABLE_SEPARATE_SPAWNS then
         PlayerSpawnItems(event)
@@ -232,22 +229,22 @@ function oarc_player_created(event)
     end
 end
 
-Event.register(defines.events.on_player_respawned, oarc_player_respawned)
+Event.register(defines.events.on_player_created, oarc_player_created)
 
 function oarc_player_respawned(event)
 
     if ENABLE_SEPARATE_SPAWNS then
-        SeparateSpawnsPlayerRespawned(event)        
+        SeparateSpawnsPlayerRespawned(event)
     end
    
-    PlayerRespawnItems(event)
+    --PlayerRespawnItems(event)
 
     if ENABLE_LONGREACH then
         GivePlayerLongReach(game.players[event.player_index])
     end
 end
 
-Event.register(defines.events.on_player_left_game, oarc_on_player_left_game)
+Event.register(defines.events.on_player_respawned, oarc_player_respawned)
 
 function oarc_on_player_left_game(event)
     if ENABLE_GRAVESTONE_ON_LEAVING then
@@ -262,13 +259,15 @@ function oarc_on_player_left_game(event)
     end
 end
 
-Event.register(defines.events.on_built_entity, oarc_autofill)
+Event.register(defines.events.on_player_left_game, oarc_on_player_left_game)
 
 function oarc_autofill(event)
     if ENABLE_AUTOFILL then
         Autofill(event)
     end
 end
+
+Event.register(defines.events.on_built_entity, oarc_autofill)
 
 -- local global.vision_tick = 0
 -- Event.register(defines.events.on_tick, oarc_on_tick)

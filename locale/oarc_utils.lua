@@ -1003,6 +1003,7 @@ function CreateHoldingPen(surface, chunkArea)
 end
 
 function CreateHoldingPenGenerateChunk(event)
+	return --Why does this exist?
     CreateHoldingPen(event.surface, event.area)
 end
 

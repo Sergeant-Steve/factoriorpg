@@ -297,7 +297,7 @@ function SpawnOptsGuiClick(event)
     end
 
     if (elemName == "default_spawn_btn") then
-        CreateSpawnCtrlGui(player)
+        --CreateSpawnCtrlGui(player)
         GivePlayerStarterItems(player)
         ChangePlayerSpawn(player, player.force.get_spawn_position(GAME_SURFACE_NAME))
         SendBroadcastMsg(player.name .. " joined the main force!")
@@ -306,7 +306,7 @@ function SpawnOptsGuiClick(event)
    
 
     elseif ((elemName == "isolated_spawn_near") or (elemName == "isolated_spawn_far")) then
-        CreateSpawnCtrlGui(player)
+        --CreateSpawnCtrlGui(player)
 
         -- Create a new spawn point
         local newSpawn = {x=0,y=0}
@@ -428,7 +428,7 @@ function SharedSpwnOptsGuiClick(event)
     else
         for spawnName,sharedSpawn in pairs(global.sharedSpawns) do
             if (buttonClicked == spawnName) then
-                CreateSpawnCtrlGui(player)
+                --CreateSpawnCtrlGui(player)
                 ChangePlayerSpawn(player,sharedSpawn.position)
                 SendPlayerToSpawn(player)
                 GivePlayerStarterItems(player)
@@ -483,6 +483,9 @@ end
 -- This is a toggle function, it either shows or hides the spawn controls
 function ExpandSpawnCtrlGui(player, tick)
     local spwnCtrlPanel = player.gui.left["spwn_ctrl_panel"]
+	if not global.playerCooldowns[player.name] then
+		return
+	end
     if (spwnCtrlPanel) then
         spwnCtrlPanel.destroy()
     else

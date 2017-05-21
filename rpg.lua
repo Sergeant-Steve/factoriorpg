@@ -8,24 +8,44 @@ require "rpgdata" --Savedata.  This is externally generated.
 --Savedata is of form: player_name = {bank = exp, class1 = exp, class2 = exp, etc}
 
 --On player join, fetch exp.
+-- function rpg_loadsave(event)
+	-- local player = game.players[event.player_index]
+	-- if not global.rpg_exp[player.name] then
+		-- global.rpg_exp[player.name] = {level=1, class="Engineer", Engineer=0, bank=0}
+		-- if rpg_save[player.name] then
+			-- --Load bank (legacy) and class exp
+			-- for k,v in pairs(rpg_save[player.name]) do
+				-- global.rpg_exp[player.name][k] = v
+			-- end
+			-- if not rpg_save[player.name].bank then 
+				-- rpg_save[player.name].bank = 0
+			-- end
+		-- end
+	-- end
+	-- if not global.rpg_tmp[player.name] then
+		-- global.rpg_tmp[player.name] = {}
+	-- end
+-- end
+
 function rpg_loadsave(event)
 	local player = game.players[event.player_index]
-	if not global.rpg_exp[player.name] then
-		global.rpg_exp[player.name] = {level=1, class="Engineer", Engineer=0, bank=0}
-		if rpg_save[player.name] then
-			--Load bank (legacy) and class exp
-			for k,v in pairs(rpg_save[player.name]) do
-				global.rpg_exp[player.name][k] = v
-			end
-			if not rpg_save[player.name].bank then 
-				rpg_save[player.name].bank = 0
-			end
+	if player.name == "" then
+		game.print("Error, player.name is empty.")
+		return
+	end
+	global.rpg_exp[player.name] = {level=1, class="Engineer", Engineer=0, bank=0}
+	if rpg_save[player.name] then
+		--Load bank (legacy) and class exp
+		for k,v in pairs(rpg_save[player.name]) do
+			global.rpg_exp[player.name][k] = v
+		end
+		if not rpg_save[player.name].bank then 
+			rpg_save[player.name].bank = 0
 		end
 	end
-	if not global.rpg_tmp[player.name] then
-		global.rpg_tmp[player.name] = {}
-	end
+	global.rpg_tmp[player.name] = {}
 end
+
 
 -- SPAWN AND RESPAWN --
 --Higher level players get more starting resources for an accelerated start!
@@ -132,6 +152,7 @@ end
 
 --Create the gui for other mods.
 function rpg_post_rpg_gui(event)
+	CreateSpawnCtrlGui(game.players[event.player_index])
 	admin_joined(event)
 	tag_create_gui(event)
 end
@@ -587,6 +608,9 @@ function rpg_give_team_bonuses(force)
 	
 	-- Malus is 0.5 * base bonus - 0.5
 	force.laboratory_speed_modifier = builderbonus / 100 + 0.5 * force.laboratory_speed_modifier - 0.5 --add base value
+	
+	--Crafting speed penalty.
+	force.manual_crafting_speed_modifier = -0.3
 		
 	force.mining_drill_productivity_bonus = minerbonus / 50 + force.mining_drill_productivity_bonus * 0.5
 	
@@ -606,7 +630,7 @@ function rpg_init()
 	global.rpg_exp = {}
 	global.rpg_tmp = {} --For non-persistent data.
 	--Players can give bonuses to the team, so let's nerf the base values so players can re-buff them.
-	game.forces.player.manual_crafting_speed_modifier = -0.3
+	--game.forces.player.manual_crafting_speed_modifier = -0.3 --Oops, game is not available at this step.
 
 	--Doh, can't have a negative bonus.  This does not work.
 	--game.forces.player.character_health_bonus = -50
