@@ -1,4 +1,6 @@
 --Factorio RPG, written by Mylon
+--How to save data:
+-- /c rpg_savedata() 
 --Utility command for griefing.
 -- /silent-command do local hoarder = {amount=0} for k,v in pairs(game.players) do if v.get_item_count("uranium-235") > hoarder.amount then hoarder.name = v.name hoarder.amount = v.get_item_count("uranium-235") end end game.print(hoarder.name .. " is hoarding " .. hoarder.amount .. " uranium-235!") end
 
@@ -9,7 +11,7 @@ require "rpgdata" --Savedata.  This is externally generated.
 function rpg_loadsave(event)
 	local player = game.players[event.player_index]
 	if not global.rpg_exp[player.name] then
-		global.rpg_exp[player.name] = {level=1, class="Engineer", Engineer=0}
+		global.rpg_exp[player.name] = {level=1, class="Engineer", Engineer=0, bank=0}
 		if rpg_save[player.name] then
 			--Load bank (legacy) and class exp
 			for k,v in pairs(rpg_save[player.name]) do
@@ -20,16 +22,19 @@ function rpg_loadsave(event)
 			end
 		end
 	end
+	if not global.rpg_tmp[player.name] then
+		global.rpg_tmp[player.name] = {}
+	end
 end
 
 -- SPAWN AND RESPAWN --
 --Higher level players get more starting resources for an accelerated start!
 function rpg_starting_resources(player)
 	--maxlevel is the highest level this function has seen from this player.
-	if not global.rpg_exp[player.name].maxlevel then 
-		global.rpg_exp[player.name].maxlevel = 1
+	if not global.rpg_tmp[player.name].maxlevel then 
+		global.rpg_tmp[player.name].maxlevel = 1
 	end
-	local bonuslevel = global.rpg_exp[player.name].level - global.rpg_exp[player.name].maxlevel
+	local bonuslevel = global.rpg_exp[player.name].level - global.rpg_tmp[player.name].maxlevel
 	global.rpg_exp[player.name].maxlevel = math.max(global.rpg_exp[player.name].level, global.rpg_exp[player.name].maxlevel)
 	if bonuslevel > 0 then
 		player.insert{name="iron-plate", count=bonuslevel * 10}
@@ -74,8 +79,10 @@ function rpg_add_gui(event)
 end
 
 --Create class pick / change gui
-function rpg_class_picker(event)
-	local player = game.players[event.player_index]
+function rpg_class_picker(player)
+	if player.gui.center.sheet then
+		player.gui.center.sheet.destroy()
+	end
 	if not player.gui.center.picker then
 		player.gui.center.add{type="frame", name="picker", caption="Choose a class"}
 		player.gui.center.picker.add{type="flow", name="container", direction="vertical"}
@@ -88,11 +95,16 @@ function rpg_class_picker(event)
 	end
 end
 
---Picker gui handler
+--rpg gui handler
 function rpg_class_click(event)
 	player = game.players[event.player_index]
-	if event.element.name == "class" then --TODO: This opens the character sheet instead of class picker
-		rpg_class_picker(event)
+	if event.element.name == "class_picker" then
+		rpg_class_picker(player)
+		return
+	end
+	if event.element.name == "class" then
+		rpg_character_sheet(player)
+		return
 	end
 	if event.element.name == "Soldier" or event.element.name == "Builder" or event.element.name == "Scientist" or event.element.name == "Miner" or event.element.name == "None" then
 		rpg_set_class(player, event.element.name)
@@ -106,6 +118,10 @@ function rpg_class_click(event)
 			rpg_update_gui(player)
 		end
 		player.gui.center.picker.destroy()
+		return
+	end
+	if event.element.name == "close_character" then
+		player.gui.center.sheet.destroy()
 		return
 	end
 end
@@ -131,6 +147,57 @@ function rpg_update_gui(player)
 	--game.print("Updating exp bar value to " .. player.gui.top.rpg.exp.value)
 end
 
+function rpg_character_sheet(player)
+	if not player.gui.center.sheet then
+		if player.controller_type == defines.controllers.character then --Make sure player has a character
+			player.gui.center.add{type="frame", name="sheet", caption="Level " ..global.rpg_exp[player.name].level .. " " .. global.rpg_exp[player.name].class}
+			player.gui.center.add{type"button", name="class_picker", caption="Change Class"}
+			player.gui.center.add{type"button", name="close_character", caption="x"}
+			
+			player.gui.center.sheet.add{type="flow", name="column_one", direction="vertical"} --Label
+			player.gui.center.sheet.add{type="flow", name="column_two", direction="vertical"} --Total bonus
+			player.gui.center.sheet.add{type="flow", name="column_three", direction="vertical"} --Personal bonus
+			
+			--Header
+			player.gui.center.sheet.column_one.add{type="label", name="header_one"}
+			player.gui.center.sheet.column_two.add{type="label", name="header_two", caption="Bonus:"}
+			player.gui.center.sheet.column_three.add{type="label", name="header_three", caption="(personal)"}
+			
+			--Start info
+			player.gui.center.sheet.column_one.add{type="label", caption="Health:"}
+			player.gui.center.sheet.column_two.add{type="label", caption=player.character.prototype.max_health+player.character_health_bonus + player.force.character_health_bonus}
+			player.gui.center.sheet.column_three.add{type="label", caption=player.character_health_bonus}
+			
+			player.gui.center.sheet.column_one.add{type="label", caption="Running Speed:"}
+			player.gui.center.sheet.column_two.add{type="label",  caption="+" .. (1+player.character_running_speed_modifier)*(1+player.force.character_running_speed_modifier)-1 .. "%" }
+			player.gui.center.sheet.column_three.add{type="label", caption="+" .. player.character_running_speed_modifier}
+			
+			player.gui.center.sheet.column_one.add{type="label", caption="Crafting Speed:"}
+			player.gui.center.sheet.column_two.add{type="label", caption="+" .. (1+player.character_crafting_speed_modifier)*(1+player.force.character_crafting_speed_modifier)-1 .. "%" }
+			player.gui.center.sheet.column_three.add{type="label", caption="+" .. player.character_crafting_speed_modifier}
+			
+			player.gui.center.sheet.column_one.add{type="label", caption="Mining Speed:"}
+			player.gui.center.sheet.column_two.add{type="label", caption="+" .. (1+player.character_mining_speed_modifier)*(1+player.force.character_mining_speed_modifier)-1 .. "%" }
+			player.gui.center.sheet.column_three.add{type="label", caption="+" .. player.character_mining_speed_modifier}
+			
+			player.gui.center.sheet.column_one.add{type="label", caption="Reach:"}
+			player.gui.center.sheet.column_two.add{type="label", caption="+" .. (player.character_reach_distance_bonus + player.force.character_reach_distance_bonus)}
+			player.gui.center.sheet.column_three.add{type="label", caption="+" .. player.character_reach_distance_bonus}
+			
+			player.gui.center.sheet.column_one.add{type="label", caption="Bonus Inventory:"}
+			player.gui.center.sheet.column_two.add{type="label", caption="+" .. player.character_inventory_slots_bonus + player.force.character_inventory_slots_bonus}
+			player.gui.center.sheet.column_three.add{type="label", caption="+" .. player.character_inventory_slots_bonus }
+			
+			player.gui.center.sheet.column_one.add{type="label", caption="Combat Robots:"}
+			player.gui.center.sheet.column_two.add{type="label", caption=player.character_maximum_following_robot_count_bonus + player.force.character_maximum_following_robot_count_bonus}
+			player.gui.center.sheet.column_three.add{type="label", caption=player.character_maximum_following_robot_count_bonus }
+		end
+		
+	else
+		player.gui.center.sheet.destroy()
+	end
+end
+
 -- END GUI STUFF --
 
 -- UTILITY FUNCTIONS --
@@ -151,10 +218,10 @@ function rpg_set_class(player, class)
 	if global.rpg_exp[player.name].bank > 0 then
 		player.print("Banked experience: " .. math.floor(global.rpg_exp[player.name].bank) .. " detected.  Leveling will be accelerated.")
 	end
-	if not global.rpg_exp[player.name].ready then
-		global.rpg_exp[player.name].ready = 1
+	if not global.rpg_tmp[player.name].ready then
+		global.rpg_tmp[player.name].ready = 1
 	end
-	global.rpg_exp[player.name].ready = math.max(global.rpg_exp[player.name].level, global.rpg_exp[player.name].ready)
+	--global.rpg_exp[player.name].ready = math.max(global.rpg_exp[player.name].level, global.rpg_exp[player.name].ready)
 	rpg_starting_resources(player)
 end
 
@@ -162,7 +229,11 @@ end
 --Rejoining will re-calculate bonuses.  Specifically for rocket launches.
 function rpg_connect(event)
 	local player = game.players[event.player_index]
-	if global.rpg_exp[player.name] and global.rpg_exp[player.name].ready then
+	if not global.rpg_exp then
+		--Init did not fire.  This is due to oarc not liking the 3ra event handler.
+		rpg_init()
+	end
+	if global.rpg_tmp[player.name] and global.rpg_tmp[player.name].ready then
 		rpg_give_bonuses(player)
 		rpg_give_team_bonuses(player.force)
 	end
@@ -187,13 +258,16 @@ function rpg_nest_killed(event)
 	--game.print("Entity died.")
 	if event.entity.type == "unit-spawner" then
 		--game.print("Spawner died.")
-		if event.cause and event.cause.type == "player" then
-			--game.print("Spawner died by player.  Awarding exp.")
-			rpg_add_exp(event.cause.player, 100)
-		else
-			if event.cause and event.cause.last_user then
-				rpg_add_exp(event.cause.last_user, 100)
-			end
+		-- if event.cause and event.cause.type == "player" then
+			-- --game.print("Spawner died by player.  Awarding exp.")
+			-- rpg_add_exp(event.cause.player, 100)
+		-- else
+			-- if event.cause and event.cause.last_user then
+				-- rpg_add_exp(event.cause.last_user, 100)
+			-- end
+		-- end
+		for __, player in pairs(event.entity.surface.find_entities_filtered{type="player", area={{event.entity.position.x-64, event.entity.position.y-64}, {event.entity.position.x+64, event.entity.position.y+64}}}) do
+			rpg_add_exp(player, 100)
 		end
 	end
 	if event.entity.type == "turret" and event.entity.force.name == "enemy" then
@@ -366,6 +440,7 @@ function rpg_give_bonuses(player)
 			player.character_reach_distance_bonus = math.floor(bonuslevel/6)
 			player.character_build_distance_bonus = math.floor(bonuslevel/6)
 			player.character_inventory_slots_bonus = math.floor(bonuslevel/6)
+			player.quickbar_count_bonus = 0
 		end
 		if global.rpg_exp[player.name].class == "Scientist" then
 			player.character_maximum_following_robot_count_bonus = math.floor(bonuslevel/4)
@@ -400,9 +475,13 @@ function rpg_give_team_bonuses(force)
 	
 	--That entire code block for calculating base bonus can be replaced by this:
 	--For some reason this stops current research.  So let's save and reset it.
-	local current_research = force.current_research
+	global.force_to_fix = force
+	global.current_research = force.current_research
+	global.research_progress = force.research_progress
 	force.reset_technology_effects()
 	force.current_research = current_research
+	--This step must be done next tick.
+	--force.research_progress = research_progress
 	
 	--Calculate base bonuses.
 	-- local baseammobonus = {}
@@ -490,7 +569,7 @@ function rpg_give_team_bonuses(force)
 		force.set_turret_attack_modifier(k, builderbonus / 100 + force.get_turret_attack_modifier(k) * 0.8 - 0.2)
 	end
 	
-	force.character_health_bonus = scientistbonus / 40 --Base health is 250, so this is caled up similarly
+	force.character_health_bonus = scientistbonus / 4 --Base health is 250, so this is caled up similarly
 	force.character_running_speed_modifier = scientistbonus / 400
 	force.worker_robots_speed_modifier = scientistbonus / 100 + force.worker_robots_speed_modifier * 0.6 - 0.4
 	
@@ -504,9 +583,19 @@ function rpg_give_team_bonuses(force)
 	
 end
 
+function rpg_fix_tech()
+	if global.force_to_fix then
+		global.force_to_fix.current_progress = global.current_progress
+		global.force_to_fix = nil
+		global.force_to_fix = nil
+		global.force_to_fix = nil
+	end
+		
+end
+
 function rpg_init()
 	global.rpg_exp = {}
-	global.rpg_temp = {} --For non-persistent data.
+	global.rpg_tmp = {} --For non-persistent data.
 	--Players can give bonuses to the team, so let's nerf the base values so players can re-buff them.
 	game.forces.player.manual_crafting_speed_modifier = -0.3
 
@@ -556,4 +645,5 @@ Event.register(defines.events.on_entity_died, rpg_nest_killed)
 Event.register(defines.events.on_research_finished, rpg_tech_researched)
 --Event.register(defines.events.on_research_finished, rpg_nerf_tech)
 --Event.register(defines.events.on_tick, rpg_exp_tick) --For debug
+Event.register(defines.events.on_tick, rpg_fix_tech) --Patch for force.reset_technology_effects()
 Event.register(-1, rpg_init)

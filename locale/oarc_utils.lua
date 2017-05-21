@@ -14,7 +14,7 @@ TICKS_PER_SECOND = 60
 TICKS_PER_MINUTE = TICKS_PER_SECOND * 60
 --------------------------------------------------------------------------------
 
-GAME_SURFACE_NAME="Game"
+GAME_SURFACE_NAME=1
 
 --------------------------------------------------------------------------------
 -- GUI Label Styles

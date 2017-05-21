@@ -115,19 +115,24 @@ require("separate_spawns_guis")
     -- Configures the map settings for enemies
     -- This controls evolution growth factors and enemy expansion settings.
 
-Event.register(-1, oarc_init)
-
-function oarc_init()
+script.on_init(function(event)
     ConfigureAlienStartingParams()
 
 	if ENABLE_SEPARATE_SPAWNS then
         InitSpawnGlobalsAndForces()
     end
-end
+end)
 	
-    -- SetServerWelcomeMessages()
--- end)
+	
+-- function oarc_init()
+    -- ConfigureAlienStartingParams()
 
+	-- if ENABLE_SEPARATE_SPAWNS then
+        -- InitSpawnGlobalsAndForces()
+    -- end
+-- end
+
+-- Event.register(-1, oarc_init)
 
 ----------------------------------------
 -- Freeplay rocket launch info
