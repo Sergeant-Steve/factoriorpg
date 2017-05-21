@@ -17,8 +17,8 @@ function rpg_loadsave(event)
 			for k,v in pairs(rpg_save[player.name]) do
 				global.rpg_exp[player.name][k] = v
 			end
-			if not global.rpg_save[player.name].bank then 
-				global.rpg_save[player.name].bank = 0
+			if not rpg_save[player.name].bank then 
+				rpg_save[player.name].bank = 0
 			end
 		end
 	end

@@ -11,20 +11,20 @@
 
 SPAWN_MSG1 = "Current Spawn Mode: Pick"
 SPAWN_MSG2 = "Start with the main base or start from an escape capsule"
-SPAWN_MSG3 = "Resources are spread out far apart."
+SPAWN_MSG3 = ""
 
 
 -- Disable everything between this...
-WELCOME_MSG = "[INSERT SERVER OWNER MSG HERE!]"
-GAME_MODE_MSG = "In the current game mode, a satellite must be launched from an existing far away rocket silo to win!"
+WELCOME_MSG = ""
+GAME_MODE_MSG = ""
 MODULES_ENABLED = "Mods Enabled: Separate Spawns, RSO, Long-Reach, Autofill, Undecorator, Player List"
 
-WELCOME_MSG_TITLE = "[INSERT SERVER OWNER MSG HERE!]"
+WELCOME_MSG_TITLE = ""
 WELCOME_MSG1 = "Rules: Be polite. Ask before changing other players's stuff. Have fun!"
 WELCOME_MSG2 = "This server is running a custom scenario that changes spawn locations."
 
-OTHER_MSG1 = "Latest updates in this scenario version (0.4.1):"
-OTHER_MSG2 = "Gravestones are back in."
+OTHER_MSG1 = ""
+OTHER_MSG2 = ""
 
 WELCOME_MSG3 = "Due to the way this scenario works, it may take some time for the land"
 WELCOME_MSG4 = "around your new spawn area to generate..."

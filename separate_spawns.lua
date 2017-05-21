@@ -190,7 +190,8 @@ function InitSpawnGlobalsAndForces()
     end
 
     game.create_force(MAIN_FORCE)
-    game.forces[MAIN_FORCE].set_spawn_position(game.forces["player"].get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME)
+    --game.forces[MAIN_FORCE].set_spawn_position(game.forces["player"].get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME)
+	game.forces[MAIN_FORCE].set_spawn_position(game.forces["player"].get_spawn_position(1), 1)
     SetCeaseFireBetweenAllForces()
     SetFriendlyBetweenAllForces()
     -- AntiGriefing(game.forces[MAIN_FORCE])
