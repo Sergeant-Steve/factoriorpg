@@ -99,6 +99,9 @@ end
 --rpg gui handler
 function rpg_class_click(event)
 	player = game.players[event.player_index]
+	if not (event.element and event.element.name) then
+		return
+	end
 	if event.element.name == "class_picker" then
 		rpg_class_picker(event)
 		return

@@ -24,7 +24,7 @@ Event = {
 			if id == Event.core_events.init then
 				script.on_init(function()
 					--Event.dispatch({ name = Event.core_events.init, tick = game.tick })
-					Event.dispatch({ name = Event.core_events.init, tick = -1 })
+					Event.dispatch({ name = Event.core_events.init})
 				end)
 			elseif id == Event.core_events.load then
 				script.on_load(function()

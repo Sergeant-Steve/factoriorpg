@@ -26,8 +26,8 @@
 -- Generic Utility Includes
 require("locale/oarc_utils")
 --require("locale/rso/rso_control")
-require("locale/frontier_silo")
-require("locale/tag")
+--require("locale/frontier_silo")
+--require("locale/tag")
 
 -- Main Configuration File
 require("oarc_config")
@@ -124,7 +124,8 @@ require("separate_spawns_guis")
         -- InitSpawnGlobalsAndForces()
     -- end
 -- end)
-	
+
+--Event.register(-1, oarc_init)	
 	
  function oarc_init()
     ConfigureAlienStartingParams()
@@ -133,8 +134,6 @@ require("separate_spawns_guis")
         InitSpawnGlobalsAndForces()
     end
  end
-
-Event.register(-1, oarc_init)
 
 ----------------------------------------
 -- Freeplay rocket launch info
@@ -150,7 +149,7 @@ Event.register(-1, oarc_init)
 ----------------------------------------
 -- Chunk Generation
 ----------------------------------------
-Event.register(defines.events.on_chunk_generated, oarc_chunk_generated)
+-- Event.register(defines.events.on_chunk_generated, oarc_chunk_generated)
 
 function oarc_chunk_generated(event)
     if ENABLE_UNDECORATOR then
@@ -180,13 +179,13 @@ end
 Event.register(defines.events.on_gui_click, oarc_on_gui_click)
 
 function oarc_on_gui_click(event)
-    if ENABLE_TAGS then
-        TagGuiClick(event)
-    end
+	-- if ENABLE_TAGS then
+        -- TagGuiClick(event)
+    -- end
 
-    if ENABLE_PLAYER_LIST then
-        PlayerListGuiClick(event)
-    end
+    -- if ENABLE_PLAYER_LIST then
+        -- PlayerListGuiClick(event)
+    -- end
 
     if ENABLE_SEPARATE_SPAWNS then
         WelcomeTextGuiClick(event)
@@ -201,37 +200,37 @@ end
 ----------------------------------------
 -- Player Events
 ----------------------------------------
-script.on_event(defines.events.on_player_joined_game, function(event)
+-- script.on_event(defines.events.on_player_joined_game, function(event)
 
-    PlayerJoinedMessages(event)
+    -- PlayerJoinedMessages(event)
 
-    if ENABLE_TAGS then
-        CreateTagGui(event)
-    end
+    -- if ENABLE_TAGS then
+        -- CreateTagGui(event)
+    -- end
 
-    if ENABLE_PLAYER_LIST then
-        CreatePlayerListGui(event)
-    end
-end)
+    -- if ENABLE_PLAYER_LIST then
+        -- CreatePlayerListGui(event)
+    -- end
+-- end)
 
--- Event.register(defines.events.on_player_created, oarc_player_created)
+Event.register(defines.events.on_player_created, oarc_player_created)
 
--- function oarc_player_created(event)
+function oarc_player_created(event)
     
-    -- -- Move the player to the game surface immediately.
-    -- -- May change this to Lobby in the future.
-    -- game.players[event.player_index].teleport(game.forces[MAIN_FORCE].get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME)
+    -- Move the player to the game surface immediately.
+    -- May change this to Lobby in the future.
+    game.players[event.player_index].teleport(game.forces[MAIN_FORCE].get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME)
 
-    -- if ENABLE_LONGREACH then
-        -- GivePlayerLongReach(game.players[event.player_index])
-    -- end
+    if ENABLE_LONGREACH then
+        GivePlayerLongReach(game.players[event.player_index])
+    end
 
-    -- if not ENABLE_SEPARATE_SPAWNS then
-        -- PlayerSpawnItems(event)
-    -- else
-        -- SeparateSpawnsPlayerCreated(event)
-    -- end
--- end
+    if not ENABLE_SEPARATE_SPAWNS then
+        PlayerSpawnItems(event)
+    else
+        SeparateSpawnsPlayerCreated(event)
+    end
+end
 
 Event.register(defines.events.on_player_respawned, oarc_player_respawned)
 
