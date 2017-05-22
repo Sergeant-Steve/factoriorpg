@@ -294,8 +294,8 @@ function rpg_nest_killed(event)
 				-- rpg_add_exp(event.cause.last_user, 100)
 			-- end
 		-- end
-		for __, player in pairs(event.entity.surface.find_entities_filtered{type="player", area={{event.entity.position.x-64, event.entity.position.y-64}, {event.entity.position.x+64, event.entity.position.y+64}}}) do
-			rpg_add_exp(player, 100)
+		for __, character in pairs(event.entity.surface.find_entities_filtered{type="player", area={{event.entity.position.x-64, event.entity.position.y-64}, {event.entity.position.x+64, event.entity.position.y+64}}}) do
+			rpg_add_exp(character.player, 100)
 		end
 	end
 	if event.entity.type == "turret" and event.entity.force.name == "enemy" then
@@ -501,14 +501,19 @@ function rpg_give_team_bonuses(force)
 		end
 	end
 	
+	--force.reset_technology_effects()
+	
 	--That entire code block for calculating base bonus can be replaced by this:
 	--For some reason this stops current research.  So let's save and reset it.
 	if force.current_research then
-		global.force_to_fix = force
-		global.current_research = force.current_research
+		--global.force_to_fix = force
+		global.current_research = force.current_research.name
 		global.research_progress = force.research_progress
 		force.reset_technology_effects()
-		force.current_research = current_research
+		force.current_research = global.current_research
+		force.research_progress = global.research_progress
+	else
+		force.reset_technology_effects()
 	end
 	--This step must be done next tick.
 	--force.research_progress = research_progress
@@ -607,7 +612,7 @@ function rpg_give_team_bonuses(force)
 	force.character_inventory_slots_bonus = math.max(force.character_inventory_slots_bonus, math.floor(builderbonus / 40))
 	
 	-- Malus is 0.5 * base bonus - 0.5
-	force.laboratory_speed_modifier = builderbonus / 100 + 0.5 * force.laboratory_speed_modifier - 0.5 --add base value
+	force.laboratory_speed_modifier = scientistbonus / 100 + 0.5 * force.laboratory_speed_modifier - 0.5 --add base value
 	
 	--Crafting speed penalty.
 	force.manual_crafting_speed_modifier = -0.3
@@ -618,10 +623,13 @@ end
 
 function rpg_fix_tech()
 	if global.force_to_fix then
-		global.force_to_fix.research_progress = global.research_progress
-		global.force_to_fix = nil
-		global.force_to_fix = nil
-		global.force_to_fix = nil
+		if global.current_research then
+			global.force_to_fix.current_research = global.current_research
+			global.force_to_fix.research_progress = global.research_progress
+			global.force_to_fix = nil
+			global.current_research = nil
+			global.research_progress = nil
+		end
 	end
 		
 end
