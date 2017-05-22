@@ -81,9 +81,11 @@ function gui_click(event)
 			--	return
 			--end
 			force_spectators(i, nil)
+			return
 		elseif e.name == "admin_tag" and e.parent.name == "admin_pane" then
 			p.print("Admin tag applied!")
 			p.tag = " [Admin]"
+			return
 		elseif e.name == "admin_compensation_mode" and e.parent.name == "admin_pane" then
 			if(global.player_character_stats[i].compensation_mode) then
 				global.player_character_stats[i].compensation_mode = false
@@ -112,13 +114,17 @@ function gui_click(event)
 				end
 				update_character(i)
 			end
+			return
 		elseif e.name == "teleport" and e.parent.name == "spectate_panel" then
 			force_spectators(i, true)
+			return
 		elseif e.name == "return_character" and e.parent.name == "spectate_panel" then
 			force_spectators(i, false)
+			return
 		elseif e.name == "admin_menu" and e.caption == "Open Admin" then
 			create_admin_gui(p.name)
 			p.gui.top.admin_menu.caption = "Close Admin"
+			return
 		elseif e.name == "admin_menu" and e.caption == "Close Admin" then
 			if p.gui.left.admin_pane ~= nil then
 				if p.gui.left.spectate_panel == nil then
@@ -135,6 +141,7 @@ function gui_click(event)
 					p.print("Close the Spectator Menu First!")
 				end
 			end
+			return
 		elseif e.name == "clear_corpses" then
 			for _, entity in pairs(game.surfaces["nauvis"].find_entities_filtered{area = {{p.position.x-1000,p.position.y-1000}, {p.position.x+1000, p.position.y+1000}}, type="corpse"}) do 
 				entity.destroy() 
@@ -147,6 +154,7 @@ function gui_click(event)
 				p.gui.left.admin_pane.commands.caption = "Close"
 				create_command_gui(i)
 			end
+			return
 		elseif e.name == "character" then
 			if p.gui.left.character_panel and e.caption == "Close" then
 				p.gui.left.admin_pane.character.caption = "Character"
@@ -157,6 +165,7 @@ function gui_click(event)
 			elseif e.caption == "Disabled" then
 				p.print("Character modification is currently disabled")
 			end
+			return
 		elseif e.name == "character_pickup" then
 			if global.player_character_stats[i].item_loot_pickup then
 				global.player_character_stats[i].item_loot_pickup = false
@@ -169,6 +178,7 @@ function gui_click(event)
 				p.character_item_pickup_distance_bonus = 5
 				p.character_loot_pickup_distance_bonus = 5
 			end
+			return
 		elseif e.name == "character_reach" then
 			if global.player_character_stats[i].build_itemdrop_reach_resourcereach_distance then
 				global.player_character_stats[i].build_itemdrop_reach_resourcereach_distance = false
@@ -185,6 +195,7 @@ function gui_click(event)
 				p.character_reach_distance_bonus = 125
 				p.character_resource_reach_distance_bonus = 125
 			end
+			return
 		elseif e.name == "character_craft" then
 			if global.player_character_stats[i].crafting_speed then
 				global.player_character_stats[i].crafting_speed = false
@@ -195,6 +206,7 @@ function gui_click(event)
 				event.element.style.font_color = global.green
 				p.character_crafting_speed_modifier = 60
 			end
+			return
 		elseif e.name == "character_mine" then
 			if global.player_character_stats[i].mining_speed then
 				global.player_character_stats[i].mining_speed = false
@@ -205,6 +217,7 @@ function gui_click(event)
 				event.element.style.font_color = global.green
 				p.character_mining_speed_modifier = 150
 			end
+			return
 		elseif e.name == "character_invincible" then
 			if global.player_character_stats[i].invincible then
 				global.player_character_stats[i].invincible = false
@@ -215,6 +228,7 @@ function gui_click(event)
 				event.element.style.font_color = global.green
 				p.character.destructible = false
 			end
+			return
 		elseif e.name == "character_run1" then
 			local run_table = event.element.parent
 			run_table.character_run1.state = true
@@ -224,6 +238,7 @@ function gui_click(event)
 			run_table.character_run10.state = false
 			p.character_running_speed_modifier = 0
 			global.player_character_stats[i].running_speed = 0
+			return
 		elseif e.name == "character_run2" then
 			local run_table = event.element.parent
 			run_table.character_run1.state = false
@@ -233,6 +248,7 @@ function gui_click(event)
 			run_table.character_run10.state = false
 			p.character_running_speed_modifier = 1
 			global.player_character_stats[i].running_speed = 1
+			return
 		elseif e.name == "character_run3" then
 			local run_table = event.element.parent
 			run_table.character_run1.state = false
@@ -242,6 +258,7 @@ function gui_click(event)
 			run_table.character_run10.state = false
 			p.character_running_speed_modifier = 2
 			global.player_character_stats[i].running_speed = 2
+			return
 		elseif e.name == "character_run5" then
 			local run_table = event.element.parent
 			run_table.character_run1.state = false
@@ -251,6 +268,7 @@ function gui_click(event)
 			run_table.character_run10.state = false
 			p.character_running_speed_modifier = 4
 			global.player_character_stats[i].running_speed = 4
+			return
 		elseif e.name == "character_run10" then
 			local run_table = event.element.parent
 			run_table.character_run1.state = false
@@ -260,12 +278,15 @@ function gui_click(event)
 			run_table.character_run10.state = true
 			p.character_running_speed_modifier = 9
 			global.player_character_stats[i].running_speed = 9
+			return
 		elseif e.name == "follow" then
 			toggle_follow_panel(p)
+			return
 		elseif e.name == "unfollow" then
 			global.follow_targets[i] = nil
 			p.gui.left.follow_panel.follow_list.unfollow.destroy()
 			p.gui.left.follow_panel.follow_list.return_button.destroy()
+			return
 		elseif e.name == "return_button" then
 			global.follow_targets[i] = nil
 			p.teleport(global.original_position[i], global.original_surface[i])
@@ -273,6 +294,7 @@ function gui_click(event)
 			p.gui.left.follow_panel.follow_list.return_button.destroy()
 		elseif e.name == "admin_follow_search_button" then
 			update_follow_panel(p)
+			return
 		end
 		--set who to follow
 		for _, player in pairs(game.connected_players) do
@@ -284,6 +306,7 @@ function gui_click(event)
 				if not p.gui.left.follow_panel.follow_list.return_button then p.gui.left.follow_panel.follow_list.add { name = "return_button", type = "button", caption = "Return" } end
 				p.gui.left.follow_panel.follow_list.unfollow.style.font = "default"
 				p.gui.left.follow_panel.follow_list.return_button.style.font = "default"
+				return
 			end
 		end
 	end
