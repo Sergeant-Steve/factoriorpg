@@ -286,26 +286,39 @@ function rpg_nest_killed(event)
 	--game.print("Entity died.")
 	if event.entity.type == "unit-spawner" then
 		--game.print("Spawner died.")
-		-- if event.cause and event.cause.type == "player" then
-			-- --game.print("Spawner died by player.  Awarding exp.")
-			-- rpg_add_exp(event.cause.player, 100)
-		-- else
-			-- if event.cause and event.cause.last_user then
-				-- rpg_add_exp(event.cause.last_user, 100)
-			-- end
-		-- end
-		for __, character in pairs(event.entity.surface.find_entities_filtered{type="player", area={{event.entity.position.x-64, event.entity.position.y-64}, {event.entity.position.x+64, event.entity.position.y+64}}}) do
-			rpg_add_exp(character.player, 100)
-		end
-	end
-	if event.entity.type == "turret" and event.entity.force.name == "enemy" then
-		--Worm turret died.
-		if event.cause and event.cause.player then
-			rpg_add_exp(event.cause.player, 50)
+		if event.cause and event.cause.type == "player" then
+			--game.print("Spawner died by player.  Awarding exp.")
+			rpg_nearby_exp(event.entity.position, event.cause.force, 100)
 		else
 			if event.cause and event.cause.last_user then
-				rpg_add_exp(event.cause.last_user, 50)
+				rpg_nearby_exp(event.entity.position, event.cause.force, 100)
 			end
+		end		
+	end
+	if event.entity.type == "turret" and string.find(event.entity.name, "worm") then
+		--Worm turret died.
+		--game.print("Worm died at ".. event.entity.position.x .. "," .. event.entity.position.y .. " by the hands of " .. event.cause.player.name )
+		--0.15.13 bug: cause is nil
+		-- if event.cause then
+			-- rpg_nearby_exp(event.entity.position, event.cause.force, 50)
+		-- end
+		
+		--Temporary measure.  This can cause players on different teams to get exp.  Super edge-case stuff.
+		local radius = 64
+		local position = event.entity.position
+		for __, player in pairs(game.connected_players) do
+			if player.position.x < position.x + radius and player.position.x > position.x - radius and player.position.y < position.y + radius and player.position.y > position.y - radius then
+				rpg_add_exp(player, 50)
+			end
+		end
+	end
+end
+
+function rpg_nearby_exp(position, force, amount)
+	local radius = 64
+	for __, player in pairs(force.connected_players) do
+		if player.position.x < position.x + radius and player.position.x > position.x - radius and player.position.y < position.y + radius and player.position.y > position.y - radius then
+			rpg_add_exp(player, amount)
 		end
 	end
 end
@@ -357,7 +370,7 @@ end
 --Display exp, check for level up, update gui
 function rpg_add_exp(player, amount)
 	
-	local level = global.rpg_exp[player.name].level
+	--local level = global.rpg_exp[player.name].level
 	local class = global.rpg_exp[player.name].class
 	
 	--Bonus exp from legacy
@@ -384,7 +397,7 @@ function rpg_add_exp(player, amount)
 		end
 	end
 	--Parent value updated so update our local value.
-	level = global.rpg_exp[player.name].level
+	--level = global.rpg_exp[player.name].level
 	
 	rpg_update_gui(player)
 end
@@ -501,20 +514,21 @@ function rpg_give_team_bonuses(force)
 		end
 	end
 	
-	--force.reset_technology_effects()
+	force.reset_technology_effects()
 	
 	--That entire code block for calculating base bonus can be replaced by this:
 	--For some reason this stops current research.  So let's save and reset it.
-	if force.current_research then
-		--global.force_to_fix = force
-		global.current_research = force.current_research.name
-		global.research_progress = force.research_progress
-		force.reset_technology_effects()
-		force.current_research = global.current_research
-		force.research_progress = global.research_progress
-	else
-		force.reset_technology_effects()
-	end
+	-- Made obsolete by 0.15.13
+	-- if force.current_research then
+		-- --global.force_to_fix = force
+		-- global.current_research = force.current_research.name
+		-- global.research_progress = force.research_progress
+		-- force.reset_technology_effects()
+		-- force.current_research = global.current_research
+		-- force.research_progress = global.research_progress
+	-- else
+		-- force.reset_technology_effects()
+	-- end
 	--This step must be done next tick.
 	--force.research_progress = research_progress
 	
