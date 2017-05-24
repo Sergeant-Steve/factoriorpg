@@ -46,7 +46,7 @@ function FindUnusedSpawns(event)
     local player = game.players[event.player_index]
     if (player.online_time < MIN_ONLINE_TIME) then
 
-        DropGravestoneChests(player)
+        --DropGravestoneChests(player)
 
         -- Clear out global variables for that player
         if (global.playerSpawns[player.name] ~= nil) then
@@ -92,7 +92,7 @@ function FindUnusedSpawns(event)
         end
 
         -- Remove the character completely
-        game.remove_offline_players({player})
+        --game.remove_offline_players({player})
     end
 end
 
