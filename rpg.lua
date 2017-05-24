@@ -3,6 +3,7 @@
 -- /c rpg_savedata() 
 --Utility command for griefing.
 -- /silent-command do local hoarder = {amount=0} for k,v in pairs(game.players) do if v.get_item_count("uranium-235") > hoarder.amount then hoarder.name = v.name hoarder.amount = v.get_item_count("uranium-235") end end game.print(hoarder.name .. " is hoarding " .. hoarder.amount .. " uranium-235!") end
+-- /c for k,v in pairs(game.player.surface.find_entities_filtered{name="programmable-speaker"}) do game.print(v.last_user.name .. "is making noise.") end
 
 require "rpgdata" --Savedata.  This is externally generated.
 --Savedata is of form: player_name = {bank = exp, class1 = exp, class2 = exp, etc}
@@ -324,6 +325,7 @@ function rpg_nearby_exp(position, force, amount)
 end
 
 --Award exp based on number of beakers
+--This respects research multiplier setting
 function rpg_tech_researched(event)
 	--rpg_give_team_bonuses calls this event a lot.
 	if event.by_script then
@@ -355,11 +357,16 @@ function rpg_tech_researched(event)
 end
 
 function rpg_satellite_launched(event)
-	local bonus = 0
-	--Todo: Check for hard recipes mode.
+	local bonus = 20000
+	if game.difficulty_settings.recipe_difficulty == 1 then
+		bonus = 2 * bonus
+	end
+	if game.difficulty_settings.technology_difficulty == 1 then
+		bonus = 2 * bonus
+	end
 	if event.rocket.get_item_count("satellite") > 0 then
 		global.satellites_launched = global.satellites_launched + 1
-		bonus = math.max(10, 20000 / (global.satellites_launched^1.5))
+		bonus = math.max(100, bonus / (global.satellites_launched^1.5))
 		for n, player in pairs(game.players) do
 			local fraction_online = player.online_time / game.tick
 			rpg_add_exp(player, bonus * fraction_online)
@@ -447,6 +454,13 @@ function rpg_levelup(player)
 		player.surface.create_entity{name="flying-text", text="Level up!", position={player.position.x, player.position.y-3}}
 	end
 	global.rpg_exp[player.name].level = global.rpg_exp[player.name].level + 1
+	
+	--Promote and allow decon planners
+	if global.rpg_exp[player.name].level >= 5 then
+		if player.permission_group.name == "Default" then
+			player.permission_group = game.permissions.get_group("trusted")
+		end
+	end
 	
 	--Award bonuses
 	if player.connected then
@@ -635,18 +649,19 @@ function rpg_give_team_bonuses(force)
 	
 end
 
-function rpg_fix_tech()
-	if global.force_to_fix then
-		if global.current_research then
-			global.force_to_fix.current_research = global.current_research
-			global.force_to_fix.research_progress = global.research_progress
-			global.force_to_fix = nil
-			global.current_research = nil
-			global.research_progress = nil
-		end
-	end
+-- Obsolete as of 0.15.13
+-- function rpg_fix_tech()
+	-- if global.force_to_fix then
+		-- if global.current_research then
+			-- global.force_to_fix.current_research = global.current_research
+			-- global.force_to_fix.research_progress = global.research_progress
+			-- global.force_to_fix = nil
+			-- global.current_research = nil
+			-- global.research_progress = nil
+		-- end
+	-- end
 		
-end
+-- end
 
 function rpg_init()
 	global.rpg_exp = {}

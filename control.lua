@@ -1,6 +1,7 @@
 -- TOOLS: Recommend all be turned on
 require "locale/utils/event" --Yes this line is seriously commented out, and yes without this it won't even work. I guess you now HAVE TO change the settings to match what you need.
 --require "oarc_events" --Oarc's separate spawn scenario.  Not working yet.
+require "rpg_permissions" --Limit certain actions to players level 5 or greater
 require "rpg" --Award bonuses based on experience earned.
 --require "permissions" --Permission manager
 --require "trusted" --Module to add trusted players to a seperate permission group
@@ -13,6 +14,7 @@ require "tag" --Module to let players set a tag behind their names to improve te
 --require "popup" --Module to create and display an popup in the center of all players their screens.
 --require "rules" --Module which displays a popup with the rules when a player joins, or presses the open rules button
 --require "rocket" --Module to stop people removing the rocket silo
+require "dirtpath" --For some silliness.
 
 -- World Generators: Pick only ONE
 require "oarc_events" --Oarc's separate spawn scenario.  Not working yet.

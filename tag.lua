@@ -66,6 +66,16 @@ function tag_on_gui_click(event)
 	end
 end
 
+commands.add_command("tag", "Set a custom tag.", function(tag)
+	if tag.parameter then
+		--game.print(serpent.line(tag))
+		game.players[tag.player_index].tag = "[" .. tag.parameter .. "]"
+		game.players[tag.player_index].print("Tag set.")
+	else
+		game.player.tag = ""
+		game.player.print("Tag cleared.")
+	end
+end)
 
 Event.register(defines.events.on_gui_click, tag_on_gui_click)
 --Event.register(defines.events.on_player_joined_game, tag_create_gui) --This is called manually.

@@ -7,7 +7,7 @@ global.announcements.announcement_delay = 60 * 60 * 20
 global.announcements.announcements = {
 --	"Someone was really f-ing lazy and forgot to change this. Shame on them.",
 	"Thank you for playing FactorioRPG!",
-	"Join us on the Factorio RPG discord! https://discord.gg/KD3Twh",
+	"Join us on the Factorio RPG discord! https://discord.gg/pqsGhaH",
 	
 }
 
