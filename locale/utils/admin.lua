@@ -47,7 +47,8 @@ function entity_mined(event)
 	if entity.force.name == "neutral" 
 	or entity.name == "entity-ghost" 
 	or entity.type == "locomotive" 
-	or entity.type == "cargo-wagon" 
+	or entity.type == "cargo-wagon"
+	or entity.type == "fluid-wagon"
 	or entity.type == "car" 
 	or entity.type:find("robot") 
 	or game.players[event.player_index].force == game.forces.Admins 
