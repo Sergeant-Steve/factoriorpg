@@ -460,10 +460,11 @@ end
 
 -- Adjust alien params
 function ConfigureAlienStartingParams()
-    game.map_settings.enemy_evolution.time_factor=0
+    --game.map_settings.enemy_evolution.time_factor=0
     game.map_settings.enemy_evolution.destroy_factor = game.map_settings.enemy_evolution.destroy_factor / ENEMY_DESTROY_FACTOR_DIVISOR
     game.map_settings.enemy_evolution.pollution_factor = game.map_settings.enemy_evolution.pollution_factor / ENEMY_POLLUTION_FACTOR_DIVISOR
-    game.map_settings.enemy_expansion.enabled = ENEMY_EXPANSION
+    --Respect map settings!
+	--game.map_settings.enemy_expansion.enabled = ENEMY_EXPANSION
 end
 
 -- Add Long Reach to Character

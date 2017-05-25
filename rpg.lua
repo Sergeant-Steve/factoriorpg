@@ -44,7 +44,7 @@ function rpg_loadsave(event)
 			rpg_save[player.name].bank = 0
 		end
 	end
-	global.rpg_tmp[player.name] = {}
+	global.rpg_tmp[player.name] = {class_timer=-20*60*60}
 end
 
 
@@ -102,18 +102,24 @@ end
 --Create class pick / change gui
 function rpg_class_picker(event)
 	local player = game.players[event.player_index]
-	if player.gui.center.sheet then
-		player.gui.center.sheet.destroy()
-	end
-	if not player.gui.center.picker then
-		player.gui.center.add{type="frame", name="picker", caption="Choose a class"}
-		player.gui.center.picker.add{type="flow", name="container", direction="vertical"}
-		player.gui.center.picker.container.add{type="button", name="Soldier", caption="Soldier", tooltip="Enhance the combat abilities of your team, larger radar radius"}
-		player.gui.center.picker.container.add{type="button", name="Builder", caption="Builder", tooltip="Extra reach, team turret damage, additional quickbars (at 20 and 50)"}
-		player.gui.center.picker.container.add{type="button", name="Scientist", caption="Scientist", tooltip="Boost combat robots, science speed, team health, team movement speed"}
-		player.gui.center.picker.container.add{type="button", name="Miner", caption="Miner", tooltip="Incrase explosive damage and mining productivity of your team"}
-		player.gui.center.picker.container.add{type="button", name="None", caption="None", tooltip="No bonuses are given to team."}
-		player.gui.center.picker.add{type="button", name="pickerclose", caption="x"}
+	--Check if player is eligible to change classes.
+	--15 minute cooldown	
+	if global.rpg_tmp[player.name].class_timer and game.tick > global.rpg_tmp[player.name].class_timer + 60 * 60 * 15 then
+		if player.gui.center.sheet then
+			player.gui.center.sheet.destroy()
+		end
+		if not player.gui.center.picker then
+			player.gui.center.add{type="frame", name="picker", caption="Choose a class"}
+			player.gui.center.picker.add{type="flow", name="container", direction="vertical"}
+			player.gui.center.picker.container.add{type="button", name="Soldier", caption="Soldier", tooltip="Enhance the combat abilities of your team, larger radar radius"}
+			player.gui.center.picker.container.add{type="button", name="Builder", caption="Builder", tooltip="Extra reach, team turret damage, additional quickbars (at 20 and 50)"}
+			player.gui.center.picker.container.add{type="button", name="Scientist", caption="Scientist", tooltip="Boost combat robots, science speed, team health, team movement speed"}
+			player.gui.center.picker.container.add{type="button", name="Miner", caption="Miner", tooltip="Incrase explosive damage and mining productivity of your team"}
+			player.gui.center.picker.container.add{type="button", name="None", caption="None", tooltip="No bonuses are given to team."}
+			player.gui.center.picker.add{type="button", name="pickerclose", caption="x"}
+		end
+	else
+		player.print("You cannot change class for " .. math.ceil( 15 - ( (game.tick - global.rpg_tmp[player.name].class_timer) / 60 / 60) ) .. " more minutes.")
 	end
 end
 
@@ -153,7 +159,9 @@ end
 
 --Create the gui for other mods.
 function rpg_post_rpg_gui(event)
-	CreateSpawnCtrlGui(game.players[event.player_index])
+	if CreateSpawnCtrlGui then
+		CreateSpawnCtrlGui(game.players[event.player_index])
+	end
 	admin_joined(event)
 	tag_create_gui(event)
 end
@@ -203,7 +211,12 @@ function rpg_character_sheet(player)
 			
 			column_one.add{type="label", caption="Crafting Speed:"}
 			column_two.add{type="label", caption="+" .. math.floor(((1+player.character_crafting_speed_modifier)*(1+player.force.manual_crafting_speed_modifier)-1) * 100) .. "%" }
-			column_three.add{type="label", caption="+" .. math.floor(player.character_crafting_speed_modifier * 100) .. "%"}
+			--This one can be negative so...
+			if player.character_crafting_speed_modifier >= 0 then
+				column_three.add{type="label", caption="+" .. math.floor(player.character_crafting_speed_modifier * 100) .. "%"}
+			else
+				column_three.add{type="label", caption=math.floor(player.character_crafting_speed_modifier * 100) .. "%"}
+			end
 			
 			column_one.add{type="label", caption="Mining Speed:"}
 			column_two.add{type="label", caption="+" .. math.floor(((1+player.character_mining_speed_modifier)-1) * 100 ) .. "%" }
@@ -234,6 +247,7 @@ end
 function rpg_set_class(player, class)
 	global.rpg_exp[player.name].level = 1
 	global.rpg_exp[player.name].class = class
+	global.rpg_tmp[player.name].class_timer = game.tick
 	if not global.rpg_exp[player.name][class] then
 		global.rpg_exp[player.name][class] = 0
 	end
@@ -251,6 +265,8 @@ function rpg_set_class(player, class)
 		global.rpg_tmp[player.name].ready = 1
 	end
 	--global.rpg_exp[player.name].ready = math.max(global.rpg_exp[player.name].level, global.rpg_exp[player.name].ready)
+	rpg_give_bonuses(player)
+	rpg_give_team_bonuses(player.force)
 	rpg_starting_resources(player)
 end
 
@@ -463,10 +479,10 @@ function rpg_levelup(player)
 	end
 	
 	--Award bonuses
-	if player.connected then
-		rpg_give_bonuses(player)
-		rpg_give_team_bonuses(player.force)
-	end
+	-- if player.connected then
+		-- rpg_give_bonuses(player)
+		-- rpg_give_team_bonuses(player.force)
+	-- end
 end
 
 --Award bonuses
@@ -649,6 +665,33 @@ function rpg_give_team_bonuses(force)
 	
 end
 
+-- Soldier reward: Bonus radius to radar scanning
+function rpg_bonus_scan(event)
+	if not event.radar then
+		log("RPG: Radar not valid.")
+		return
+	end
+	
+	local soldierbonus = 0
+	local force = event.radar.force
+	for k,v in pairs(force.players) do
+		if v.connected then
+			if global.rpg_exp[v.name].class == "Soldier" then
+				soldierbonus = soldierbonus + global.rpg_exp[v.name].level
+			end
+		end
+	end
+	local bonus = 32 * (soldierbonus ^ 0.3) --This is the literal size of the area we're scanning.
+
+	local position = { x=event.chunk_position.x * 32 + 16, y=event.chunk_position.y * 32 + 16 }
+
+	-- Extend scan in the same direction as the radar.
+	--Default case, bottom-right quadrant
+	local bbox = {{position.x-bonus/2, position.y-bonus/2}, {position.x+bonus/2, position.y+bonus/2}}
+		
+	event.radar.force.chart(event.radar.surface, bbox)
+end
+
 -- Obsolete as of 0.15.13
 -- function rpg_fix_tech()
 	-- if global.force_to_fix then
@@ -713,6 +756,7 @@ Event.register(defines.events.on_player_respawned, rpg_respawn)
 Event.register(defines.events.on_rocket_launched, rpg_satellite_launched)
 Event.register(defines.events.on_entity_died, rpg_nest_killed)
 Event.register(defines.events.on_research_finished, rpg_tech_researched)
+Event.register(defines.events.on_sector_scanned, rpg_bonus_scan)
 --Event.register(defines.events.on_research_finished, rpg_nerf_tech)
 --Event.register(defines.events.on_tick, rpg_exp_tick) --For debug
 Event.register(defines.events.on_tick, rpg_fix_tech) --Patch for force.reset_technology_effects()

@@ -78,10 +78,13 @@ function Event.dispatch(event)
             if not success then
                 -- may be nil in on_load
                 if _G.game then
-                    if Game.print_all(err) == 0 then
-                        -- no players received the message, force a real error so someone notices
-                        error(err)
-                    end
+					-- This causes desyncs.
+                    -- if Game.print_all(err) == 0 then
+                        -- -- no players received the message, force a real error so someone notices
+                        -- error(err)
+                    -- end
+					--Instead, just log it.
+					log(err)
                 else
                     -- no way to handle errors cleanly when the game is not up
                     error(err)

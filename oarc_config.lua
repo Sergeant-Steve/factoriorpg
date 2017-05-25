@@ -207,11 +207,11 @@ SPAWN_TREE_OCTAGON_ENABLED = true
 
 -- Safe area has no aliens
 -- +/- this in x and y direction
-SAFE_AREA_TILE_DIST = CHUNK_SIZE*14
+SAFE_AREA_TILE_DIST = CHUNK_SIZE*11
 
 -- Warning area has reduced aliens
 -- +/- this in x and y direction
-WARNING_AREA_TILE_DIST = CHUNK_SIZE*24
+WARNING_AREA_TILE_DIST = CHUNK_SIZE*16
 
 -- 1 : X (spawners alive : spawners destroyed) in this area
 WARN_AREA_REDUCTION_RATIO = 15
@@ -234,7 +234,7 @@ ENABLE_DEFAULT_SPAWN = true
 
 -- Enable if people can allow others to join their base
 ENABLE_SHARED_SPAWNS = true
-MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN = 3
+MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN = 4
 
 
 ---------------------------------------
@@ -245,7 +245,7 @@ RESPAWN_COOLDOWN_TICKS = TICKS_PER_MINUTE * RESPAWN_COOLDOWN_IN_MINUTES
 
 -- Require playes to be online for at least 5 minutes
 -- Else their character is removed and their spawn point is freed up for use
-MIN_ONLIME_TIME_IN_MINUTES = 5
+MIN_ONLIME_TIME_IN_MINUTES = 15
 MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 
 
@@ -257,8 +257,8 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 ENEMY_EXPANSION = false
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
-ENEMY_POLLUTION_FACTOR_DIVISOR = 10
-ENEMY_DESTROY_FACTOR_DIVISOR = 5
+ENEMY_POLLUTION_FACTOR_DIVISOR = 4
+ENEMY_DESTROY_FACTOR_DIVISOR = 1
 
 
 --------------------------------------------------------------------------------

@@ -17,11 +17,11 @@ require "tag" --Module to let players set a tag behind their names to improve te
 require "dirtpath" --For some silliness.
 
 -- World Generators: Pick only ONE
-require "oarc_events" --Oarc's separate spawn scenario.  Not working yet.
+--require "oarc_events" --Oarc's separate spawn scenario.  Not working yet.
 --require "void" --Worldgenerator which randomly generates holes in the world
 --require "nuclear" --worldgenerator for nuclear scenario
 --require "island_spawn" --worldgenerator for island spawn scenario
---require "grid" --Worldgenerator which devides the world into a grid.
+require "grid" --Worldgenerator which devides the world into a grid.
 
 --BROKEN?
 --require "locale/utils/undecorator"	--Removes decorations
