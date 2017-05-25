@@ -14,7 +14,7 @@ require "mod-gui"
 --require "rocket" --Module to stop people removing the rocket silo
 
 -- World Generators: Pick only ONE
---require "void" --Worldgenerator which randomly generates holes in the world
+--NOT UPDATED require "void" --Worldgenerator which randomly generates holes in the world
 --require "nuclear" --worldgenerator for nuclear scenario
 --NOT UPDATED require "grid" --Worldgenerator which devides the world into a grid.
 
