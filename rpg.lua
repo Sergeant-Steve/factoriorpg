@@ -153,7 +153,7 @@ end
 
 --rpg gui handler
 function rpg_class_click(event)
-	player = game.players[event.player_index]
+	local player = game.players[event.player_index]
 	if not (event.element and event.element.name) then
 		return
 	end
