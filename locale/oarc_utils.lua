@@ -231,7 +231,7 @@ end
 -- Set all forces to friendly
 function SetFriendlyBetweenAllForces()
     for name,team in pairs(game.forces) do
-        if name ~= "neutral" and (name ~= "enemy" or name ~= "Admins")then
+        if not (name == "neutral" or name == "enemy" or name == "Admins") then
             for x,y in pairs(game.forces) do
                 if x ~= "neutral" and x ~= "enemy" then
                     team.set_friend(x,true)
