@@ -3,7 +3,7 @@ local increment = util.increment
 local format_number = util.format_number
 local format_time = util.formattime
 
-script.on_event(defines.events.on_rocket_launched, function(event)
+Event.register(defines.events.on_rocket_launched, function(event)
   local rocket = event.rocket
   if rocket.get_item_count("satellite") > 0 then
     game.set_game_state{game_finished = true, player_won = true, can_continue = true}
@@ -15,7 +15,7 @@ script.on_event(defines.events.on_rocket_launched, function(event)
   end
 end)
 
-script.on_init(function()
+Event.register(-1, function()
   init_globals()
   setup_waypoints()
   init_forces()
@@ -23,7 +23,7 @@ script.on_init(function()
   randomize_ore()
 end)
 
-script.on_event(defines.events.on_entity_died, function(event)
+Event.register(defines.events.on_entity_died, function(event)
   local entity_type = event.entity.type
   if entity_type == "unit" then
     unit_died(event)
@@ -35,7 +35,7 @@ script.on_event(defines.events.on_entity_died, function(event)
   end
 end)
 
-script.on_event(defines.events.on_player_created, function(event)
+Event.register(defines.events.on_player_created, function(event)
   local player = game.players[event.player_index]
   give_spawn_equipment(player)
   give_starting_equipment(player)
@@ -46,17 +46,17 @@ script.on_event(defines.events.on_player_created, function(event)
   end
 end)
 
-script.on_event(defines.events.on_player_joined_game, function(event)
+Event.register(defines.events.on_player_joined_game, function(event)
   local player = game.players[event.player_index]
   gui_init(player)
 end)
 
-script.on_event(defines.events.on_player_respawned, function(event)
+Event.register(defines.events.on_player_respawned, function(event)
   local player = game.players[event.player_index]
   give_spawn_equipment(player)
 end)
 
-script.on_event(defines.events.on_gui_click, function(event)
+Event.register(defines.events.on_gui_click, function(event)
   local gui = event.element
   local player = game.players[event.player_index]
   if gui.name == "send_next_wave" then
@@ -112,7 +112,7 @@ script.on_event(defines.events.on_gui_click, function(event)
   end
 end)
 
-script.on_event(defines.events.on_tick, function (event)
+Event.register(defines.events.on_tick, function (event)
   local tick = event.tick
   check_next_wave(tick)
   check_spawn_units(tick)
