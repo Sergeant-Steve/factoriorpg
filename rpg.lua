@@ -51,12 +51,40 @@ end
 -- SPAWN AND RESPAWN --
 --Higher level players get more starting resources for an accelerated start!
 function rpg_starting_resources(player)
-	--maxlevel is the highest level this function has seen from this player.
-	if not global.rpg_tmp[player.name].maxlevel then 
-		global.rpg_tmp[player.name].maxlevel = 1
+	-- Sum all exp and calculate what level that would be.
+	if global.rpg_tmp[player.name].ready then
+		return
+	else
+		global.rpg_tmp[player.name].ready = true --And continue
 	end
-	local bonuslevel = global.rpg_exp[player.name].level - global.rpg_tmp[player.name].maxlevel
-	global.rpg_tmp[player.name].maxlevel = math.max(global.rpg_exp[player.name].level, global.rpg_tmp[player.name].maxlevel)
+	local sum_exp = 0
+	local total_level = 1
+	if global.rpg_exp[player.name].bank then
+		sum_exp = sum_exp + global.rpg_exp[player.name].bank
+	end
+	if global.rpg_exp[player.name].Soldier then
+		sum_exp = sum_exp + global.rpg_exp[player.name].Soldier 
+	end
+	if global.rpg_exp[player.name].Builder then
+		sum_exp = sum_exp + global.rpg_exp[player.name].Builder 
+	end
+	if global.rpg_exp[player.name].Scientist then
+		sum_exp = sum_exp + global.rpg_exp[player.name].Scientist 
+	end
+	if global.rpg_exp[player.name].Miner then
+		sum_exp = sum_exp + global.rpg_exp[player.name].Miner 
+	end
+	while rpg_exp_tnl(total_level) < sum_exp do
+		total_level = total_level + 1
+	end
+	--game.print("Giving staring resources.  Total exp is " .. sum_exp .. " and total level is " .. total_level .. ".")
+	-- --maxlevel is the highest level this function has seen from this player.
+	-- if not global.rpg_tmp[player.name].maxlevel then 
+		-- global.rpg_tmp[player.name].maxlevel = 1
+	-- end
+	-- local bonuslevel = global.rpg_exp[player.name].level - global.rpg_tmp[player.name].maxlevel
+	-- global.rpg_tmp[player.name].maxlevel = math.max(global.rpg_exp[player.name].level, global.rpg_tmp[player.name].maxlevel)
+	local bonuslevel = total_level - 1
 	if bonuslevel > 0 then
 		player.insert{name="iron-plate", count=bonuslevel * 10}
 		player.insert{name="copper-plate", count=math.max(1, math.floor(bonuslevel / 4) * 10) }
@@ -260,9 +288,6 @@ function rpg_set_class(player, class)
 	end
 	if global.rpg_exp[player.name].bank > 0 then
 		player.print("Banked experience: " .. math.floor(global.rpg_exp[player.name].bank) .. " detected.  Leveling will be accelerated.")
-	end
-	if not global.rpg_tmp[player.name].ready then
-		global.rpg_tmp[player.name].ready = 1
 	end
 	--global.rpg_exp[player.name].ready = math.max(global.rpg_exp[player.name].level, global.rpg_exp[player.name].ready)
 	rpg_give_bonuses(player)

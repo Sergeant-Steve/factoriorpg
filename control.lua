@@ -17,11 +17,11 @@ require "tag" --Module to let players set a tag behind their names to improve te
 require "dirtpath" --For some silliness.
 
 -- World Generators: Pick only ONE
---require "oarc_events" --Oarc's separate spawn scenario.  Not working yet.
+require "oarc_events" --Oarc's separate spawn scenario.  Not working yet.
 --require "void" --Worldgenerator which randomly generates holes in the world
 --require "nuclear" --worldgenerator for nuclear scenario
 --require "island_spawn" --worldgenerator for island spawn scenario
-require "grid" --Worldgenerator which devides the world into a grid.
+--require "grid" --Worldgenerator which devides the world into a grid.
 
 --BROKEN?
 --require "locale/utils/undecorator"	--Removes decorations
@@ -36,12 +36,12 @@ end
 -- @param event on_player_joined event
 function player_joined(event)
 	local player = game.players[event.player_index]
-	if game.tick < ticks_from_minutes(10) then
+	--if game.tick < ticks_from_minutes(10) then
 		player.insert { name = "pistol", count = 1 }
 		player.insert { name = "firearm-magazine", count = 20 }
 		player.insert { name = "burner-mining-drill", count = 2 }
 		player.insert { name = "stone-furnace", count = 2 }
-	end
+	--end
 
 	if (player.force.technologies["steel-processing"].researched) then
         player.insert { name = "steel-axe", count = 2 }

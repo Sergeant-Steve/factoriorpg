@@ -199,7 +199,7 @@ ENABLE_SPAWN_FORCE_GRASS = true
 SPAWN_TREE_CIRCLE_ENABLED = true
 
 -- Set this to true for the spawn area to be surrounded by an octagon of trees
-SPAWN_TREE_OCTAGON_ENABLED = true
+SPAWN_TREE_OCTAGON_ENABLED = false
 
 ---------------------------------------
 -- Safe Spawn Area Options
@@ -207,7 +207,7 @@ SPAWN_TREE_OCTAGON_ENABLED = true
 
 -- Safe area has no aliens
 -- +/- this in x and y direction
-SAFE_AREA_TILE_DIST = CHUNK_SIZE*11
+SAFE_AREA_TILE_DIST = CHUNK_SIZE*10
 
 -- Warning area has reduced aliens
 -- +/- this in x and y direction
