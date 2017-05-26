@@ -1,5 +1,11 @@
 local surface = nil
 
+local HOURS_OF_FUEL = 6
+
+local SECONDS_PER_HOUR = 3600
+local SECONDS_PER_FUEL = 200
+local TOTAL_FUEL = HOURS_OF_FUEL * SECONDS_PER_HOUR / SECONDS_PER_FUEL
+
 local function clear_area()
 	for k, v in pairs(surface.find_entities({{-164, 0}, {163, 64}})) do
 		v.destroy()
@@ -43,7 +49,7 @@ local function create_requestors()
 			end
 
 			local chest = create_entity_at("logistic-chest-requester", chest_x, y * 5 + 16 - 1)
-			chest.get_inventory(defines.inventory.chest).insert({ name="uranium-fuel-cell", count=142 })
+			chest.get_inventory(defines.inventory.chest).insert({ name="uranium-fuel-cell", count = TOTAL_FUEL - 2 })
 			chest.set_request_slot({ name="uranium-fuel-cell", count=4 }, 1)
 
 			create_entity_at("inserter", x, y * 5 + 16 - 1, insert_dir)

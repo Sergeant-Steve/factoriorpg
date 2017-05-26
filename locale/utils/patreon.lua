@@ -57,27 +57,27 @@ function patreon_check(player)
 end
 function patreon_create_patreon_top_gui(player_name)
 	local player = game.players[player_name]
-	if player.gui.top.patreon_menu == nil then
-		player.gui.top.add { name = "patreon_menu", type = "button", caption = "Open Patreon" }
+	if mod_gui.get_button_flow(player).patreon_menu == nil then
+		mod_gui.get_button_flow(player).add { name = "patreon_menu", type = "button", caption = "Open Patreon" }
 	end
 end
 function patreon_create_patreon_pane(player_name)
 	local player = game.players[player_name]
 	local index = player.index
 	local patreon_pane = nil
-	if not player.gui.left.patreon_pane then
-		patreon_pane = player.gui.left.add { name = "patreon_pane", type = "frame", direction = "vertical", caption = "Patreon GUI " }
+	if not mod_gui.get_frame_flow(player).patreon_pane then
+		patreon_pane = mod_gui.get_frame_flow(player).add { name = "patreon_pane", type = "frame", direction = "vertical", caption = "Patreon GUI " }
 	else
-		patreon_pane = player.gui.left.patreon_pane
+		patreon_pane = mod_gui.get_frame_flow(player).patreon_pane
 	end
-	if not player.gui.left.patreon_pane.unique_tag then
+	if not mod_gui.get_frame_flow(player).patreon_pane.unique_tag then
 		patreon_pane.add { name = "unique_tag", type = "button", caption = "Unique Tag" }
 	end
-	if not player.gui.left.patreon_pane.patreon_tag then
+	if not mod_gui.get_frame_flow(player).patreon_pane.patreon_tag then
 		patreon_pane.add { name = "patreon_tag", type = "button", caption = "Patreon Tag" }
 	end
 	if player.admin == false then
-		if not player.gui.left.patreon_pane.spectate then
+		if not mod_gui.get_frame_flow(player).patreon_pane.spectate then
 			patreon_pane.add { name = "spectate", type = "button", caption = "Spectate" }
 		end
 	end
@@ -107,12 +107,12 @@ function patreon_gui_click(event)
 			p.tag = " [Patreon]"
 		elseif e.name == "patreon_menu" and e.caption == "Open Patreon" then
 			patreon_create_patreon_pane(p.name)
-			p.gui.top.patreon_menu.caption = "Close Patreon"
+			mod_gui.get_button_flow(p).patreon_menu.caption = "Close Patreon"
 		elseif e.name == "patreon_menu" and e.caption == "Close Patreon" then
-			if p.gui.left.patreon_pane ~= nil then
-				p.gui.left.patreon_pane.destroy()
+			if mod_gui.get_frame_flow(p).patreon_pane ~= nil then
+				mod_gui.get_frame_flow(p).patreon_pane.destroy()
 			end
-			p.gui.top.patreon_menu.caption = "Open Patreon"
+			mod_gui.get_button_flow(p).patreon_menu.caption = "Open Patreon"
 		end
 	end
 end
@@ -134,8 +134,8 @@ end
 function patreon_spectate_off(index)
 	local player = game.players[index]
 	global.patreon.player_spectator_state[index] = false
-	player.gui.left.patreon_pane.return_character.destroy()
-	player.gui.left.patreon_pane.add { name = "spectate", type = "button", caption = "Spectate" }
+	mod_gui.get_frame_flow(player).patreon_pane.return_character.destroy()
+	mod_gui.get_frame_flow(player).patreon_pane.add { name = "spectate", type = "button", caption = "Spectate" }
 	if player.character == nil then
 		local pos = player.position
 		if global.patreon.player_spectator_character[index] and global.patreon.player_spectator_character[index].valid then
@@ -160,8 +160,8 @@ end
 function patreon_spectate_on(index)
 	local player = game.players[index]
 	global.patreon.player_spectator_state[index] = true
-	player.gui.left.patreon_pane.spectate.destroy()
-	player.gui.left.patreon_pane.add { name = "return_character", type = "button", caption = "Stop Spectating" }
+	mod_gui.get_frame_flow(player).patreon_pane.spectate.destroy()
+	mod_gui.get_frame_flow(player).patreon_pane.add { name = "return_character", type = "button", caption = "Stop Spectating" }
 	if player.character then
 		player.character.destructible = false
 		player.walking_state = { walking = false, direction = defines.direction.north }

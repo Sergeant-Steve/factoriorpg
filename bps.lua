@@ -13,8 +13,8 @@ local function init_gui(player)
 		return
 	end
 
-	if (not player.gui.top["blueprint-string-button"]) then
-		player.gui.top.add { type = "button", name = "blueprint-string-button", caption = "BPS" }
+	if (not mod_gui.get_button_flow(player)["blueprint-string-button"]) then
+		mod_gui.get_button_flow(player).add { type = "button", name = "blueprint-string-button", caption = "BPS" }
 	end
 end
 
@@ -46,11 +46,11 @@ end
 -- Expand player's gui
 -- @param player target player
 local function expand_gui(player)
-	local frame = player.gui.left["blueprint-string"]
+	local frame = mod_gui.get_frame_flow(player)["blueprint-string"]
 	if (frame) then
 		frame.destroy()
 	else
-		frame = player.gui.left.add { type = "frame", name = "blueprint-string" }
+		frame = mod_gui.get_frame_flow(player).add { type = "frame", name = "blueprint-string" }
 		frame.add { type = "label", caption = { "textbox-caption" } }
 		frame.add { type = "textfield", name = "blueprint-string-text" }
 		frame.add { type = "button", name = "blueprint-string-load", caption = "Load" }
@@ -270,7 +270,7 @@ end
 -- Call the required local functions to load a blueprint
 -- @param player player that is loading the blueprint
 local function load_blueprint(player)
-	local textbox = player.gui.left["blueprint-string"]["blueprint-string-text"]
+	local textbox = mod_gui.get_frame_flow(player)["blueprint-string"]["blueprint-string-text"]
 	local data = trim(textbox.text)
 	if (data == "") then
 		player.print({ "no-string" })
