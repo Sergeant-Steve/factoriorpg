@@ -22,7 +22,7 @@ function grave_expire(event)
 	for __, tag in pairs(global.graves) do
 		--15 minutes
 		if game.tick > tag[2] then
-			if tag[1] then
+			if tag[1].valid then
 				tag[1].destroy()
 			end
 			table.remove(global.graves, __)
