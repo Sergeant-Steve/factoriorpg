@@ -1,4 +1,5 @@
 -- TOOLS: Recommend all be turned on
+require "mod-gui"
 require "locale/utils/event" --Yes this line is seriously commented out, and yes without this it won't even work. I guess you now HAVE TO change the settings to match what you need.
 --require "oarc_events" --Oarc's separate spawn scenario.  Not working yet.
 require "rpg_permissions" --Limit certain actions to players level 5 or greater
@@ -18,13 +19,10 @@ require "dirtpath" --For some silliness.
 
 -- World Generators: Pick only ONE
 require "oarc_events" --Oarc's separate spawn scenario.  Not working yet.
---require "void" --Worldgenerator which randomly generates holes in the world
+--NOT UPDATED require "void" --Worldgenerator which randomly generates holes in the world
 --require "nuclear" --worldgenerator for nuclear scenario
---require "island_spawn" --worldgenerator for island spawn scenario
---require "grid" --Worldgenerator which devides the world into a grid.
+--NOT UPDATED require "grid" --Worldgenerator which devides the world into a grid.
 
---BROKEN?
---require "locale/utils/undecorator"	--Removes decorations
 
 -- FOLLOWING CODE GIVES SAME MINIMUM INVENTORY TO ALL SCENARIOS:
 

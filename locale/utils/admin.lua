@@ -47,8 +47,8 @@ function entity_mined(event)
 	if entity.force.name == "neutral" 
 	or entity.name == "entity-ghost" 
 	or entity.type == "locomotive" 
-	or entity.type == "cargo-wagon" 
-	or entity.type == "fluid-wagon" 
+	or entity.type == "cargo-wagon"
+	or entity.type == "fluid-wagon"
 	or entity.type == "car" 
 	or entity.type:find("robot") 
 	or game.players[event.player_index].force == game.forces.Admins 
@@ -76,43 +76,39 @@ function gui_click(event)
 	end
 	if e.name ~= nil then
 		if e.name == "spectate" and e.parent.name == "admin_pane" then
-			--if not p.admin then
-			--	p.gui.top.spectate.destroy()
-			--	p.print("You are no longer an admin.")
-			--	return
-			--end
 			force_spectators(i, nil)
 			return
 		elseif e.name == "admin_tag" and e.parent.name == "admin_pane" then
 			p.print("Admin tag applied!")
 			p.tag = " [Admin]"
 			return
-		elseif e.name == "admin_compensation_mode" and e.parent.name == "admin_pane" then
+		elseif e.name == "admin_compensation_mode" and e.parent.name == "admin_pane" and e.caption == "Compensate" then
 			if(global.player_character_stats[i].compensation_mode) then
 				global.player_character_stats[i].compensation_mode = false
+				global.player_character_stats[i].running_speed = 0
 				update_character(i)
 				e.style.font_color = global.red
-				if p.gui.left.admin_pane.character then
-					p.gui.left.admin_pane.character.caption = "Character"
+				if mod_gui.get_frame_flow(p).admin_pane.character then
+					mod_gui.get_frame_flow(p).admin_pane.character.caption = "Character"
 				end
 			else
 				global.player_character_stats[i].compensation_mode = true
 				e.style.font_color = global.green
-				if p.gui.left.admin_pane.character then
-					p.gui.left.admin_pane.character.caption = "Disabled"
-					if p.gui.left.character_panel then
-						p.gui.left.character_panel.destroy()
-						global.player_character_stats[i] = {
+				if mod_gui.get_frame_flow(p).admin_pane.character then
+					mod_gui.get_frame_flow(p).admin_pane.character.caption = "Disabled"
+					if mod_gui.get_frame_flow(p).character_panel then
+						mod_gui.get_frame_flow(p).character_panel.destroy()
+					end
+				end
+				global.player_character_stats[i] = {
 							item_loot_pickup = false,
 							build_itemdrop_reach_resourcereach_distance = false,
 							crafting_speed = false,
 							mining_speed = false,
 							invincible = false,
-							running_speed = 0,
+							running_speed = 0.5,
 							compensation_mode = true
 						}
-					end
-				end
 				update_character(i)
 			end
 			return
@@ -124,17 +120,17 @@ function gui_click(event)
 			return
 		elseif e.name == "admin_menu" and e.caption == "Open Admin" then
 			create_admin_gui(p.name)
-			p.gui.top.admin_menu.caption = "Close Admin"
+			mod_gui.get_button_flow(p).admin_menu.caption = "Close Admin"
 			return
 		elseif e.name == "admin_menu" and e.caption == "Close Admin" then
-			if p.gui.left.admin_pane ~= nil then
-				if p.gui.left.spectate_panel == nil then
-					if p.gui.left.character_panel == nil then
-						p.gui.left.admin_pane.destroy()
-						if p.gui.left.command_pane ~= nil then
-							p.gui.left.command_pane.destroy()
+			if mod_gui.get_frame_flow(p).admin_pane ~= nil then
+				if mod_gui.get_frame_flow(p).spectate_panel == nil then
+					if mod_gui.get_frame_flow(p).character_panel == nil then
+						mod_gui.get_frame_flow(p).admin_pane.destroy()
+						if mod_gui.get_frame_flow(p).command_pane ~= nil then
+							mod_gui.get_frame_flow(p).command_pane.destroy()
 						end
-						p.gui.top.admin_menu.caption = "Open Admin"
+						mod_gui.get_button_flow(p).admin_menu.caption = "Open Admin"
 					else
 						p.print("Close the character menu first!")
 					end
@@ -148,20 +144,20 @@ function gui_click(event)
 				entity.destroy() 
 			end
 		elseif e.name == "commands" then
-			if p.gui.left.command_pane then
-				p.gui.left.admin_pane.commands.caption = "Commands"
-				p.gui.left.command_pane.destroy()
+			if mod_gui.get_frame_flow(p).command_pane then
+				mod_gui.get_frame_flow(p).admin_pane.commands.caption = "Commands"
+				mod_gui.get_frame_flow(p).command_pane.destroy()
 			else
-				p.gui.left.admin_pane.commands.caption = "Close"
+				mod_gui.get_frame_flow(p).admin_pane.commands.caption = "Close"
 				create_command_gui(i)
 			end
 			return
 		elseif e.name == "character" then
-			if p.gui.left.character_panel and e.caption == "Close" then
-				p.gui.left.admin_pane.character.caption = "Character"
-				p.gui.left.character_panel.destroy()
+			if mod_gui.get_frame_flow(p).character_panel and e.caption == "Close" then
+				mod_gui.get_frame_flow(p).admin_pane.character.caption = "Character"
+				mod_gui.get_frame_flow(p).character_panel.destroy()
 			elseif e.caption == "Character" then
-				p.gui.left.admin_pane.character.caption = "Close"
+				mod_gui.get_frame_flow(p).admin_pane.character.caption = "Close"
 				create_character_gui(i)
 			elseif e.caption == "Disabled" then
 				p.print("Character modification is currently disabled")
@@ -285,28 +281,29 @@ function gui_click(event)
 			return
 		elseif e.name == "unfollow" then
 			global.follow_targets[i] = nil
-			p.gui.left.follow_panel.follow_list.unfollow.destroy()
-			p.gui.left.follow_panel.follow_list.return_button.destroy()
+			mod_gui.get_frame_flow(p).follow_panel.follow_list.unfollow.destroy()
+			mod_gui.get_frame_flow(p).follow_panel.follow_list.return_button.destroy()
 			return
 		elseif e.name == "return_button" then
 			global.follow_targets[i] = nil
 			p.teleport(global.original_position[i], global.original_surface[i])
-			p.gui.left.follow_panel.follow_list.unfollow.destroy()
-			p.gui.left.follow_panel.follow_list.return_button.destroy()
+			mod_gui.get_frame_flow(p).follow_panel.follow_list.unfollow.destroy()
+			mod_gui.get_frame_flow(p).follow_panel.follow_list.return_button.destroy()
 		elseif e.name == "admin_follow_search_button" then
 			update_follow_panel(p)
 			return
 		end
 		--set who to follow
+		if not (e.valid) then return end
 		for _, player in pairs(game.connected_players) do
 			if e.name == "admin_follow_player_" .. player.name then
 				global.original_position[i] = p.position
 				global.original_surface[i] = p.surface
 				global.follow_targets[i] = player.index
-				if not p.gui.left.follow_panel.follow_list.unfollow then p.gui.left.follow_panel.follow_list.add { name = "unfollow", type = "button", caption = "Unfollow" } end
-				if not p.gui.left.follow_panel.follow_list.return_button then p.gui.left.follow_panel.follow_list.add { name = "return_button", type = "button", caption = "Return" } end
-				p.gui.left.follow_panel.follow_list.unfollow.style.font = "default"
-				p.gui.left.follow_panel.follow_list.return_button.style.font = "default"
+				if not mod_gui.get_frame_flow(p).follow_panel.follow_list.unfollow then mod_gui.get_frame_flow(p).follow_panel.follow_list.add { name = "unfollow", type = "button", caption = "Unfollow" } end
+				if not mod_gui.get_frame_flow(p).follow_panel.follow_list.return_button then mod_gui.get_frame_flow(p).follow_panel.follow_list.add { name = "return_button", type = "button", caption = "Return" } end
+				mod_gui.get_frame_flow(p).follow_panel.follow_list.unfollow.style.font = "default"
+				mod_gui.get_frame_flow(p).follow_panel.follow_list.return_button.style.font = "default"
 				return
 			end
 		end
@@ -317,7 +314,7 @@ end
 -- @param index index of the player to change
 function create_character_gui(index)
 	local player = game.players[index]
-	local character_frame = player.gui.left.add { name = "character_panel", type = "frame", direction = "vertical", caption = "Character" }
+	local character_frame = mod_gui.get_frame_flow(player).add { name = "character_panel", type = "frame", direction = "vertical", caption = "Character" }
 	local button_table = character_frame.add { name= "character_buttons", type = "table", colspan = 1}
 	button_table.add { name = "character_pickup", type = "button", caption = "Pickup" }
 	button_table.add { name = "character_reach", type = "button", caption = "Reach" }
@@ -454,19 +451,19 @@ This panel is also updated when connected players change, such as play joins or 
 ]]
 function update_follow_panel(player)
 	local player_index = player.index
-	if player.gui.left.follow_panel then
-		if not player.gui.left.follow_panel.search_bar then
-			player.gui.left.follow_panel.add { name = "search_bar", type = "textfield"}
+	if mod_gui.get_frame_flow(player).follow_panel then
+		if not mod_gui.get_frame_flow(player).follow_panel.search_bar then
+			mod_gui.get_frame_flow(player).follow_panel.add { name = "search_bar", type = "textfield"}
 		end
-		if not player.gui.left.follow_panel.admin_follow_search_button then
-			player.gui.left.follow_panel.add { name = "admin_follow_search_button", type = "button", caption = "filter"}
+		if not mod_gui.get_frame_flow(player).follow_panel.admin_follow_search_button then
+			mod_gui.get_frame_flow(player).follow_panel.add { name = "admin_follow_search_button", type = "button", caption = "filter"}
 		end
 		-- destroy the panel first to make sure we are not duplicating names.
-		if player.gui.left.follow_panel.follow_list then player.gui.left.follow_panel.follow_list.destroy() end
+		if mod_gui.get_frame_flow(player).follow_panel.follow_list then mod_gui.get_frame_flow(player).follow_panel.follow_list.destroy() end
 		
 		
 		
-		local follow_list = player.gui.left.follow_panel.add { name = "follow_list", type = "scroll-pane" }
+		local follow_list = mod_gui.get_frame_flow(player).follow_panel.add { name = "follow_list", type = "scroll-pane" }
 		follow_list.style.maximal_height = 250
 
 		if #game.connected_players == 1 then
@@ -474,13 +471,13 @@ function update_follow_panel(player)
 		else
 			for _, follow_player in pairs(game.connected_players) do
 				if player.index ~= follow_player.index then
-					if player.gui.left.follow_panel.search_bar.text ~= nil then
-						if string.find(follow_player.name, player.gui.left.follow_panel.search_bar.text) ~= nil then
-							local label = follow_list.add{name = follow_player.name, type = "button", caption = "admin_follow_player_" .. follow_player.name}
+					if mod_gui.get_frame_flow(player).follow_panel.search_bar.text ~= nil then
+						if string.find(follow_player.name, mod_gui.get_frame_flow(player).follow_panel.search_bar.text) ~= nil then
+							local label = follow_list.add{name = "admin_follow_player_" .. follow_player.name, type = "button", caption = follow_player.name}
 							label.style.font = "default"
 						end
 					else 
-						local label = follow_list.add{name = follow_player.name, type = "button", caption = "admin_follow_player_" .. follow_player.name}
+						local label = follow_list.add{name = "admin_follow_player_" .. follow_player.name, type = "button", caption = follow_player.name}
 						label.style.font = "default"
 					end
 				end
@@ -498,13 +495,13 @@ function update_follow_panel(player)
 end
 
 function toggle_follow_panel(player)
-	if player.gui.left.follow_panel then
-		if player.gui.left.spectate_panel then player.gui.left.spectate_panel.follow.caption = "Follow" end
-		player.gui.left.follow_panel.destroy()
+	if mod_gui.get_frame_flow(player).follow_panel then
+		if mod_gui.get_frame_flow(player).spectate_panel then mod_gui.get_frame_flow(player).spectate_panel.follow.caption = "Follow" end
+		mod_gui.get_frame_flow(player).follow_panel.destroy()
 		global.follow_targets[player.index] = nil
 	else
-		player.gui.left.spectate_panel.follow.caption = "Close"
-		player.gui.left.add { name = "follow_panel", type = "frame", direction = "vertical", caption = "Follow" }
+		mod_gui.get_frame_flow(player).spectate_panel.follow.caption = "Close"
+		mod_gui.get_frame_flow(player).add { name = "follow_panel", type = "frame", direction = "vertical", caption = "Follow" }
 		update_follow_panel(player)
 	end
 end
@@ -546,8 +543,8 @@ end
 
 function create_admin_top_gui(player_name)
 	local player = game.players[player_name]
-	if player.gui.top.admin_menu == nil then
-		player.gui.top.add { name = "admin_menu", type = "button", caption = "Open Admin" }
+	if mod_gui.get_button_flow(player).admin_menu == nil then
+		mod_gui.get_button_flow(player).add { name = "admin_menu", type = "button", caption = "Open Admin" }
 	end
 end
 
@@ -558,28 +555,6 @@ function create_admin_gui(player_name)
 	local index = player.index
 	local admin_pane = nil
 	global.player_character_stats = global.player_character_stats or {}
-	if not player.gui.left.admin_pane then
-		admin_pane = player.gui.left.add { name = "admin_pane", type = "frame", direction = "vertical", caption = "Admin Tools" }
-	else
-		admin_pane = player.gui.left.admin_pane
-	end
-	if not player.gui.left.admin_pane.spectate then
-		admin_pane.add { name = "spectate", type = "button", caption = "Spectate" }
-	end
-	if not player.gui.left.admin_pane.character then
-		admin_pane.add { name = "character", type = "button", caption = "Character" }
-	end
-	if not player.gui.left.admin_pane.admin_tag then
-		admin_pane.add { name = "admin_tag", type = "button", caption = "Admin Tag" }
-	end
-	if not player.gui.left.admin_pane.commands then
-		admin_pane.add { name = "commands", type = "button", caption = "Commands" }
-	end
-	
-	if not player.gui.left.admin_pane.admin_compensation_mode then
-		local a = admin_pane.add { name = "admin_compensation_mode", type = "button", caption = "Compensate" }
-		a.style.font_color = global.red
-	end
 	if global.player_character_stats[index] == nil then
 		global.player_character_stats[index] = {
 			item_loot_pickup = false,
@@ -591,6 +566,36 @@ function create_admin_gui(player_name)
 			compensation_mode = false
 		}
 	end
+	if not mod_gui.get_frame_flow(player).admin_pane then
+		admin_pane = mod_gui.get_frame_flow(player).add { name = "admin_pane", type = "frame", direction = "vertical", caption = "Admin Tools" }
+	else
+		admin_pane = mod_gui.get_frame_flow(player).admin_pane
+	end
+	if not mod_gui.get_frame_flow(player).admin_pane.spectate then
+		admin_pane.add { name = "spectate", type = "button", caption = "Spectate" }
+	end
+	if not mod_gui.get_frame_flow(player).admin_pane.character then
+		if global.player_character_stats[index].compensation_mode then
+			admin_pane.add { name = "character", type = "button", caption = "Disabled" }
+		else
+			admin_pane.add { name = "character", type = "button", caption = "Character" }
+		end
+	end
+	if not mod_gui.get_frame_flow(player).admin_pane.admin_tag then
+		admin_pane.add { name = "admin_tag", type = "button", caption = "Admin Tag" }
+	end
+	if not mod_gui.get_frame_flow(player).admin_pane.commands then
+		admin_pane.add { name = "commands", type = "button", caption = "Commands" }
+	end
+	if not mod_gui.get_frame_flow(player).admin_pane.admin_compensation_mode then
+		local a = admin_pane.add { name = "admin_compensation_mode", type = "button", caption = "Compensate" }
+		if global.player_character_stats[index].compensation_mode then
+			a.style.font_color = global.green
+		else
+			a.style.font_color = global.red
+		end
+	end
+	
 
 end
 
@@ -598,18 +603,18 @@ function create_command_gui(player_name)
 	local player = game.players[player_name]
 	local index = player.index
 	local command_pane = nil
-	if not player.gui.left.command_pane then
-		command_pane = player.gui.left.add { name = "command_pane", type = "frame", direction = "vertical", caption = "Commands" }
+	if not mod_gui.get_frame_flow(player).command_pane then
+		command_pane = mod_gui.get_frame_flow(player).add { name = "command_pane", type = "frame", direction = "vertical", caption = "Commands" }
 	else
-		command_pane = player.gui.left.command_pane
+		command_pane = mod_gui.get_frame_flow(player).command_pane
 	end
-	if not player.gui.left.command_pane.clear_corpses then
+	if not mod_gui.get_frame_flow(player).command_pane.clear_corpses then
 		command_pane.add { name = "clear_corpses", type = "button", caption = "Clear Biter Corpses" }
 	end
-	if not player.gui.left.command_pane.empty1 then
+	if not mod_gui.get_frame_flow(player).command_pane.empty1 then
 		command_pane.add { name = "empty1", type = "button", caption = "Suggest a Command to put here" }
 	end
-	if not player.gui.left.command_pane.empty2 then
+	if not mod_gui.get_frame_flow(player).command_pane.empty2 then
 		command_pane.add { name = "empty2", type = "button", caption = "Suggest a Command to put here" }
 	end
 end
@@ -649,16 +654,20 @@ function force_spectators(index, teleport)
 		end
 		global.player_spectator_state[index] = false
 		player.force = game.forces[global.player_spectator_force[index].name]
-		if player.gui.left.spectate_panel then
-			player.gui.left.spectate_panel.destroy()
+		if mod_gui.get_frame_flow(player).spectate_panel then
+			mod_gui.get_frame_flow(player).spectate_panel.destroy()
 		end
-		if player.gui.left.follow_panel then
+		if mod_gui.get_frame_flow(player).follow_panel then
 			toggle_follow_panel(player)
 		end
-		player.gui.left.admin_pane.spectate.caption = "Spectate"
-		if player.gui.left.admin_pane.character ~= nil then
-			player.gui.left.admin_pane.character.caption = "Character"
+		mod_gui.get_frame_flow(player).admin_pane.spectate.caption = "Spectate"
+		if mod_gui.get_frame_flow(player).admin_pane.character ~= nil then
+			mod_gui.get_frame_flow(player).admin_pane.character.caption = "Character"
 		end
+		if mod_gui.get_frame_flow(player).admin_pane.admin_compensation_mode ~= nil then
+			mod_gui.get_frame_flow(player).admin_pane.admin_compensation_mode.caption = "Compensate"
+		end
+		
 		update_character(index)
 	else
 		--put player in spectator mode
@@ -680,22 +689,25 @@ function force_spectators(index, teleport)
 		player.print("You are now a spectator")
 
 		-- Creates a Spectator Panel
-		local spectate_panel = player.gui.left.add { name = "spectate_panel", type = "frame", direction = "vertical", caption = "Spectator Mode" }
+		local spectate_panel = mod_gui.get_frame_flow(player).add { name = "spectate_panel", type = "frame", direction = "vertical", caption = "Spectator Mode" }
 		spectate_panel.add { name = "teleport", type = "button", caption = "Teleport" }
 		spectate_panel.add { name = "return_character", type = "button", caption = "Return" }
-		player.gui.left.admin_pane.spectate.caption = "Spectating"
+		mod_gui.get_frame_flow(player).admin_pane.spectate.caption = "Spectating"
 
-		if player.gui.left.character_panel ~= nil then
-			player.gui.left.character_panel.destroy()
-			player.gui.left.admin_pane.character.caption = "Disabled"
+		if mod_gui.get_frame_flow(player).character_panel ~= nil then
+			mod_gui.get_frame_flow(player).character_panel.destroy()
 		end
-		if player.gui.left.admin_pane.character ~= nil then
-			player.gui.left.admin_pane.character.caption = "Disabled"
+		if mod_gui.get_frame_flow(player).admin_pane.character ~= nil then
+			mod_gui.get_frame_flow(player).admin_pane.character.caption = "Disabled"
+		end
+		if mod_gui.get_frame_flow(player).admin_pane.admin_compensation_mode ~= nil then
+			mod_gui.get_frame_flow(player).admin_pane.admin_compensation_mode.caption = "Disabled"
 		end
 		-- adds an option to follow another player.
 		if spectate_panel.follow_panel == nil then
 			spectate_panel.add { name = "follow", type = "button", caption = "Follow" }
 		end
+		
 	end
 end
 
