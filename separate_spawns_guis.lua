@@ -178,9 +178,12 @@ function DisplaySpawnOptions(player)
     soloSpawnFlow.add{name = "isolated_spawn_near",
                     type = "button",
                     caption="Solo Spawn (Near)"}
-    soloSpawnFlow.add{name = "isolated_spawn_far",
-                    type = "button",
-                    caption="Solo Spawn (Far)"}
+	--Disabled for marathon mode.
+	if game.difficulty_settings.recipe_difficulty == 0 then
+		soloSpawnFlow.add{name = "isolated_spawn_far",
+						type = "button",
+						caption="Solo Spawn (Far)"}
+	end
     
     soloSpawnFlow.add{name = "isolated_spawn_lbl1", type = "label",
                     caption="You are spawned in a new area, with some starting resources."}    
