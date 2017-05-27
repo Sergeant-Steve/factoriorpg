@@ -390,7 +390,7 @@ function rpg_tech_researched(event)
 		end
 	end
 	value = value ^ 0.85
-	for _, player in pairs(game.players) do
+	for _, player in pairs(event.research.force.players) do
 		if player.connected then
 			rpg_add_exp(player, value)
 		end
@@ -655,15 +655,14 @@ function rpg_give_team_bonuses(force)
 			end
 		--end
 	end
-		
-	
+
 	-- Malus for ammo is base * 0.8 - 0.2
 	for k, v in pairs(ammotypes) do
 		if string.find(k, "turret") then
 			force.set_ammo_damage_modifier(k, builderbonus / 100 + force.get_ammo_damage_modifier(k) * 0.85 - 0.15)
 		elseif string.find(k, "robot") then
 			force.set_ammo_damage_modifier(k, scientistbonus / 100 + force.get_ammo_damage_modifier(k) * 0.8 - 0.2)
-		elseif string.find(k, "grenade") then
+		elseif string.find(k, "grenade") or string.find(k, "rocket") then
 			force.set_ammo_damage_modifier(k, minerbonus / 100 + force.get_ammo_damage_modifier(k) * 0.8 - 0.2)
 		else --Bullets, shells, flamethrower
 			force.set_ammo_damage_modifier(k, soldierbonus / 100 + force.get_ammo_damage_modifier(k) * 0.8 - 0.2)
@@ -675,7 +674,7 @@ function rpg_give_team_bonuses(force)
 	
 	force.character_health_bonus = scientistbonus / 4 --Base health is 250, so this is caled up similarly
 	force.character_running_speed_modifier = scientistbonus / 400
-	force.worker_robots_speed_modifier = scientistbonus / 100 + force.worker_robots_speed_modifier * 0.6 - 0.4
+	force.worker_robots_speed_modifier = scientistbonus / 50 + force.worker_robots_speed_modifier * 0.6 - 0.4
 	
 	--This one can't decrease, or players logging out would cause stuff to drop!
 	force.character_inventory_slots_bonus = math.max(force.character_inventory_slots_bonus, math.floor(builderbonus / 40))
@@ -716,6 +715,24 @@ function rpg_bonus_scan(event)
 		
 	event.radar.force.chart(event.radar.surface, bbox)
 end
+
+--Scientist reward: No corpse running!
+function rpg_im_too_smart_to_die(event)
+	local player = game.players[event.player_index]
+	if global.rpg_exp[player.name].class == "Scientist" and global.rpg_exp[player.name].level >= 50 then
+		player.character.health = 1
+		
+		--This interacts with Oarc.  Need to use player's spawn location.
+		if ENABLE_SEPARATE_SPAWNS then
+			player.teleport(global.playerSpawns[player.name])
+		else
+			--Non Oarc respawn:
+			player.teleport(player.force.get_spawn_position(player.surface))
+		end
+	end
+end
+
+--Miner reward: Oil
 
 -- Obsolete as of 0.15.13
 -- function rpg_fix_tech()
@@ -782,7 +799,8 @@ Event.register(defines.events.on_rocket_launched, rpg_satellite_launched)
 Event.register(defines.events.on_entity_died, rpg_nest_killed)
 Event.register(defines.events.on_research_finished, rpg_tech_researched)
 Event.register(defines.events.on_sector_scanned, rpg_bonus_scan)
+Event.register(defines.events.on_pre_player_died, rpg_im_too_smart_to_die)
 --Event.register(defines.events.on_research_finished, rpg_nerf_tech)
 --Event.register(defines.events.on_tick, rpg_exp_tick) --For debug
-Event.register(defines.events.on_tick, rpg_fix_tech) --Patch for force.reset_technology_effects()
+--Event.register(defines.events.on_tick, rpg_fix_tech) --Patch for force.reset_technology_effects()
 Event.register(-1, rpg_init)
