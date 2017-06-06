@@ -5,6 +5,7 @@
 -- /silent-command do local hoarder = {amount=0} for k,v in pairs(game.players) do if v.get_item_count("uranium-235") > hoarder.amount then hoarder.name = v.name hoarder.amount = v.get_item_count("uranium-235") end end game.print(hoarder.name .. " is hoarding " .. hoarder.amount .. " uranium-235!") end
 -- /c for k,v in pairs(game.player.surface.find_entities_filtered{name="programmable-speaker"}) do game.print(v.last_user.name .. "is making noise.") end
 
+require "rpg_beastmaster" --New class gets its own file for class-related events.
 require "rpgdata" --Savedata.  This is externally generated.
 --Savedata is of form: player_name = {bank = exp, class1 = exp, class2 = exp, etc}
 
@@ -74,6 +75,9 @@ function rpg_starting_resources(player)
 	if global.rpg_exp[player.name].Miner then
 		sum_exp = sum_exp + global.rpg_exp[player.name].Miner 
 	end
+	if global.rpg_exp[player.name].Beastmaster then
+		sum_exp = sum_exp + global.rpg_exp[player.name].Beastmaster 
+	end
 	while rpg_exp_tnl(total_level) < sum_exp do
 		total_level = total_level + 1
 	end
@@ -136,14 +140,35 @@ function rpg_class_picker(event)
 		if player.gui.center.sheet then
 			player.gui.center.sheet.destroy()
 		end
+		
+		--Iterate over each class to find out what level they are before the player picks.
+		local levels = {Soldier = 1, Builder = 1, Scientist = 1, Miner = 1, Beastmaster = 1, None = 1}
+		for k, v in pairs(levels) do
+			if global.rpg_exp[player.name][k] then
+				while global.rpg_exp[player.name][k] >= rpg_exp_tnl(levels[k]) do
+					levels[k] = levels[k]+1
+				end
+				--game.print("Class: " ..k .. " Level: "..v) --This works
+			end
+			--game.print("Class: " ..k .. " Level: "..v) --This works
+		end	
+	
 		if not player.gui.center.picker then
 			player.gui.center.add{type="frame", name="picker", caption="Choose a class"}
 			player.gui.center.picker.add{type="flow", name="container", direction="vertical"}
 			player.gui.center.picker.container.add{type="button", name="Soldier", caption="Soldier", tooltip="Enhance the combat abilities of your team, larger radar radius"}
 			player.gui.center.picker.container.add{type="button", name="Builder", caption="Builder", tooltip="Extra reach, team turret damage, additional quickbars (at 20 and 50)"}
 			player.gui.center.picker.container.add{type="button", name="Scientist", caption="Scientist", tooltip="Boost combat robots, science speed, team health, team movement speed"}
-			player.gui.center.picker.container.add{type="button", name="Miner", caption="Miner", tooltip="Incrase explosive damage and mining productivity of your team"}
+			player.gui.center.picker.container.add{type="button", name="Miner", caption="Miner", tooltip="Increase explosive damage and mining productivity of your team"}
+			player.gui.center.picker.container.add{type="button", name="Beastmaster", caption="Beastmaster", tooltip="Gain biter pets on nest kills. Reduces evolution scaling.(BETA)"}
 			player.gui.center.picker.container.add{type="button", name="None", caption="None", tooltip="No bonuses are given to team."}
+			
+			for k, v in pairs(player.gui.center.picker.container.children) do
+				if levels[v.name] > 1 then
+					v.caption = v.caption .. " : " .. levels[v.name]
+				end
+			end
+			
 			player.gui.center.picker.add{type="button", name="pickerclose", caption="x"}
 		end
 	else
@@ -165,7 +190,7 @@ function rpg_class_click(event)
 		rpg_character_sheet(player)
 		return
 	end
-	if event.element.name == "Soldier" or event.element.name == "Builder" or event.element.name == "Scientist" or event.element.name == "Miner" or event.element.name == "None" then
+	if event.element.name == "Soldier" or event.element.name == "Builder" or event.element.name == "Scientist" or event.element.name == "Miner" or event.element.name == "None" or event.element.name == "Beastmaster" then
 		rpg_set_class(player, event.element.name)
 		player.gui.center.picker.destroy()
 		rpg_update_gui(player)
@@ -358,9 +383,17 @@ end
 
 function rpg_nearby_exp(position, force, amount)
 	local radius = 64
-	for __, player in pairs(force.connected_players) do
-		if player.position.x < position.x + radius and player.position.x > position.x - radius and player.position.y < position.y + radius and player.position.y > position.y - radius then
-			rpg_add_exp(player, amount)
+	if force.name == "beasts" then --Check all online players.
+		for __, player in pairs(game.connected_players) do
+			if player.position.x < position.x + radius and player.position.x > position.x - radius and player.position.y < position.y + radius and player.position.y > position.y - radius then
+				rpg_add_exp(player, amount)
+			end
+		end
+	else
+		for __, player in pairs(force.connected_players) do
+			if player.position.x < position.x + radius and player.position.x > position.x - radius and player.position.y < position.y + radius and player.position.y > position.y - radius then
+				rpg_add_exp(player, amount)
+			end
 		end
 	end
 end
@@ -409,7 +442,8 @@ function rpg_satellite_launched(event)
 		global.satellites_launched = global.satellites_launched + 1
 		bonus = math.max(100, bonus / (global.satellites_launched^1.5))
 		for n, player in pairs(game.players) do
-			local fraction_online = player.online_time / game.tick
+			--Scale this so players only need to be online for 80% of the time to achieve full reward.
+			local fraction_online = math.max(1, player.online_time / game.tick / 0.8)
 			rpg_add_exp(player, bonus * fraction_online)
 		end
 	end
@@ -552,6 +586,7 @@ function rpg_give_team_bonuses(force)
 	local scientistbonus = 0
 	local builderbonus = 0
 	local minerbonus = 0
+	local beastmasterbonus = 0
 	for k,v in pairs(force.players) do
 		if v.connected then
 			if global.rpg_exp[v.name].class == "Soldier" then
@@ -565,6 +600,9 @@ function rpg_give_team_bonuses(force)
 			end
 			if global.rpg_exp[v.name].class == "Miner" then
 				minerbonus = minerbonus + global.rpg_exp[v.name].level
+			end
+			if global.rpg_exp[v.name].class == "Beastmaster" then
+				beastmasterbonus = minerbonus + global.rpg_exp[v.name].level
 			end
 		end
 	end
@@ -680,12 +718,22 @@ function rpg_give_team_bonuses(force)
 	force.character_inventory_slots_bonus = math.max(force.character_inventory_slots_bonus, math.floor(builderbonus / 40))
 	
 	-- Malus is 0.5 * base bonus - 0.5
+	-- Science bonus
 	force.laboratory_speed_modifier = scientistbonus / 100 + 0.5 * force.laboratory_speed_modifier - 0.5 --add base value
 	
 	--Crafting speed penalty.
 	force.manual_crafting_speed_modifier = -0.3
-		
+	
+	--Mining bonus
 	force.mining_drill_productivity_bonus = minerbonus / 50 + force.mining_drill_productivity_bonus * 0.5
+	
+	--Beastmaster bonus
+	--Let's turn this into a factor for easier application
+	beastmasterbonus = 100 / (100 + beastmasterbonus)
+	game.map_settings.enemy_evolution.destroy_factor = global.base_evolution_destroy * beastmasterbonus
+	game.map_settings.enemy_evolution.pollution_factor = global.base_evolution_pollution * beastmasterbonus
+	game.map_settings.enemy_evolution.time_factor = global.base_evolution_time * beastmasterbonus
+	
 	
 end
 
@@ -751,6 +799,10 @@ end
 function rpg_init()
 	global.rpg_exp = {}
 	global.rpg_tmp = {} --For non-persistent data.
+	
+	global.base_evolution_destroy = game.map_settings.enemy_evolution.destroy_factor
+	global.base_evolution_pollution = game.map_settings.enemy_evolution.pollution_factor
+	global.base_evolution_time = game.map_settings.enemy_evolution.time_factor
 	--Players can give bonuses to the team, so let's nerf the base values so players can re-buff them.
 	--game.forces.player.manual_crafting_speed_modifier = -0.3 --Oops, game is not available at this step.
 
