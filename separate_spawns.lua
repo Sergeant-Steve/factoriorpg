@@ -90,6 +90,15 @@ function FindUnusedSpawns(event)
         if ((#player.force.players <= 1) and (player.force.name ~= MAIN_FORCE)) then
             game.merge_forces(player.force, MAIN_FORCE)
         end
+		
+		--Move player to spawn
+		player.teleport({0,0})
+		
+		--Delete spawn gui
+		player.gui.top.spwn_ctrls.destroy()
+		
+		--Add to table in case player rejoins later.  This toggles the flag so they get the spawn gui all over again.
+		global.playerAbandon[player.name] = true
 
         -- Remove the character completely
         --game.remove_offline_players({player})
@@ -188,6 +197,10 @@ function InitSpawnGlobalsAndForces()
     if (global.playerCooldowns == nil) then
         global.playerCooldowns = {}
     end
+	
+	if global.playerAbandon == nil then
+		global.playerAbandon = {}
+	end
 
     game.create_force(MAIN_FORCE)
     --game.forces[MAIN_FORCE].set_spawn_position(game.forces["player"].get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME)

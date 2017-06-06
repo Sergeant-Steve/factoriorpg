@@ -211,7 +211,7 @@ Event.register(defines.events.on_gui_click, oarc_on_gui_click)
 -- end)
 
 
-
+--Let's try changing this to on player joined
 function oarc_player_created(event)
     
     -- Move the player to the game surface immediately.
@@ -230,6 +230,17 @@ function oarc_player_created(event)
 end
 
 Event.register(defines.events.on_player_created, oarc_player_created)
+
+--If player previously abandoned a base...
+function oarc_recreate_start(event)
+	local player = game.players[event.player_index]
+	if ENABLE_SEPARATE_SPAWNS and global.playerAbandon[player.name] then
+		global.playerAbandon[player.name] = nil
+		SeparateSpawnsPlayerCreated(event)
+	end
+end
+
+Event.register(defines.events.on_player_joined_game, oarc_recreate_start)
 
 function oarc_player_respawned(event)
 

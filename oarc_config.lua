@@ -11,7 +11,7 @@
 
 SPAWN_MSG1 = "Current Spawn Mode: Pick"
 SPAWN_MSG2 = "Start with the main base or start from an escape capsule"
-SPAWN_MSG3 = "DEATHWORLD ENABLED.  Separate spawn is dangerous!"
+SPAWN_MSG3 = ""
 
 
 -- Disable everything between this...
@@ -207,11 +207,11 @@ SPAWN_TREE_OCTAGON_ENABLED = false
 
 -- Safe area has no aliens
 -- +/- this in x and y direction
-SAFE_AREA_TILE_DIST = CHUNK_SIZE*7
+SAFE_AREA_TILE_DIST = CHUNK_SIZE*8
 
 -- Warning area has reduced aliens
 -- +/- this in x and y direction
-WARNING_AREA_TILE_DIST = CHUNK_SIZE*12
+WARNING_AREA_TILE_DIST = CHUNK_SIZE*13
 
 -- 1 : X (spawners alive : spawners destroyed) in this area
 WARN_AREA_REDUCTION_RATIO = 12
@@ -234,7 +234,7 @@ ENABLE_DEFAULT_SPAWN = true
 
 -- Enable if people can allow others to join their base
 ENABLE_SHARED_SPAWNS = true
-MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN = 4
+MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN = 5
 
 
 ---------------------------------------
@@ -257,8 +257,8 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 ENEMY_EXPANSION = false
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
-ENEMY_POLLUTION_FACTOR_DIVISOR = 8
-ENEMY_DESTROY_FACTOR_DIVISOR = 4
+ENEMY_POLLUTION_FACTOR_DIVISOR = 2
+ENEMY_DESTROY_FACTOR_DIVISOR = 1
 
 
 --------------------------------------------------------------------------------
