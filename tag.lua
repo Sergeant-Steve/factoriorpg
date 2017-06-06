@@ -5,8 +5,8 @@
 
 function tag_create_gui(event)
 	local player = game.players[event.player_index]
-	if not mod_gui.get_button_flow(player).tag_button then
-		mod_gui.get_button_flow(player).add { name = "tag_button", type = "button", caption = "Tag" }
+	if not mod_gui.get_button_flow(player)["tag-button"] then
+		mod_gui.get_button_flow(player).add { name = "tag-button", type = "button", caption = "Tag" }
 	end
 end
 
