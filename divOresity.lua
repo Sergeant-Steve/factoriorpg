@@ -8,10 +8,10 @@ EXEMPT_AREA = 200 --This is the radius of the starting area that can't be affect
 
 --Build a table of potential ores to pick from.  Uranium is exempt from popping up randomly.
 function divOresity_init()
-	ORES = {}
+	global.diverse_ores = {}
 	for k,v in pairs(game.entity_prototypes) do
 		if v.type == "resource" and v.resource_category == "basic-solid" and v.mineable_properties.required_fluid == nil then
-			table.insert(ORES, v.name)
+			table.insert(global.diverse_ores, v.name)
 		end
 	end
 end
@@ -22,7 +22,7 @@ function diversify(event)
 		if math.abs(v.position.x) > EXEMPT_AREA and math.abs(v.position.y) > EXEMPT_AREA then
 			if v.prototype.resource_category == "basic-solid" then
 				if math.random() < DIVERSITY_QUOTA then --Replace!
-					local refugee = ORES[math.random(#ORES)]
+					local refugee = global.diverse_ores[math.random(#global.diverse_ores)]
 					event.surface.create_entity{name=refugee, position=v.position, amount=v.amount}
 					v.destroy()
 				end
