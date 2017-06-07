@@ -19,7 +19,7 @@ end
 function diversify(event)
 	local ores = event.surface.find_entities_filtered{type="resource", area=event.area}
 	for k,v in pairs(ores) do
-		if math.abs(v.position.x) > EXEMPT_AREA and math.abs(v.position.y) > EXEMPT_AREA then
+		if math.abs(v.position.x) > EXEMPT_AREA or math.abs(v.position.y) > EXEMPT_AREA then
 			if v.prototype.resource_category == "basic-solid" then
 				if math.random() < DIVERSITY_QUOTA then --Replace!
 					local refugee = global.diverse_ores[math.random(#global.diverse_ores)]
