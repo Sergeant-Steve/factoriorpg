@@ -3,6 +3,7 @@
 --MIT licensed
 
 HARVEST_MULTIPLIER = 2
+PRODUCTIVITY_RESEARCH_AFFECTS_DROPS = true
 
 --Destroy any uranium, in case someone didn't change map gen settings
 function harvest_despawn(event)
@@ -14,14 +15,19 @@ end
 
 function harvest_drop(event)
 	if event.entity.force.name == "enemy" then
+		local amount = 0
 		if string.find(event.entity.name, "small") then
-			harvest_reap(event, 1)
+			amount = harvest_sow(1)
+			event.entity.surface.spill_item_stack(event.entity.position, {name="uranium-ore", count=amount}, true)
 		elseif string.find(event.entity.name, "medium") then
-			harvest_reap(event, 2)
+			amount = harvest_sow(2)
+			event.entity.surface.spill_item_stack(event.entity.position, {name="uranium-ore", count=amount}, true)
 		elseif string.find(event.entity.name, "big") then
-			harvest_reap(event, 4)
+			amount = harvest_sow(4)
+			event.entity.surface.spill_item_stack(event.entity.position, {name="uranium-ore", count=amount}, true)
 		elseif string.find(event.entity.name, "behemoth") then
-			harvest_reap(event, 8)
+			amount = harvest_sow(8)
+			event.entity.surface.spill_item_stack(event.entity.position, {name="uranium-ore", count=amount}, true)
 		elseif string.find(event.entity.name, "spawner") then
 			if not global.harvest_spawn then
 				global.harvest_spawn = {}
@@ -29,14 +35,24 @@ function harvest_drop(event)
 			if not global.harvest_spawn[event.entity.surface.name] then
 				global.harvest_spawn[event.entity.surface.name] = {}
 			end
-			table.insert(global.harvest_spawn[event.entity.surface.name], {position=event.entity.position, amount=20})
+			amount = harvest_sow(20)
+			table.insert(global.harvest_spawn[event.entity.surface.name], {position=event.entity.position, amount=amount})
 		end
 	end
 end
 
-function harvest_reap(event, amount)
-	amount = math.max(1, math.ceil(amount * HARVEST_MULTIPLIER))
-	loot = event.entity.surface.spill_item_stack(event.entity.position, {name="uranium-ore", count=amount}, true)
+--Fractional amounts are allowed.  Any decimal remander represents the chance for 1 additional to drop.
+function harvest_sow(amount)
+	amount = amount * HARVEST_MULTIPLIER
+	if PRODUCTIVITY_RESEARCH_AFFECTS_DROPS then
+		--This assumes the force.  Necessary for worm kills.
+		amount = amount * (1 + game.forces.player.mining_drill_productivity_bonus)
+	end
+	if math.random() < amount % 1 then
+			amount = amount + 1
+		end
+	amount = math.max(1, math.floor(amount))
+	return amount
 end
 
 function harvest_prettifier()
