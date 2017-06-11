@@ -100,7 +100,7 @@ function rpg_beast_init()
 	beasts.set_friend(game.forces.player, true)
 	beasts.set_friend(game.forces.enemy, false)
 	game.forces.player.set_friend(beasts, true)
-	beasts.ai_controllable = true
+	beasts.ai_controllable = false --This is what's causing them to nom belts?
 	beasts.friendly_fire = false
 end
 

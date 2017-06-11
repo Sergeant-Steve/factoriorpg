@@ -106,23 +106,22 @@ end
 
 function bluebuild(builder)
 	local pos = builder.position
-	-- local reachDistance = data.raw.player.player.reach_distance
-	--local reachDistance = 7
-	--local searchArea = {{pos.x - reachDistance, pos.y - reachDistance}, {pos.x + reachDistance, pos.y + reachDistance}}
+	local reachDistance = math.max(math.min(builder.reach_distance, 128), 1)
+	local searchArea = {{pos.x - reachDistance, pos.y - reachDistance}, {pos.x + reachDistance, pos.y + reachDistance}}
 	-- Bluebuild 1.1 - Switch to a maintained list of ghosts instead of constant searching.
 	if (not global.ghosts) or (not global.ghosts[builder.surface.name]) then
 		return
 	end
-	areaList = global.ghosts[builder.surface.name]
-	--local areaList = builder.surface.find_entities_filtered{area = searchArea, type = "entity-ghost", force=builder.force }
-	--local tileList = builder.surface.find_entities_filtered{area = searchArea, type = "tile-ghost", force=builder.force }
+	--areaList = global.ghosts[builder.surface.name]
+	local areaList = builder.surface.find_entities_filtered{area = searchArea, type = "entity-ghost", force=builder.force }
+	local tileList = builder.surface.find_entities_filtered{area = searchArea, type = "tile-ghost", force=builder.force }
 	-- Merge the lists
-	-- for key, value in pairs(tileList) do
-		-- if not areaList then
-			-- areaList = {}
-		-- end
-		-- table.insert(areaList, value)
-	-- end
+	for key, value in pairs(tileList) do
+		if not areaList then
+			areaList = {}
+		end
+		table.insert(areaList, value)
+	end
 	-- game.print("Found " .. #areaList .. " ghosts in area.")
 	for index, ghost in pairs(areaList) do
 		if ghost == nil or not ghost.valid then

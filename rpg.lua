@@ -715,11 +715,11 @@ function rpg_give_team_bonuses(force)
 	force.worker_robots_speed_modifier = scientistbonus / 50 + force.worker_robots_speed_modifier * 0.6 - 0.4
 	
 	--This one can't decrease, or players logging out would cause stuff to drop!
-	force.character_inventory_slots_bonus = math.max(force.character_inventory_slots_bonus, math.floor(builderbonus / 40))
+	force.character_inventory_slots_bonus = math.max(force.character_inventory_slots_bonus, math.floor(builderbonus / 20))
 	
 	-- Malus is 0.5 * base bonus - 0.5
 	-- Science bonus
-	force.laboratory_speed_modifier = scientistbonus / 100 + 0.5 * force.laboratory_speed_modifier - 0.5 --add base value
+	force.laboratory_speed_modifier = scientistbonus / 100 + 0.5 * force.laboratory_speed_modifier - 0.5
 	
 	--Crafting speed penalty.
 	force.manual_crafting_speed_modifier = -0.3

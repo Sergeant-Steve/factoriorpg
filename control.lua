@@ -18,10 +18,12 @@ require "tag" --Module to let players set a tag behind their names to improve te
 require "gravemarker" --Mark player death locations on map for corpse runs.
 require "dirtpath" --For some silliness.
 require "divOresity" --Some ore gets scrambled and must be filtered.
-require "bluebuild" --Bluebuild softmod
+--require "dark harvest" --Only way to get uranium is from biter deaths.
+--require "dark harvest event" --Temp for testing.
+--require "bluebuild" --Bluebuild softmod
 
 -- World Generators: Pick only ONE
-require "oarc_events" --Oarc's separate spawn scenario.  Not working yet.
+require "oarc_events" --Oarc's separate spawn scenario.
 --NOT UPDATED require "void" --Worldgenerator which randomly generates holes in the world
 --require "nuclear" --worldgenerator for nuclear scenario
 --NOT UPDATED require "grid" --Worldgenerator which devides the world into a grid.
