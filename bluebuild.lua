@@ -4,27 +4,15 @@ AUTO_OFF_TIMER = 60 * 60 * 2 --2 minutes
 -- Find ghosts to place.  Then find buildings to destruct.
 function blue_runOnce()
 	global.runOnce = true
-	if not global.ghosts then
-		global.ghosts = {}
-	end
-	if not global.blueBuildFirstTick then
-		global.blueBuildFirstTick = {}
-	end
-	if not global.bluePositions then
-		global.bluePosition = {}
-	end
-	if not global.blueBuildToggle then
-		global.blueBuildToggle = {}
-	end
-	if not global.blueDemoToggle then
-		global.blueDemoToggle = {}
-	end
-	if not global.blueLastDemo then
-		global.blueLastDemo = {}
-	end
-	if not global.blueBuildLastBuild then
-		global.blueBuildLastBuild = {}
-	end
+	global.blueBuildSwitch = true
+	global.ghosts = {}
+	global.blueBuildFirstTick = {}
+	global.bluePosition = {}
+	global.blueBuildToggle = {}
+	global.blueDemoToggle = {}
+	global.blueLastDemo = {}
+	global.blueBuildLastBuild = {}
+	global.blueBuildOptin = {}
 end
 
 function blue_initPlayer(event)
@@ -36,11 +24,15 @@ function blue_initPlayer(event)
 	global.blueBuildFirstTick[event.player_index] = game.tick
 	global.blueBuildLastBuild[event.player_index] = game.tick
 	global.blueLastDemo[event.player_index] = game.tick
+	global.blueBuildOptin[event.player_index] = true
 end
 
 function blue_playerloop()
 	if not global.runOnce then
 		runOnce()
+	end
+	if not global.blueBuildSwitch then
+		return
 	end
 	
 	-- for iPlayer = 1, #game.players do
@@ -51,6 +43,11 @@ function blue_playerloop()
 	
 	for _, player in pairs(game.players) do
 		if player.connected then
+			--Each player only gets checked once per (6 * online players) ticks.
+			if not ((game.tick + 6 * player.index) % (6 * #game.connected_players) == 0) then
+				break
+			end
+
 			--Toggle build/demo flags if player is idle.
 			--Set to 2 minutes
 			if global.blueBuildLastBuild[player.index] < game.tick - AUTO_OFF_TIMER then
@@ -109,9 +106,9 @@ function bluebuild(builder)
 	local reachDistance = math.max(math.min(builder.reach_distance, 128), 1)
 	local searchArea = {{pos.x - reachDistance, pos.y - reachDistance}, {pos.x + reachDistance, pos.y + reachDistance}}
 	-- Bluebuild 1.1 - Switch to a maintained list of ghosts instead of constant searching.
-	if (not global.ghosts) or (not global.ghosts[builder.surface.name]) then
-		return
-	end
+	-- if (not global.ghosts) or (not global.ghosts[builder.surface.name]) then
+	-- 	return
+	-- end
 	--areaList = global.ghosts[builder.surface.name]
 	local areaList = builder.surface.find_entities_filtered{area = searchArea, type = "entity-ghost", force=builder.force }
 	local tileList = builder.surface.find_entities_filtered{area = searchArea, type = "tile-ghost", force=builder.force }
@@ -124,10 +121,10 @@ function bluebuild(builder)
 	end
 	-- game.print("Found " .. #areaList .. " ghosts in area.")
 	for index, ghost in pairs(areaList) do
-		if ghost == nil or not ghost.valid then
-			table.remove(areaList, index)
-			return false
-		end
+		-- if ghost == nil or not ghost.valid then
+		-- 	table.remove(areaList, index)
+		-- 	return false
+		-- end
 		--if builder.can_reach_entity(ghost) and builder.force == ghost.force then
 		-- Need a fudge factor since my distance formula seems off.  Game likely measures from nearest colliding point?
 		if ghost.force == builder.force and distance(builder, ghost) < math.min(builder.build_distance + 1, 128) then
@@ -225,38 +222,57 @@ function distance(ent1, ent2)
 	return math.floor( math.sqrt( (ent1.position.x - ent2.position.x)^2 + (ent1.position.y - ent2.position.y)^2 ) )
 end
 
-function updateGhosts()
-	if not global.ghosts then
-		global.ghosts = {}
-	end
-	for __, surface in pairs(game.surfaces) do
-		-- type(surface) is string
-		if not global.ghosts[surface.name] then 
-			global.ghosts[surface.name] = {}
-		end
-		global.ghosts[surface.name] = game.surfaces[surface.name].find_entities_filtered{name="entity-ghost"}
-	end
-end
+-- function updateGhosts()
+-- 	if not global.ghosts then
+-- 		global.ghosts = {}
+-- 	end
+-- 	for __, surface in pairs(game.surfaces) do
+-- 		-- type(surface) is string
+-- 		if not global.ghosts[surface.name] then 
+-- 			global.ghosts[surface.name] = {}
+-- 		end
+-- 		global.ghosts[surface.name] = game.surfaces[surface.name].find_entities_filtered{name="entity-ghost"}
+-- 	end
+-- end
 
 function blue_enable_autobuild(event)
 	if event.created_entity and event.created_entity.name == "entity-ghost" then
-		if not global.ghosts[event.created_entity.surface.name] then 
-			global.ghosts[event.created_entity.surface.name] = {}
+		if global.blueBuildOptin[event.player_index] then
+			-- if not global.ghosts[event.created_entity.surface.name] then 
+			-- 	global.ghosts[event.created_entity.surface.name] = {}
+			-- end
+			-- table.insert(global.ghosts[event.created_entity.surface.name], event.created_entity)
+			global.blueBuildToggle[event.player_index] = true
+			global.blueBuildLastBuild[event.player_index] = game.tick
 		end
-		table.insert(global.ghosts[event.created_entity.surface.name], event.created_entity)
-		global.blueBuildToggle[event.player_index] = true
-		global.blueBuildLastBuild[event.player_index] = game.tick
 	end
 end
 
 function blue_demotoggle(event)
-	global.blueBuildLastBuild[event.player_index] = game.tick
-	global.blueDemoToggle[event.player_index] = true
+	if global.blueBuildOptin[event.player_index] then
+		global.blueBuildLastBuild[event.player_index] = game.tick
+		global.blueDemoToggle[event.player_index] = true
+	end
 end
+
+commands.add_command("bluebuild", "Toggle bluebuild", function()
+	global.blueBuildOptin[game.player.index] = not global.blueBuildOptin[game.player.index]
+
+	game.player.print("Bluebuild set to " .. tostring(global.blueBuildOptin[game.player.index]) .."." )
+end)
+
+commands.add_command("bluebuildswitch", "Toggle bluebuild for the whole server", function()
+	if game.player.admin then
+		global.blueBuildSwitch = not global.blueBuildSwitch
+		game.player.print("Bluebuild server setting set to " .. tostring(global.blueBuildOptin[game.player.index]) .."." )
+	else
+		game.player.print("Only admins can use this command.")
+	end
+end)
 
 Event.register(defines.events.on_built_entity, blue_enable_autobuild)
 
-Event.register(defines.events.on_player_joined_game, blue_initPlayer)
+Event.register(defines.events.on_player_created, blue_initPlayer)
 		
 
 Event.register(defines.events.on_tick, blue_playerloop)
