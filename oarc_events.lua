@@ -164,6 +164,11 @@ function oarc_chunk_generated(event)
     -- This MUST come after RSO generation!
     if ENABLE_SEPARATE_SPAWNS then
         SeparateSpawnsGenerateChunk(event)
+        --Mylon: Nerf ore spawns to reduce distance bonus.
+        local ores = event.surface.find_entities_filtered{type="resource", area=event.area}
+	    for k,v in pairs(ores) do
+            v.amount = math.floor(v.amount^0.9)
+        end
     end
 
     --CreateHoldingPenGenerateChunk(event);
