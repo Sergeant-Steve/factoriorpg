@@ -20,7 +20,7 @@ require "dirtpath" --For some silliness.
 require "divOresity" --Some ore gets scrambled and must be filtered.
 --require "dark harvest" --Only way to get uranium is from biter deaths.
 --require "dark harvest event" --Temp for testing.
---require "bluebuild" --Bluebuild softmod
+require "bluebuild" --Bluebuild softmod
 
 -- World Generators: Pick only ONE
 require "oarc_events" --Oarc's separate spawn scenario.

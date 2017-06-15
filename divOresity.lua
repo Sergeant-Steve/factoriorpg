@@ -3,8 +3,10 @@
 --MIT licensed
 --Inspired by Ore Chaos
 
-DIVERSITY_QUOTA = 0.125
+DIVERSITY_QUOTA = 0.175
 EXEMPT_AREA = 200 --This is the radius of the starting area that can't be affected.
+STONE_BYPRODUCT = false --Delete patches of stone.  Stone only appears as a byproduct.
+STONE_BYPRODUCT_RATIO = 0.20 --If math.random() is between DIVERSITY_QUOTA and this, it's stone.
 
 --Build a table of potential ores to pick from.  Uranium is exempt from popping up randomly.
 function divOresity_init()
@@ -21,9 +23,15 @@ function diversify(event)
 	for k,v in pairs(ores) do
 		if math.abs(v.position.x) > EXEMPT_AREA or math.abs(v.position.y) > EXEMPT_AREA then
 			if v.prototype.resource_category == "basic-solid" then
-				if math.random() < DIVERSITY_QUOTA then --Replace!
+				local random = math.random()
+				if v.name == "stone" and STONE_BYPRODUCT then
+					v.destroy()
+				elseif random < DIVERSITY_QUOTA then --Replace!
 					local refugee = global.diverse_ores[math.random(#global.diverse_ores)]
 					event.surface.create_entity{name=refugee, position=v.position, amount=v.amount}
+					v.destroy()
+				elseif random < STONE_BYPRODUCT_RATIO then --Replace with stone!
+					event.surface.create_entity{name="stone", position=v.position, amount=v.amount}
 					v.destroy()
 				end
 			end
