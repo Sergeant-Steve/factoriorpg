@@ -61,7 +61,14 @@ function rpg_free_pets(event)
 		for n, p in pairs(game.players) do
 			if p.connected then
 				if global.rpg_exp[p.name].class == "Beastmaster" then
-					rpg_add_pet(p)
+					--Check to see if the player is in the wild.  If there are nearby belts or assemblers, skip.
+					local pos = p.position
+					local area = {{pos.x-100, pos.y-100}, {pos.x+100, pos.y+100}}
+					local beltcount = p.surface.count_entities_filtered{area=area, type="transport-belt"}
+					local assemblercount = p.surface.count_entities_filtered{area=area, type="assembling-machine"}
+					if beltcount == 0 and assemblercount == 0 then
+						rpg_add_pet(p)
+					end
 				end
 			end
 		end
