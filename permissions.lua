@@ -13,13 +13,13 @@ function permissions_init()
 	default.set_allows_action(defines.input_action.open_train_gui, false)
 	default.set_allows_action(defines.input_action.set_train_stopped, false)
 	default.set_allows_action(defines.input_action.change_train_stop_station, false)
-	game.permissions.create_group("trusted") --For level 5+ players.
+	game.permissions.create_group("trusted")
 end
 
 function permissions_upgrade(event)
 	if event.tick % (5 * 60 * 60) == 500 then --Check once every 5 minutes
 		for n, p in pairs(game.connected_players) do
-			if p.permissions_group.name == "default" then
+			if p.permission_group.name == "Default" then
 				if p.online_time / 60 / 60 > 30 then --30 minutes
 					p.permission_group = game.permissions.get_group("trusted")
 				end
@@ -29,15 +29,11 @@ function permissions_upgrade(event)
 end
 
 function permissions_precheck(event)
-	local player = game.players[player_index]
+	local player = game.players[event.player_index]
 	if patreon_check(player) or player.admin then
-		p.permission_group = game.permissions.get_group("trusted")
-
+		player.permission_group = game.permissions.get_group("trusted")
+	end
 end
 
-global.patreon.patreons
-global.trusted.list
-
-Event.register()
 Event.register(defines.events.on_player_created, permissions_precheck)
 Event.register(-1, permissions_init)
