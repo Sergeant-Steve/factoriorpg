@@ -5,6 +5,10 @@
 -- Includes the GUI stuff
 
 
+if MODULE_LIST then
+	module_list_add("Oarc separate spawns")
+end
+
 --------------------------------------------------------------------------------
 -- EVENT RELATED FUNCTIONS
 --------------------------------------------------------------------------------

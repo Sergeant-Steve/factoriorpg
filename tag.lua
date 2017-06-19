@@ -3,6 +3,10 @@
 -- Modified by I_IBlackI_I
 -- Tag list modified by Mylon
 
+if MODULE_LIST then
+	module_list_add("Tags")
+end
+
 function tag_create_gui(event)
 	local player = game.players[event.player_index]
 	if not mod_gui.get_button_flow(player)["tag-button"] then

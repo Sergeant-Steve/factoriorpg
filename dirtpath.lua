@@ -1,5 +1,9 @@
 DIRT_THRESHOLD = 6
 
+if MODULE_LIST then
+	module_list_add("Dirt Path")
+end
+
 function dirtDirt()
 	if not global.dirt then
 		global.dirt = {}

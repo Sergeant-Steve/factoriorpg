@@ -1,6 +1,10 @@
 --Bluebuild softmod, based on version 1.1.4
 AUTO_OFF_TIMER = 60 * 60 * 2 --2 minutes
 
+if MODULE_LIST then
+	module_list_add("Bluebuild")
+end
+
 -- Find ghosts to place.  Then find buildings to destruct.
 function blue_runOnce()
 	global.runOnce = true
@@ -181,7 +185,7 @@ function bluedemo(builder)
 	-- Reach distance must not be 0.  Just for you, Choumiko.  Now works with FAT Controller
 	local reachDistance = math.max(math.min(builder.reach_distance, 128), 1)
 	local searchArea = {{pos.x - reachDistance, pos.y - reachDistance}, {pos.x + reachDistance, pos.y + reachDistance}}
-	local areaList = builder.surface.find_entities_filtered{area=searchArea, limit=40}
+	local areaList = builder.surface.find_entities_filtered{area=searchArea, limit=400}
 	local areaListCleaned = {}
 	
 	-- Clean areaList

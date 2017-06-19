@@ -1,6 +1,7 @@
 -- TOOLS: Recommend all be turned on
 require "mod-gui"
 require "locale/utils/event" --Yes this line is seriously commented out, and yes without this it won't even work. I guess you now HAVE TO change the settings to match what you need.
+require "module_list" --Creates and displays a list of active modules on login.
 --require "oarc_events" --Oarc's separate spawn scenario.  Not working yet.
 require "rpg_permissions" --Limit certain actions to players level 5 or greater
 require "rpg" --Award bonuses based on experience earned.
@@ -23,7 +24,7 @@ require "divOresity" --Some ore gets scrambled and must be filtered.
 require "bluebuild" --Bluebuild softmod
 
 -- World Generators: Pick only ONE
-require "oarc_events" --Oarc's separate spawn scenario.
+--require "oarc_events" --Oarc's separate spawn scenario.
 --NOT UPDATED require "void" --Worldgenerator which randomly generates holes in the world
 --require "nuclear" --worldgenerator for nuclear scenario
 --NOT UPDATED require "grid" --Worldgenerator which devides the world into a grid.

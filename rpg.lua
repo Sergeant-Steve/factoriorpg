@@ -158,7 +158,7 @@ function rpg_class_picker(event)
 			player.gui.center.picker.add{type="flow", name="container", direction="vertical"}
 			player.gui.center.picker.container.add{type="button", name="Soldier", caption="Soldier", tooltip="Enhance the combat abilities of your team, larger radar radius"}
 			player.gui.center.picker.container.add{type="button", name="Builder", caption="Builder", tooltip="Extra reach, team turret damage, additional quickbars (at 20 and 50)"}
-			player.gui.center.picker.container.add{type="button", name="Scientist", caption="Scientist", tooltip="Boost combat robots, science speed, team health, team movement speed"}
+			player.gui.center.picker.container.add{type="button", name="Scientist", caption="Scientist", tooltip="Boost combat robots, science speed, team health, team movement speed, worker robot bot speed"}
 			player.gui.center.picker.container.add{type="button", name="Miner", caption="Miner", tooltip="Increase explosive damage and mining productivity of your team"}
 			player.gui.center.picker.container.add{type="button", name="Beastmaster", caption="Beastmaster", tooltip="Gain biter pets on nest kills. Reduces evolution scaling.(BETA)"}
 			player.gui.center.picker.container.add{type="button", name="None", caption="None", tooltip="No bonuses are given to team."}
@@ -780,8 +780,6 @@ function rpg_im_too_smart_to_die(event)
 	end
 end
 
---Miner reward: Oil
-
 -- Obsolete as of 0.15.13
 -- function rpg_fix_tech()
 	-- if global.force_to_fix then
@@ -792,8 +790,7 @@ end
 			-- global.current_research = nil
 			-- global.research_progress = nil
 		-- end
-	-- end
-		
+	-- end	
 -- end
 
 function rpg_init()
@@ -835,11 +832,6 @@ function rpg_is_sanitary(name)
 	return true
 end
 
---Replaced with serpent.block(global.rpg_data)
--- commands.add_command("export", "Export exp table for processing", function()
-	-- rpg_savedata()
--- end)
-
 --Event.register(defines.events.on_player_created, rpg_add_gui) --We'll do this after a class is chosen.
 Event.register(defines.events.on_player_created, rpg_loadsave)
 Event.register(defines.events.on_player_created, rpg_class_picker)
@@ -854,5 +846,4 @@ Event.register(defines.events.on_sector_scanned, rpg_bonus_scan)
 Event.register(defines.events.on_pre_player_died, rpg_im_too_smart_to_die)
 --Event.register(defines.events.on_research_finished, rpg_nerf_tech)
 --Event.register(defines.events.on_tick, rpg_exp_tick) --For debug
---Event.register(defines.events.on_tick, rpg_fix_tech) --Patch for force.reset_technology_effects()
 Event.register(-1, rpg_init)

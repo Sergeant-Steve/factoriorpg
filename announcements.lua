@@ -15,7 +15,6 @@ global.announcements.announcements = {
 global.announcements.intros = {
 	"Welcome to Factorio RPG!  Earn exp by launching rockets, researching technology, or killing biter nests and worms.  The first rocket is worth the most.",
 	"Levels provide small bonuses like movement speed, bonus inventory slots, bonus health, and more.",
-	"Currently enabled modules: Tag, Gravemarker, Dirtpath, divOresity"
 }
 -- Go through the announcements, based on the delay set in config
 -- @param event on_tick event
