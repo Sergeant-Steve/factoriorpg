@@ -14,10 +14,10 @@ function gOre(event)
             v.destroy()
         end
     end
-    for x = event.area.left_top.x, event.area.left_top.x + 32 do
-        for y = event.area.left_top.y, event.area.left_top.y + 32 do
+    for x = event.area.left_top.x, event.area.left_top.x + 31 do
+        for y = event.area.left_top.y, event.area.left_top.y + 31 do
             if event.surface.get_tile(x,y).collides_with("ground-tile") then
-                local amount = (x^2 + y^2)^0.6
+                local amount = (x^2 + y^2)^0.6 / 5
                 --Radius of 50 tiles is clear
                 --Radius of 200 tiles has no uranium
                 if x^2 + y^2 >= EASY_ORE_RADIUS^2 then
@@ -46,7 +46,12 @@ function dangOre(event)
     local last_user = event.created_entity.last_user
     local ores = event.created_entity.surface.count_entities_filtered{type="resource", area=event.created_entity.bounding_box}
     if ores > 0 then
+        --Need to turn off ghosts left by dead buildings so construction bots won't keep placing buildings and having them blow up.
+        local ttl = event.created_entity.force.ghost_time_to_live
+        local force = event.created_entity.force
+        event.created_entity.force.ghost_time_to_live = 0
         event.created_entity.die()
+        force.ghost_time_to_live = ttl
         if last_user then
             last_user.print("Cannot build non-miners on resources!")
         end
