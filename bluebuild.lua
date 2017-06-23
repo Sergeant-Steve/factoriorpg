@@ -247,7 +247,7 @@ end
 -- end
 
 function blue_enable_autobuild(event)
-	if event.created_entity and event.created_entity.name == "entity-ghost" then
+	if event.created_entity and event.created_entity.valid and event.created_entity.name == "entity-ghost" then
 		if global.blueBuildOptin[event.player_index] then
 			-- if not global.ghosts[event.created_entity.surface.name] then 
 			-- 	global.ghosts[event.created_entity.surface.name] = {}
