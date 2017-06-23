@@ -279,13 +279,14 @@ end
 
 Event.register(defines.events.on_player_left_game, oarc_on_player_left_game)
 
-function oarc_autofill(event)
-    if ENABLE_AUTOFILL then
-        Autofill(event)
-    end
-end
+-- Separated from Oarc.
+-- function oarc_autofill(event)
+--     if ENABLE_AUTOFILL then
+--         Autofill(event)
+--     end
+-- end
 
-Event.register(defines.events.on_built_entity, oarc_autofill)
+-- Event.register(defines.events.on_built_entity, oarc_autofill)
 
 -- local global.vision_tick = 0
 -- Event.register(defines.events.on_tick, oarc_on_tick)

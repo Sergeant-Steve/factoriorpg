@@ -1,6 +1,7 @@
 --Factorio RPG, written by Mylon
 --How to save data:
 -- /c rpg_savedata() 
+
 --Utility command for griefing.
 -- /silent-command do local hoarder = {amount=0} for k,v in pairs(game.players) do if v.get_item_count("uranium-235") > hoarder.amount then hoarder.name = v.name hoarder.amount = v.get_item_count("uranium-235") end end game.print(hoarder.name .. " is hoarding " .. hoarder.amount .. " uranium-235!") end
 -- /c for k,v in pairs(game.player.surface.find_entities_filtered{name="programmable-speaker"}) do game.print(v.last_user.name .. "is making noise.") end
@@ -45,7 +46,14 @@ function rpg_loadsave(event)
 			rpg_save[player.name].bank = 0
 		end
 	end
+	--Set class timer to a negative value so the timer function does not interrupt the first class selection.
 	global.rpg_tmp[player.name] = {class_timer=-20*60*60}
+
+	--Check combined levels to determine permissions.
+	local total_levels = rpg_level_sum(player)
+	if total_levels >= 5 then
+		player.permission_group = game.permissions.get_group("trusted")
+	end
 end
 
 
@@ -58,35 +66,7 @@ function rpg_starting_resources(player)
 	else
 		global.rpg_tmp[player.name].ready = true --And continue
 	end
-	local sum_exp = 0
-	local total_level = 1
-	if global.rpg_exp[player.name].bank then
-		sum_exp = sum_exp + global.rpg_exp[player.name].bank
-	end
-	if global.rpg_exp[player.name].Soldier then
-		sum_exp = sum_exp + global.rpg_exp[player.name].Soldier 
-	end
-	if global.rpg_exp[player.name].Builder then
-		sum_exp = sum_exp + global.rpg_exp[player.name].Builder 
-	end
-	if global.rpg_exp[player.name].Scientist then
-		sum_exp = sum_exp + global.rpg_exp[player.name].Scientist 
-	end
-	if global.rpg_exp[player.name].Miner then
-		sum_exp = sum_exp + global.rpg_exp[player.name].Miner 
-	end
-	if global.rpg_exp[player.name].Beastmaster then
-		sum_exp = sum_exp + global.rpg_exp[player.name].Beastmaster 
-	end
-	while rpg_exp_tnl(total_level) < sum_exp do
-		total_level = total_level + 1
-	end
-	--game.print("Giving staring resources.  Total exp is " .. sum_exp .. " and total level is " .. total_level .. ".")
-	-- --maxlevel is the highest level this function has seen from this player.
-	-- if not global.rpg_tmp[player.name].maxlevel then 
-		-- global.rpg_tmp[player.name].maxlevel = 1
-	-- end
-	-- local bonuslevel = global.rpg_exp[player.name].level - global.rpg_tmp[player.name].maxlevel
+	local total_level = rpg_level_sum(player)
 	-- global.rpg_tmp[player.name].maxlevel = math.max(global.rpg_exp[player.name].level, global.rpg_tmp[player.name].maxlevel)
 	local bonuslevel = total_level - 1
 	if bonuslevel > 0 then
@@ -158,7 +138,7 @@ function rpg_class_picker(event)
 			player.gui.center.picker.add{type="flow", name="container", direction="vertical"}
 			player.gui.center.picker.container.add{type="button", name="Soldier", caption="Soldier", tooltip="Enhance the combat abilities of your team, larger radar radius"}
 			player.gui.center.picker.container.add{type="button", name="Builder", caption="Builder", tooltip="Extra reach, team turret damage, additional quickbars (at 20 and 50)"}
-			player.gui.center.picker.container.add{type="button", name="Scientist", caption="Scientist", tooltip="Boost combat robots, science speed, team health, team movement speed, worker robot bot speed"}
+			player.gui.center.picker.container.add{type="button", name="Scientist", caption="Scientist", tooltip="Boost combat robots, science speed, team health, team movement speed, worker robot speed/battery"}
 			player.gui.center.picker.container.add{type="button", name="Miner", caption="Miner", tooltip="Increase explosive damage and mining productivity of your team"}
 			player.gui.center.picker.container.add{type="button", name="Beastmaster", caption="Beastmaster", tooltip="Gain biter pets on nest kills. Reduces evolution scaling.(BETA)"}
 			player.gui.center.picker.container.add{type="button", name="None", caption="None", tooltip="No bonuses are given to team."}
@@ -544,6 +524,34 @@ function rpg_levelup(player)
 	-- end
 end
 
+--Sum all exp values and return level as if player stuck to one class.
+function rpg_level_sum(player)
+	local sum_exp = 0
+	local total_level = 1
+	if global.rpg_exp[player.name].bank then
+		sum_exp = sum_exp + global.rpg_exp[player.name].bank
+	end
+	if global.rpg_exp[player.name].Soldier then
+		sum_exp = sum_exp + global.rpg_exp[player.name].Soldier 
+	end
+	if global.rpg_exp[player.name].Builder then
+		sum_exp = sum_exp + global.rpg_exp[player.name].Builder 
+	end
+	if global.rpg_exp[player.name].Scientist then
+		sum_exp = sum_exp + global.rpg_exp[player.name].Scientist 
+	end
+	if global.rpg_exp[player.name].Miner then
+		sum_exp = sum_exp + global.rpg_exp[player.name].Miner 
+	end
+	if global.rpg_exp[player.name].Beastmaster then
+		sum_exp = sum_exp + global.rpg_exp[player.name].Beastmaster 
+	end
+	while rpg_exp_tnl(total_level) < sum_exp do
+		total_level = total_level + 1
+	end
+	return total_level
+end
+
 --Award bonuses
 function rpg_give_bonuses(player)
 	local bonuslevel = global.rpg_exp[player.name].level - 1
@@ -573,9 +581,9 @@ function rpg_give_bonuses(player)
 			player.quickbar_count_bonus = 0
 		end
 		if global.rpg_exp[player.name].class == "Scientist" then
-			player.character_maximum_following_robot_count_bonus = math.floor(bonuslevel/4)
+			player.character_maximum_following_robot_count_bonus = math.floor(bonuslevel/2.5)
 		else
-			player.character_maximum_following_robot_count_bonus = math.floor(bonuslevel/8)
+			player.character_maximum_following_robot_count_bonus = math.floor(bonuslevel/5)
 		end
 	end
 end
@@ -602,14 +610,14 @@ function rpg_give_team_bonuses(force)
 				minerbonus = minerbonus + global.rpg_exp[v.name].level
 			end
 			if global.rpg_exp[v.name].class == "Beastmaster" then
-				beastmasterbonus = minerbonus + global.rpg_exp[v.name].level
+				beastmasterbonus = beastmasterbonus + global.rpg_exp[v.name].level
 			end
 		end
 	end
 	
-	force.reset_technology_effects()
-	
 	--That entire code block for calculating base bonus can be replaced by this:
+	force.reset_technology_effects()
+		
 	--For some reason this stops current research.  So let's save and reset it.
 	-- Made obsolete by 0.15.13
 	-- if force.current_research then
@@ -677,6 +685,7 @@ function rpg_give_team_bonuses(force)
 	scientistbonus = math.floor(scientistbonus^0.85)
 	builderbonus = math.floor(builderbonus^0.85)
 	minerbonus = math.floor(minerbonus^0.85)
+	--Beastmaster
 	
 	--I do need that block after all to find the list of ammo types and gun types
 	local ammotypes = {}
@@ -710,9 +719,10 @@ function rpg_give_team_bonuses(force)
 		force.set_turret_attack_modifier(k, builderbonus / 100 + force.get_turret_attack_modifier(k) * 0.8 - 0.2)
 	end
 	
-	force.character_health_bonus = scientistbonus / 4 --Base health is 250, so this is caled up similarly
+	force.character_health_bonus = scientistbonus / 3 --Base health is 250, so this is scaled up similarly
 	force.character_running_speed_modifier = scientistbonus / 400
 	force.worker_robots_speed_modifier = scientistbonus / 50 + force.worker_robots_speed_modifier * 0.6 - 0.4
+	force.worker_robots_battery_modifier = scientistbonus / 50
 	
 	--This one can't decrease, or players logging out would cause stuff to drop!
 	force.character_inventory_slots_bonus = math.max(force.character_inventory_slots_bonus, math.floor(builderbonus / 20))

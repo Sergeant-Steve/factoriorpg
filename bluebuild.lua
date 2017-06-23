@@ -48,21 +48,28 @@ function blue_playerloop()
 	for _, player in pairs(game.players) do
 		if player.connected then
 			--Each player only gets checked once per (6 * online players) ticks.
-			if not ((game.tick + 6 * player.index) % (6 * #game.connected_players) == 0) then
-				break
+			if blue_turn(player) then
+				--Toggle build/demo flags if player is idle.
+				--Set to 2 minutes
+				if global.blueBuildLastBuild[player.index] < game.tick - AUTO_OFF_TIMER then
+					global.blueBuildToggle[player.index] = false
+				end
+				if global.blueBuildLastBuild[player.index] < game.tick - AUTO_OFF_TIMER then
+					global.blueDemoToggle[player.index] = false
+				end
+				--Now check for stuff to build/tear down.
+				bluecheck(player)
 			end
-
-			--Toggle build/demo flags if player is idle.
-			--Set to 2 minutes
-			if global.blueBuildLastBuild[player.index] < game.tick - AUTO_OFF_TIMER then
-				global.blueBuildToggle[player.index] = false
-			end
-			if global.blueBuildLastBuild[player.index] < game.tick - AUTO_OFF_TIMER then
-				global.blueDemoToggle[player.index] = false
-			end
-			--Now check for stuff to build/tear down.
-			bluecheck(player)
 		end
+	end
+end
+
+--Necessary because Lua loops suck.
+function blue_turn(player)
+	if ((game.tick + 6 * player.index) % (6 * math.max(1, #game.connected_players)) == 0) then
+		return true
+	else
+		return false
 	end
 end
 

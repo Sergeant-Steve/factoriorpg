@@ -18,10 +18,12 @@ require "tag" --Module to let players set a tag behind their names to improve te
 --require "rocket" --Module to stop people removing the rocket silo
 require "gravemarker" --Mark player death locations on map for corpse runs.
 require "dirtpath" --For some silliness.
-require "divOresity" --Some ore gets scrambled and must be filtered.
+--require "divOresity" --Some ore gets scrambled and must be filtered.
+require "dangOreus" --Silly idea for testing.
 --require "dark harvest" --Only way to get uranium is from biter deaths.
 --require "dark harvest event" --Temp for testing.
 require "bluebuild" --Bluebuild softmod
+require "autofill" --Softmod autofill separated from Oarc
 
 -- World Generators: Pick only ONE
 --require "oarc_events" --Oarc's separate spawn scenario.
@@ -78,3 +80,12 @@ end
 
 Event.register(defines.events.on_player_created, player_joined)
 Event.register(defines.events.on_player_respawned, player_respawned)
+
+--Time for the debug code.  If any (not global.) globals are written to at this point, an error will be thrown.
+--eg, x = 2 will throw an error because it's not global.x
+-- setmetatable(_G, {
+-- 	__newindex = function(_, n)
+-- 		log("Attempt to write to undeclared var " .. n)
+-- 		game.print("Attempt to write to undeclared var " .. n)
+-- 	end
+-- })

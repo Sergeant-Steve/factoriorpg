@@ -67,7 +67,7 @@ ENABLE_TAGS = false
 ENABLE_LONGREACH = false
 
 -- Enable Autofill
-ENABLE_AUTOFILL = true
+-- ENABLE_AUTOFILL = true --Separated
 
 -- Enable Playerlist
 ENABLE_PLAYER_LIST = false
@@ -282,12 +282,6 @@ ENABLE_RANDOM_SILO_POSITION = true
 BUILD_DIST_BONUS = 20
 REACH_DIST_BONUS = BUILD_DIST_BONUS
 RESOURCE_DIST_BONUS = 2
-
---------------------------------------------------------------------------------
--- Autofill Options
---------------------------------------------------------------------------------
-
-AUTOFILL_TURRET_AMMO_QUANTITY = 20
 
 --------------------------------------------------------------------------------
 -- Use rso_config and rso_resource_config for RSO config settings
