@@ -1,11 +1,12 @@
 -- TOOLS: Recommend all be turned on
 require "mod-gui"
 require "locale/utils/event" --Yes this line is seriously commented out, and yes without this it won't even work. I guess you now HAVE TO change the settings to match what you need.
+require "module_list" --Display and print a list of active modules on player connected.  Moduled called before this can't be added.
 require "permissions" --Permission manager
 --require "trusted" --Module to add trusted players to a seperate permission group
 require "locale/utils/patreon" --Module to give patreons spectate and a nice unique tag
 require "locale/utils/admin"	--Admin module to give the admins spectate, commands and character modifications.
---require "announcements"	--Module to announce stuff ingame / give the players a welcome message
+require "announcements"	--Module to announce stuff ingame / give the players a welcome message
 require "tag" --Module to let players set a tag behind their names to improve teamwork
 --require "fmcd" --Module to consolidate saving data to an output file for the agent
 --require "stats" --Module to generate stats and print them to the filesystem

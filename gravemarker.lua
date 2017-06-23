@@ -1,5 +1,9 @@
 GRAVEMARKER_EXPIRY_TIMER = 15 --In minutes
 
+if MODULE_LIST then
+	module_list_add("Grave Marker")
+end
+
 -- When player dies, create a map tag at their location.
 function grave_marker(event)
 	if not global.graves then
