@@ -1,3 +1,6 @@
+STARTING_RADIUS = 100
+EASY_ORE_RADIUS = 250
+
 if MODULE_LIST then
 	module_list_add("dangOreus")
 end
@@ -17,13 +20,13 @@ function gOre(event)
                 local amount = (x^2 + y^2)^0.6
                 --Radius of 50 tiles is clear
                 --Radius of 200 tiles has no uranium
-                if x^2 + y^2 >= 200^2 then
+                if x^2 + y^2 >= EASY_ORE_RADIUS^2 then
                     local type = global.diverse_ores[math.random(#global.diverse_ores)]
                     --With noise
                     event.surface.create_entity{name=type, amount=amount, position={x+0.45+0.1*math.random(), y+0.45+0.1*math.random()}}
                     --Without noise
                     -- event.surface.create_entity{name=type, amount=amount, position={x+0.5, y+0.5}}
-                elseif x^2 + y^2 >= 50^2 then
+                elseif x^2 + y^2 >= STARTING_RADIUS^2 then
                     local type = global.easy_ores[math.random(#global.easy_ores)]
                     --With noise
                     event.surface.create_entity{name=type, amount=amount, position={x+0.45+0.1*math.random(), y+0.45+0.1*math.random()}}
