@@ -5,14 +5,14 @@ global.announcements = global.announcements or {}
 global.announcements.announcement_delay = 600
 -- List of announcements that are printed periodically, going through the list.
 global.announcements.announcements = {
-	"Someone was really f-ing lazy and forgot to change this. Shame on them.",
---		"Check out our patreon: http://patreon.com/factoriommo",
---		"Need an admin? Ask @hands or @crew in #moderation-request."
+		"Thank you for playing FactorioMMO!",
+		"Check out our patreon: http://patreon.com/factoriommo",
+		"Need an admin? Ask @hands or @crew in #moderation-request."
 }
 
 -- List of introductory messages that players are shown upon joining (in order).
 global.announcements.intros = {
-	"Someone was really f-ing lazy and forgot to change this. Shame on them.",
+	"Welcome to dangOreus!  Ore consumes anything built on it except miners.  It must be mined before the space can be used.",
 	"",
 	""
 }
