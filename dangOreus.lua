@@ -50,6 +50,19 @@ function dangOre(event)
     end
 end
 
+--Destroying chests causes any contained ore to spill onto the ground.
+function ore_rly(event)
+    local items = {"stone", "coal", "iron-ore", "copper-ore", "uranium-ore"}
+    if event.entity.type == "container" or event.entity.type == "cargo-wagon" then
+        for k, v in pairs(items) do
+            if event.entity.get_item_count(v) > 0 then
+                event.entity.surface.spill_item_stack(event.entity.position, {name=v, count=event.entity.get_item_count(v)})
+            end
+        end
+    end
+end
+
+--Build the list of ores
 function divOresity_init()
 	global.diverse_ores = {}
     global.easy_ores = {}
@@ -66,4 +79,5 @@ end
 Event.register(defines.events.on_built_entity, dangOre)
 Event.register(defines.events.on_robot_built_entity, dangOre)
 Event.register(defines.events.on_chunk_generated, gOre)
+Event.register(defines.events.on_entity_died, ore_rly)
 Event.register(-1, divOresity_init)
