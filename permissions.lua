@@ -35,5 +35,6 @@ function permissions_precheck(event)
 	end
 end
 
+Event.register(defines.events.on_tick, permissions_upgrade)
 Event.register(defines.events.on_player_created, permissions_precheck)
 Event.register(-1, permissions_init)

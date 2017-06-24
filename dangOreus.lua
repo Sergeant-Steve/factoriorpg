@@ -5,7 +5,6 @@ if MODULE_LIST then
 	module_list_add("dangOreus")
 end
 
-
 --Sprinkle ore everywhere
 function gOre(event)
     local oldores = event.surface.find_entities_filtered{type="resource", area=event.area}
@@ -17,7 +16,7 @@ function gOre(event)
     for x = event.area.left_top.x, event.area.left_top.x + 31 do
         for y = event.area.left_top.y, event.area.left_top.y + 31 do
             if event.surface.get_tile(x,y).collides_with("ground-tile") then
-                local amount = (x^2 + y^2)^0.6 / 5
+                local amount = (x^2 + y^2)^0.75 / 8
                 --Radius of 50 tiles is clear
                 --Radius of 200 tiles has no uranium
                 if x^2 + y^2 >= EASY_ORE_RADIUS^2 then
@@ -40,7 +39,7 @@ end
 
 --Auto-destroy non-mining drills.
 function dangOre(event)
-    if event.created_entity.type == "mining-drill" or not event.created_entity.destructible then
+    if event.created_entity.type == "mining-drill" or event.created_entity.type == "car" or not event.created_entity.destructible then
         return
     end
     local last_user = event.created_entity.last_user
@@ -82,6 +81,9 @@ function divOresity_init()
             end
 		end
 	end
+    --There's never enough iron so...
+    table.insert(global.diverse_ores, "iron-ore")
+    table.insert(global.easy_ores, "iron-ore")
 end
 
 Event.register(defines.events.on_built_entity, dangOre)
