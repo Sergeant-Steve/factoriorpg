@@ -17,7 +17,7 @@ SPAWN_MSG3 = ""
 -- Disable everything between this...
 WELCOME_MSG = ""
 GAME_MODE_MSG = ""
-MODULES_ENABLED = "Seperate Spawns enabled, Autofill enabled"
+MODULES_ENABLED = ""
 
 WELCOME_MSG_TITLE = ""
 WELCOME_MSG1 = "Rules: Be polite. Ask before changing other players's stuff. Have fun!"
@@ -130,12 +130,12 @@ PLAYER_RESPAWN_START_ITEMS = {
 CHECK_SPAWN_UNGENERATED_CHUNKS_RADIUS = 5
 
 -- Near Distance in chunks
-NEAR_MIN_DIST = 25 --50
-NEAR_MAX_DIST = 100 --125
+NEAR_MIN_DIST = 25 --25
+NEAR_MAX_DIST = 120 --100
                    --
 -- Far Distance in chunks
-FAR_MIN_DIST = 100 --50
-FAR_MAX_DIST = 200 --125
+FAR_MIN_DIST = 175 --150
+FAR_MAX_DIST = 225 --200
           
 ---------------------------------------
 -- Resource & Spawn Circle Options
