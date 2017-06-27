@@ -156,12 +156,35 @@ function ore_rly(event)
     end
 end
 
+--Unchart one random chunk per minute to keep the map remotely sane.
+function unchOret(event)
+    if not (event.tick % (60 * 60) == 0) then
+        return
+    end
+
+    local chunk_count = 0
+    for chunk in game.surfaces[1].get_chunks() do
+        chunk_count = chunk_count + 1
+    end
+    local stopat = math.random(chunk_count)
+    local count = 0
+    for chunk in game.surfaces[1].get_chunks() do
+        count = count + 1
+        if count == stopat then
+            for k,v in pairs(game.forces) do --Because oarc modifies the default force... I should do all forces to be sure
+                v.unchart_chunk({chunk.x, chunk.y}, "1")
+            end
+        end
+    end
+end
+
 --Build the list of ores
 function divOresity_init()
     --Each chunk picks a table to generate from.  Each table has either 3 copies of one ore, or 6 copies.
     global.easy_ore_list = {}
 	global.diverse_ore_list = {}
 
+    --These are depreciated.
     global.easy_ores = {}
     global.diverse_ores = {}
     global.ore_chunks = {}
@@ -174,9 +197,6 @@ function divOresity_init()
             end
 		end
 	end
-    
-    --These tables should look like:
-
 
     --Easy ores
     for k, v in pairs(global.easy_ore_list) do
@@ -230,4 +250,5 @@ Event.register(defines.events.on_built_entity, dangOre)
 Event.register(defines.events.on_robot_built_entity, dangOre)
 Event.register(defines.events.on_chunk_generated, gOre)
 Event.register(defines.events.on_entity_died, ore_rly)
+Event.register(defines.events.on_tick, unchOret)
 Event.register(-1, divOresity_init)
