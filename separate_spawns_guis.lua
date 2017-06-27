@@ -179,7 +179,7 @@ function DisplaySpawnOptions(player)
                     type = "button",
                     caption="Solo Spawn (Near)"}
 	--Disabled for marathon mode.
-	if game.difficulty_settings.recipe_difficulty == 0 then
+	if game.difficulty_settings.recipe_difficulty == 0 and rpg_level_sum(player) >= 10 then
 		soloSpawnFlow.add{name = "isolated_spawn_far",
 						type = "button",
 						caption="Solo Spawn (Far)"}

@@ -93,7 +93,7 @@ function rpg_savedata()
 	else
 		target = 1
 	end
-	game.write_file(filename, serpent.block(global.rpg_exp, {comment=false}), true, target)
+	game.write_file(filename, serpent.block(global.rpg_exp), true, target)
 end
 
 -- GUI STUFF --

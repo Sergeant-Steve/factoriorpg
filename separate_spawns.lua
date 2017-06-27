@@ -99,7 +99,9 @@ function FindUnusedSpawns(event)
 		player.teleport({0,0})
 		
 		--Delete spawn gui
-		player.gui.top.spwn_ctrls.destroy()
+        if player.gui.top.spwn_ctrls then
+            player.gui.top.spwn_ctrls.destroy()
+        end
 		
 		--Add to table in case player rejoins later.  This toggles the flag so they get the spawn gui all over again.
 		global.playerAbandon[player.name] = true

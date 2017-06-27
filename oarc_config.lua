@@ -130,12 +130,12 @@ PLAYER_RESPAWN_START_ITEMS = {
 CHECK_SPAWN_UNGENERATED_CHUNKS_RADIUS = 5
 
 -- Near Distance in chunks
-NEAR_MIN_DIST = 25 --25
-NEAR_MAX_DIST = 120 --100
+NEAR_MIN_DIST = 22 --25
+NEAR_MAX_DIST = 60 --100
                    --
 -- Far Distance in chunks
-FAR_MIN_DIST = 175 --150
-FAR_MAX_DIST = 225 --200
+FAR_MIN_DIST = 80 --150
+FAR_MAX_DIST = 200 --200
           
 ---------------------------------------
 -- Resource & Spawn Circle Options
@@ -224,7 +224,7 @@ WARN_AREA_REDUCTION_RATIO = 12
 -- Separate teams
 -- This allows you to join your own force/team. Everyone is still COOP/PvE, all
 -- teams are friendly and cease-fire.
-ENABLE_SEPARATE_TEAMS = false
+ENABLE_SEPARATE_TEAMS = false --Disabled for potential desyncs.
 
 -- Main force is what default players join
 MAIN_FORCE = "main_force"
