@@ -158,23 +158,22 @@ end
 
 --Unchart one random chunk per minute to keep the map remotely sane.
 function unchOret(event)
-    if not (event.tick % (60 * 60) == 0) then
+    if not (event.tick % (60) == 0) then
         return
     end
 
-    local chunk_count = 0
+    local chunks = {}
     for chunk in game.surfaces[1].get_chunks() do
-        chunk_count = chunk_count + 1
-    end
-    local stopat = math.random(chunk_count)
-    local count = 0
-    for chunk in game.surfaces[1].get_chunks() do
-        count = count + 1
-        if count == stopat then
-            for k,v in pairs(game.forces) do --Because oarc modifies the default force... I should do all forces to be sure
-                v.unchart_chunk({chunk.x, chunk.y}, "1")
+        if game.forces.player.is_chunk_charted("1", {chunk.x, chunk.y}) then
+            if not game.forces.player.is_chunk_visible("1", {chunk.x, chunk.y}) then
+                table.insert(chunks, {x=chunk.x, y=chunk.y})
             end
         end
+    end
+
+    if #chunks > 0 then
+        local chunk = chunks[math.random(#chunks)]
+        game.forces.player.unchart_chunk({chunk.x, chunk.y}, "1")
     end
 end
 
