@@ -9,6 +9,9 @@ end
 function Autofill(event)
     local player = game.players[event.player_index]
     local eventEntity = event.created_entity
+    if not (event.created_entity and event.created_entity.valid) then
+        return --Something happened to it!
+    end
 
     if (eventEntity.name == "gun-turret") then
         AutofillTurret(player, eventEntity)

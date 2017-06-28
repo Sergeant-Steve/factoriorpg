@@ -158,7 +158,7 @@ end
 
 --Unchart one random chunk per minute to keep the map remotely sane.
 function unchOret(event)
-    if not (event.tick % (60) == 0) then
+    if not (event.tick % (60*60) == 0) then
         return
     end
 
