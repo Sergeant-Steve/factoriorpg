@@ -122,7 +122,14 @@ end
 
 --Auto-destroy non-mining drills.
 function dangOre(event)
-    if event.created_entity.type == "mining-drill" or event.created_entity.type == "car" or not event.created_entity.destructible then
+    if not (event.created_entity and event.created_entity.valid) then
+        return
+    end
+    if event.created_entity.type == "mining-drill" or event.created_entity.type == "car" or not event.created_entity.health then
+        return
+    end
+    --Some entities have no bounding box area.  Not sure which.
+    if event.created_entity.bounding_box.left_top.x == event.created_entity.bounding_box.right_bottom.x or event.created_entity.bounding_box.left_top.y == event.created_entity.bounding_box.right_bottom.y then
         return
     end
     local last_user = event.created_entity.last_user
@@ -196,6 +203,11 @@ function divOresity_init()
             end
 		end
 	end
+
+    --This is a hack to make the ratios easier to handle.
+    table.insert(global.diverse_ore_list, "iron-ore")
+    table.insert(global.easy_ore_list, "iron-ore")
+    table.insert(global.easy_ore_list, "iron-ore")
 
     --Easy ores
     for k, v in pairs(global.easy_ore_list) do
