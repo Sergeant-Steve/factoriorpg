@@ -257,8 +257,8 @@ MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 ENEMY_EXPANSION = false
 
 -- Divide the alien factors by this number to reduce it (or multiply if < 1)
-ENEMY_POLLUTION_FACTOR_DIVISOR = 2
-ENEMY_DESTROY_FACTOR_DIVISOR = 1
+ENEMY_POLLUTION_FACTOR_DIVISOR = 4
+ENEMY_DESTROY_FACTOR_DIVISOR = 2
 
 
 --------------------------------------------------------------------------------
@@ -292,7 +292,7 @@ RESOURCE_DIST_BONUS = 2
 MAP_SETTINGS_RSO_TERRAIN_SEGMENTATION = "very-low" -- Frequency of water
 MAP_SETTINGS_RSO_WATER = "high" -- Size of water patches
 MAP_SETTINGS_RSO_PEACEFUL = false -- Peaceful mode for biters/aliens
-MAP_SETTINGS_RSO_SEED = math.random(999999999) -- Default is randomized map
+--MAP_SETTINGS_RSO_SEED = math.random(999999999) -- Default is randomized map
 MAP_SETTINGS_RSO_STARTING_AREA = "very-low" -- Does not affect Oarc spawn sizes.
 
 -------------------------------------------------------------------------------

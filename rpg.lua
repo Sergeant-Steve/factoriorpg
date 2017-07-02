@@ -735,7 +735,7 @@ function rpg_give_team_bonuses(force)
 	force.manual_crafting_speed_modifier = -0.3
 	
 	--Mining bonus
-	force.mining_drill_productivity_bonus = minerbonus / 50 + force.mining_drill_productivity_bonus * 0.5
+	force.mining_drill_productivity_bonus = minerbonus / 50 + force.mining_drill_productivity_bonus
 	
 	--Beastmaster bonus
 	--Let's turn this into a factor for easier application

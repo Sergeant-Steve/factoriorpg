@@ -1,8 +1,8 @@
 -- TOOLS: Recommend all be turned on
 require "mod-gui"
 require "locale/utils/event" --Yes this line is seriously commented out, and yes without this it won't even work. I guess you now HAVE TO change the settings to match what you need.
+require "antigrief" --Look for suspicious behavior and report it to admins/log it.
 require "module_list" --Creates and displays a list of active modules on login.
---require "oarc_events" --Oarc's separate spawn scenario.  Not working yet.
 require "rpg_permissions" --Limit certain actions to players level 5 or greater
 require "rpg" --Award bonuses based on experience earned.
 --require "permissions" --Permission manager
@@ -14,19 +14,19 @@ require "tag" --Module to let players set a tag behind their names to improve te
 --require "fmcd" --Module to consolidate saving data to an output file for the agent
 --require "stats" --Module to generate stats and print them to the filesystem
 --require "popup" --Module to create and display an popup in the center of all players their screens.
---require "rules" --Module which displays a popup with the rules when a player joins, or presses the open rules button
+require "rules" --Module which displays a popup with the rules when a player joins, or presses the open rules button
 --require "rocket" --Module to stop people removing the rocket silo
 require "gravemarker" --Mark player death locations on map for corpse runs.
 require "dirtpath" --For some silliness.
---require "divOresity" --Some ore gets scrambled and must be filtered.
-require "dangOreus" --Ore is everywhere.  Cannot build on it!
+require "divOresity" --Some ore gets scrambled and must be filtered.
+--require "dangOreus" --Ore is everywhere.  Cannot build on it!
 --require "dark harvest" --Only way to get uranium is from biter deaths.
 --require "dark harvest event" --Temp for testing.
 require "bluebuild" --Bluebuild softmod
 require "autofill" --Softmod autofill separated from Oarc
 
 -- World Generators: Pick only ONE
---require "oarc_events" --Oarc's separate spawn scenario.
+require "oarc_events" --Oarc's separate spawn scenario.
 --NOT UPDATED require "void" --Worldgenerator which randomly generates holes in the world
 --require "nuclear" --worldgenerator for nuclear scenario
 --NOT UPDATED require "grid" --Worldgenerator which devides the world into a grid.
