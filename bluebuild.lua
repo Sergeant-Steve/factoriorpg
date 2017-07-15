@@ -275,7 +275,7 @@ end)
 commands.add_command("bluebuildswitch", "Toggle bluebuild for the whole server", function()
 	if game.player.admin then
 		global.blueBuildSwitch = not global.blueBuildSwitch
-		game.player.print("Bluebuild server setting set to " .. tostring(global.blueBuildOptin[game.player.index]) .."." )
+		game.player.print("Bluebuild server setting set to " .. tostring(global.blueBuildSwitch) .."." )
 	else
 		game.player.print("Only admins can use this command.")
 	end
@@ -285,7 +285,6 @@ Event.register(defines.events.on_built_entity, blue_enable_autobuild)
 
 Event.register(defines.events.on_player_created, blue_initPlayer)
 		
-
 Event.register(defines.events.on_tick, blue_playerloop)
 
 Event.register(defines.events.on_marked_for_deconstruction, blue_demotoggle)

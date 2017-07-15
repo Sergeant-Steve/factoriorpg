@@ -236,7 +236,7 @@ function oarc_player_created(event)
     end
 end
 
-Event.register(defines.events.on_player_created, oarc_player_created)
+--Event.register(defines.events.on_player_created, oarc_player_created)
 
 --If player previously abandoned a base...
 function oarc_recreate_start(event)

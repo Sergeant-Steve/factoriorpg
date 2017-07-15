@@ -24,9 +24,10 @@ require "divOresity" --Some ore gets scrambled and must be filtered.
 --require "dark harvest event" --Temp for testing.
 require "bluebuild" --Bluebuild softmod
 require "autofill" --Softmod autofill separated from Oarc
+require "belt_limit" --Limits number of belts per player.  Mostly for UPS reasons.
 
 -- World Generators: Pick only ONE
-require "oarc_events" --Oarc's separate spawn scenario.
+--require "oarc_events" --Oarc's separate spawn scenario.
 --NOT UPDATED require "void" --Worldgenerator which randomly generates holes in the world
 --require "nuclear" --worldgenerator for nuclear scenario
 --NOT UPDATED require "grid" --Worldgenerator which devides the world into a grid.
@@ -82,7 +83,7 @@ Event.register(defines.events.on_player_created, player_joined)
 Event.register(defines.events.on_player_respawned, player_respawned)
 
 --Time for the debug code.  If any (not global.) globals are written to at this point, an error will be thrown.
---eg, x = 2 will throw an error because it's not global.x
+--eg, x = 2 will throw an error because it's not global.x or local x
 function global_debug()
 	setmetatable(_G, {
 		__newindex = function(_, n)

@@ -12,7 +12,7 @@ function rpg_beast_taming(event)
 			if global.rpg_exp[player.name].class == "Beastmaster" then
 				--Conditions met.  Check for friendly biter spawn.
 				-- 4% chance per level of gaining a medium biter pet.
-				if math.random() < global.rpg_exp[player.name].level * 4 / 100 then
+				if math.random() < global.rpg_tmp[player.name].level * 4 / 100 then
 					rpg_add_pet(player)
 				end
 			end
@@ -25,7 +25,7 @@ function rpg_beast_sickem(event)
 	if event.tick % 15 == 0 then
 		for n, p in pairs(game.players) do
 			if p.connected then
-				if global.rpg_exp[p.name].class == "Beastmaster" then
+				if global.rpg_exp[p.name] and global.rpg_exp[p.name].class == "Beastmaster" then
 					if global.rpg_tmp[p.name].pets and global.rpg_tmp[p.name].pets.valid then
 						if p.shooting_state.state ~= defines.shooting.not_shooting then
 							local enemy = p.surface.find_nearest_enemy{position=p.position, max_distance=64}
@@ -40,7 +40,7 @@ function rpg_beast_sickem(event)
 						end
 					else
 					--Group expired?  Let's try rounding them up.
-						local level = global.rpg_exp[p.name].level
+						local level = global.rpg_tmp[p.name].level
 						local packsize = math.ceil(level/4)
 						local beasts = p.surface.find_entities_filtered{position=p.position, count=packsize, force="beasts"}
 						if #beasts > 0 then
@@ -60,7 +60,7 @@ function rpg_free_pets(event)
 	if event.tick % (60 * 60) == 0 then
 		for n, p in pairs(game.players) do
 			if p.connected then
-				if global.rpg_exp[p.name].class == "Beastmaster" then
+				if global.rpg_exp[p.name] and global.rpg_exp[p.name].class == "Beastmaster" then
 					--Check to see if the player is in the wild.  If there are nearby belts or assemblers, skip.
 					local pos = p.position
 					local area = {{pos.x-100, pos.y-100}, {pos.x+100, pos.y+100}}
@@ -78,7 +78,7 @@ end
 
 function rpg_add_pet(player)
 	--Can the player have more pets?
-	if global.rpg_tmp[player.name].pets and global.rpg_tmp[player.name].pets.valid and #global.rpg_tmp[player.name].pets.members > global.rpg_exp[player.name].level / 4 then
+	if global.rpg_tmp[player.name].pets and global.rpg_tmp[player.name].pets.valid and #global.rpg_tmp[player.name].pets.members > global.rpg_tmp[player.name].level / 4 then
 		return
 	end
 	local biter_type = "medium-biter" --Default biter type.

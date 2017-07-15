@@ -7,55 +7,166 @@
 -- /c for k,v in pairs(game.player.surface.find_entities_filtered{name="programmable-speaker"}) do game.print(v.last_user.name .. "is making noise.") end
 
 require "rpg_beastmaster" --New class gets its own file for class-related events.
-require "rpgdata" --Savedata.  This is externally generated.
+--require "rpgdata" --Savedata.  This is externally generated.
+
+rpg = {}
+rpg.classes = {"Engineer", "Miner", "Builder", "Soldier", "Scientist", "Beastmaster"}
+
 --Savedata is of form: player_name = {bank = exp, class1 = exp, class2 = exp, etc}
 
---On player join, fetch exp.
--- function rpg_loadsave(event)
-	-- local player = game.players[event.player_index]
-	-- if not global.rpg_exp[player.name] then
-		-- global.rpg_exp[player.name] = {level=1, class="Engineer", Engineer=0, bank=0}
-		-- if rpg_save[player.name] then
-			-- --Load bank (legacy) and class exp
-			-- for k,v in pairs(rpg_save[player.name]) do
-				-- global.rpg_exp[player.name][k] = v
-			-- end
-			-- if not rpg_save[player.name].bank then 
-				-- rpg_save[player.name].bank = 0
-			-- end
-		-- end
-	-- end
-	-- if not global.rpg_tmp[player.name] then
-		-- global.rpg_tmp[player.name] = {}
-	-- end
--- end
+--Remote commands
+commands.add_command("heartbeat", "Regular heartbeat to let the game know that the character data server is online.", function()
+	for i = 1, 3 do
+		global.rpg.heartbeat[i] = true
+	end
+end)
 
+commands.add_command("loaddata", "Loads rpg data", function(data)
+	--Only the server is allowed to use this command
+	if game.player then
+		return
+	end
+	--Incoming string is of form: {name=player.name, class=exp}
+	--rpg_tmp stores value on load so we can do a diff and store only the diff.
+	--Let's convert it from type string to type table
+	--game.print(serpent.line(str))
+	data = loadstring('return ' .. data.parameter)() --Warning: This is insecure.  I don't like it one bit.
+	
+	--game.print(serpent.line(data))
+	if not data.playername then
+		--Invalid data
+		return
+	end
+
+	local player = game.players[data.playername]
+	if not player then
+		--Stale load data file
+		return
+	end
+	player.print("RPG data loaded.")
+
+	for k,v in pairs(rpg.classes) do
+		if data[v] then
+			if global.rpg_exp[player.name][v] then
+				if data[v] > global.rpg_exp[player.name][v] then
+					global.rpg_exp[player.name][v] = data[v]
+				else
+					log("Tried to load stale data for an existing player.")
+				end
+			else
+				global.rpg_exp[player.name][v] = data[v]
+			end
+			global.rpg_tmp[player.name][v] = data[v]
+		end
+	end
+	if global.rpg_exp[player.name].class == "Engineer" then
+		rpg_class_picker(player)
+		rpg_starting_resources(player)
+	end
+	--Let's do the oarc spawns on this step.
+	if ENABLE_SEPARATE_SPAWNS then
+		if not global.rpg_tmp[player.name].oarc then
+			SeparateSpawnsPlayerCreated({player_index=player.index})
+			global.rpg_tmp[player.name].oarc = true
+		end
+	end
+end)
+
+function rpg.heartbeat(event)
+	if not (game.tick % 600 == 0) then
+		return
+	end
+	for k, v in pairs(global.rpg.heartbeat) do
+		if v then
+			global.rpg.heartbeat[k] = false
+			return
+		end
+	end
+	--Still here?  Then external script is offline.
+	log("RPG: data server offline.")
+end
+
+--On player join, set default values
 function rpg_loadsave(event)
 	local player = game.players[event.player_index]
 	if player.name == "" then
 		game.print("Error, player.name is empty.")
 		return
 	end
-	global.rpg_exp[player.name] = {level=1, class="Engineer", Engineer=0, bank=0}
-	if rpg_save[player.name] then
-		--Load bank (legacy) and class exp
-		for k,v in pairs(rpg_save[player.name]) do
-			global.rpg_exp[player.name][k] = v
-		end
-		if not rpg_save[player.name].bank then 
-			rpg_save[player.name].bank = 0
-		end
+	global.rpg_exp[player.name] = {}
+	global.rpg_tmp[player.name] = {}
+	--global.rpg_exp[player.name] = {level=1, class="Engineer", Engineer=0, bank=0}
+	for k,v in pairs(rpg.classes) do
+		global.rpg_exp[player.name][v] = 0
+		global.rpg_tmp[player.name][v] = 0
 	end
+	global.rpg_tmp[player.name].level = 1
+	global.rpg_exp[player.name].class = "Engineer"
+	global.rpg_exp[player.name].bank = 0
+
+	global.rpg_tmp[player.name].bank = 0
+	global.rpg_tmp[player.name].class_timer = -20*60*60
+	-- if rpg_save[player.name] then
+	-- 	--Load bank (legacy) and class exp
+	-- 	for k,v in pairs(rpg_save[player.name]) do
+	-- 		global.rpg_exp[player.name][k] = v
+	-- 	end
+	-- 	if not rpg_save[player.name].bank then 
+	-- 		rpg_save[player.name].bank = 0
+	-- 	end
+	-- end
 	--Set class timer to a negative value so the timer function does not interrupt the first class selection.
-	global.rpg_tmp[player.name] = {class_timer=-20*60*60}
+	--global.rpg_tmp[player.name] = {class_timer=-20*60*60}
 
 	--Check combined levels to determine permissions.
-	local total_levels = rpg_level_sum(player)
-	if total_levels >= 5 then
-		player.permission_group = game.permissions.get_group("trusted")
-	end
+	-- local total_levels = rpg_level_sum(player)
+	-- if total_levels >= 5 then
+	-- 	player.permission_group = game.permissions.get_group("trusted")
+	-- end
 end
 
+--Write a file.  Script will monitor this output file and consume events and pass data back via rcon.
+--Simple method: rcon: /silent-command global.rpg_exp[name] = data; global.rpg_tmp[name] = data
+--Hard method: rcon: /loaddata {playername=name, class1=exp, class2=exp...}
+function rpg_remote_load(event)
+	local player = game.players[event.player_index]
+	game.write_file("loadsave", player.name .. "\n", true, 0)
+end
+
+--Write data to a file.  Script will monitor this output file and consume lines.
+--Each object is a difference of exp.
+function rpg_remote_save(event)
+	local player = game.players[event.player_index]
+	local data = '{"name":"' .. player.name .. '",'
+	for k, v in pairs(rpg.classes) do
+		if global.rpg_exp[player.name][v] > global.rpg_tmp[player.name][v] then
+			data = data .. '"' .. v .. '":' .. global.rpg_exp[player.name][v]-global.rpg_tmp[player.name][v] ..","
+		end	
+	end
+	--Set tmp value to current value so we don't try to save the delta exp twice.
+	for k, v in pairs(rpg.classes) do
+		global.rpg_tmp[player.name][v] = global.rpg_exp[player.name][v]
+	end
+	data = data .. "}\n"
+	--Trim the trailing comma
+	data = string.gsub(data, ",}", "}")
+	game.write_file("savedata", data, true, 0)
+end
+
+--Save the persistent data.
+-- Single line command for manual export:
+-- /silent-command game.write_file("rpgdata - 2017-05-19.txt", serpent.block(global.rpg_exp, {comment=false}), true, 1)
+function rpg_savedata()
+	local filename = "rpgdata - " .. game.tick .. ".txt"
+	local target
+	--Are we on a dedicated server?
+	if game.player then
+		target = game.player.index
+	else
+		target = 0
+	end
+	game.write_file(filename, serpent.block(global.rpg_exp), true, target)
+end
 
 -- SPAWN AND RESPAWN --
 --Higher level players get more starting resources for an accelerated start!
@@ -81,21 +192,6 @@ function rpg_respawn(event)
 	rpg_give_bonuses(player)
 end
 
---Save the persistent data.
--- Single line command for manual export:
--- /silent-command game.write_file("rpgdata - 2017-05-19.txt", serpent.block(global.rpg_exp, {comment=false}), true, 1)
-function rpg_savedata()
-	local filename = "rpgdata - " .. game.tick .. ".txt"
-	local target
-	--Are we on a dedicated server?
-	if game.players[0] then
-		target = 0
-	else
-		target = 1
-	end
-	game.write_file(filename, serpent.block(global.rpg_exp), true, target)
-end
-
 -- GUI STUFF --
 --Add/rebuild class/level gui
 function rpg_add_gui(event)
@@ -112,8 +208,9 @@ function rpg_add_gui(event)
 end
 
 --Create class pick / change gui
-function rpg_class_picker(event)
-	local player = game.players[event.player_index]
+--function rpg_class_picker(event)
+function rpg_class_picker(player)
+	--local player = game.players[event.player_index]
 	--Check if player is eligible to change classes.
 	--15 minute cooldown	
 	if global.rpg_tmp[player.name].class_timer and game.tick > global.rpg_tmp[player.name].class_timer + 60 * 60 * 15 then
@@ -163,7 +260,7 @@ function rpg_class_click(event)
 		return
 	end
 	if event.element.name == "class_picker" then
-		rpg_class_picker(event)
+		rpg_class_picker(player)
 		return
 	end
 	if event.element.name == "class" then
@@ -204,7 +301,7 @@ function rpg_update_gui(player)
 	if not player.gui.top.rpg then
 		rpg_add_gui({player_index=player.index})
 	end
-	local level = global.rpg_exp[player.name].level
+	local level = global.rpg_tmp[player.name].level
 	--Update progress bar.
 	local class = global.rpg_exp[player.name].class
 	player.gui.top.rpg.container.class.caption = "Class: " .. global.rpg_exp[player.name].class
@@ -217,7 +314,7 @@ end
 function rpg_character_sheet(player)
 	if not player.gui.center.sheet then
 		if player.controller_type == defines.controllers.character then --Make sure player has a character
-			player.gui.center.add{type="frame", name="sheet", caption="Level " ..global.rpg_exp[player.name].level .. " " .. global.rpg_exp[player.name].class}
+			player.gui.center.add{type="frame", name="sheet", caption="Level " ..global.rpg_tmp[player.name].level .. " " .. global.rpg_exp[player.name].class}
 			player.gui.center.sheet.add{type="flow", name="container", direction="vertical"}
 			player.gui.center.sheet.container.add{type="flow", name="control", direction="horizontal"}
 			player.gui.center.sheet.container.add{type="flow", name="stats", direction="horizontal"}
@@ -278,7 +375,7 @@ end
 -- UTILITY FUNCTIONS --
 --Load exp value, calculate value, set bonuses.
 function rpg_set_class(player, class)
-	global.rpg_exp[player.name].level = 1
+	global.rpg_tmp[player.name].level = 1
 	global.rpg_exp[player.name].class = class
 	global.rpg_tmp[player.name].class_timer = game.tick
 	if not global.rpg_exp[player.name][class] then
@@ -297,13 +394,14 @@ function rpg_set_class(player, class)
 	--global.rpg_exp[player.name].ready = math.max(global.rpg_exp[player.name].level, global.rpg_exp[player.name].ready)
 	rpg_give_bonuses(player)
 	rpg_give_team_bonuses(player.force)
-	rpg_starting_resources(player)
+	--rpg_starting_resources(player)
 end
 
 -- PLAYERS JOINING AND LEAVING --
 --Rejoining will re-calculate bonuses.  Specifically for rocket launches.
 function rpg_connect(event)
 	local player = game.players[event.player_index]
+	--This should be obsolete
 	if not global.rpg_exp then
 		--Init did not fire.  This is due to oarc not liking the 3ra event handler.
 		rpg_init()
@@ -331,6 +429,9 @@ end
 -- EXP STUFF --
 function rpg_nest_killed(event)
 	--game.print("Entity died.")
+	if event.entity and event.entity.surface.get_pollution(event.entity.position) < 20 then
+		return
+	end
 	if event.entity.type == "unit-spawner" then
 		--game.print("Spawner died.")
 		if event.cause and event.cause.type == "player" then
@@ -499,7 +600,7 @@ end
 --Functions for handling levels
 function rpg_ready_to_level(player)
 	local class = global.rpg_exp[player.name].class
-	if global.rpg_exp[player.name][class] >= rpg_exp_tnl(global.rpg_exp[player.name].level) then
+	if global.rpg_exp[player.name][class] >= rpg_exp_tnl(global.rpg_tmp[player.name].level) then
 		return true
 	end
 end
@@ -508,10 +609,10 @@ function rpg_levelup(player)
 	if player.connected then
 		player.surface.create_entity{name="flying-text", text="Level up!", position={player.position.x, player.position.y-3}}
 	end
-	global.rpg_exp[player.name].level = global.rpg_exp[player.name].level + 1
+	global.rpg_tmp[player.name].level = global.rpg_tmp[player.name].level + 1
 	
 	--Promote and allow decon planners
-	if global.rpg_exp[player.name].level >= 5 then
+	if global.rpg_tmp[player.name].level >= 5 then
 		if player.permission_group.name == "Default" then
 			player.permission_group = game.permissions.get_group("trusted")
 		end
@@ -554,7 +655,11 @@ end
 
 --Award bonuses
 function rpg_give_bonuses(player)
-	local bonuslevel = global.rpg_exp[player.name].level - 1
+	if not global.rpg_exp[player.name] then
+		--Data not yet loaded.
+		return
+	end
+	local bonuslevel = global.rpg_tmp[player.name].level - 1
 	if player.controller_type == defines.controllers.character then --Just in case player is in spectate mode or some other weird stuff is happening
 		player.character_health_bonus = 8 * bonuslevel
 		player.character_running_speed_modifier = 0.005 * bonuslevel -- This seems multiplicative
@@ -569,9 +674,9 @@ function rpg_give_bonuses(player)
 			player.character_reach_distance_bonus = math.floor(bonuslevel/3)
 			player.character_build_distance_bonus = math.floor(bonuslevel/3)
 			player.character_inventory_slots_bonus = math.floor(bonuslevel/3)
-			if global.rpg_exp[player.name].level >= 50 then
+			if global.rpg_tmp[player.name].level >= 50 then
 				player.quickbar_count_bonus = 2
-			elseif global.rpg_exp[player.name].level >= 20 then
+			elseif global.rpg_tmp[player.name].level >= 20 then
 				player.quickbar_count_bonus = 1
 			end
 		else
@@ -598,24 +703,25 @@ function rpg_give_team_bonuses(force)
 	for k,v in pairs(force.players) do
 		if v.connected then
 			if global.rpg_exp[v.name].class == "Soldier" then
-				soldierbonus = soldierbonus + global.rpg_exp[v.name].level
+				soldierbonus = soldierbonus + global.rpg_tmp[v.name].level
 			end
 			if global.rpg_exp[v.name].class == "Scientist" then
-				scientistbonus = scientistbonus + global.rpg_exp[v.name].level
+				scientistbonus = scientistbonus + global.rpg_tmp[v.name].level
 			end
 			if global.rpg_exp[v.name].class == "Builder" then
-				builderbonus = builderbonus + global.rpg_exp[v.name].level
+				builderbonus = builderbonus + global.rpg_tmp[v.name].level
 			end
 			if global.rpg_exp[v.name].class == "Miner" then
-				minerbonus = minerbonus + global.rpg_exp[v.name].level
+				minerbonus = minerbonus + global.rpg_tmp[v.name].level
 			end
 			if global.rpg_exp[v.name].class == "Beastmaster" then
-				beastmasterbonus = beastmasterbonus + global.rpg_exp[v.name].level
+				beastmasterbonus = beastmasterbonus + global.rpg_tmp[v.name].level
 			end
 		end
 	end
 	
 	--That entire code block for calculating base bonus can be replaced by this:
+	local inventory_bonus = force.character_inventory_slots_bonus
 	force.reset_technology_effects()
 		
 	--For some reason this stops current research.  So let's save and reset it.
@@ -725,7 +831,7 @@ function rpg_give_team_bonuses(force)
 	force.worker_robots_battery_modifier = scientistbonus / 50
 	
 	--This one can't decrease, or players logging out would cause stuff to drop!
-	force.character_inventory_slots_bonus = math.max(force.character_inventory_slots_bonus, math.floor(builderbonus / 20))
+	force.character_inventory_slots_bonus = math.max(inventory_bonus, math.floor(builderbonus / 20))
 	
 	-- Malus is 0.5 * base bonus - 0.5
 	-- Science bonus
@@ -759,7 +865,7 @@ function rpg_bonus_scan(event)
 	for k,v in pairs(force.players) do
 		if v.connected then
 			if global.rpg_exp[v.name].class == "Soldier" then
-				soldierbonus = soldierbonus + global.rpg_exp[v.name].level
+				soldierbonus = soldierbonus + global.rpg_tmp[v.name].level
 			end
 		end
 	end
@@ -777,7 +883,7 @@ end
 --Scientist reward: No corpse running!
 function rpg_im_too_smart_to_die(event)
 	local player = game.players[event.player_index]
-	if global.rpg_exp[player.name].class == "Scientist" and global.rpg_exp[player.name].level >= 50 then
+	if global.rpg_exp[player.name].class == "Scientist" and global.rpg_tmp[player.name].level >= 50 then
 		player.character.health = 1
 		
 		--This interacts with Oarc.  Need to use player's spawn location.
@@ -806,6 +912,9 @@ end
 function rpg_init()
 	global.rpg_exp = {}
 	global.rpg_tmp = {} --For non-persistent data.
+
+	global.rpg = {}
+	global.rpg.heartbeat = {}
 	
 	global.base_evolution_destroy = game.map_settings.enemy_evolution.destroy_factor
 	global.base_evolution_pollution = game.map_settings.enemy_evolution.pollution_factor
@@ -843,17 +952,20 @@ function rpg_is_sanitary(name)
 end
 
 --Event.register(defines.events.on_player_created, rpg_add_gui) --We'll do this after a class is chosen.
-Event.register(defines.events.on_player_created, rpg_loadsave)
-Event.register(defines.events.on_player_created, rpg_class_picker)
-Event.register(defines.events.on_gui_click, rpg_class_click)
+Event.register(defines.events.on_player_created, rpg_loadsave) --This doesn't actually load anything anymore, just gives us some defaults.
+--Event.register(defines.events.on_player_created, rpg_class_picker) --Wait for data to load.
 --Event.register(defines.events.on_player_created, rpg_starting_resources)
+Event.register(defines.events.on_gui_click, rpg_class_click)
 Event.register(defines.events.on_player_joined_game, rpg_connect)
+Event.register(defines.events.on_player_joined_game, rpg_remote_load)
+Event.register(defines.events.on_player_left_game, rpg_remote_save)
 Event.register(defines.events.on_player_respawned, rpg_respawn)
 Event.register(defines.events.on_rocket_launched, rpg_satellite_launched)
 Event.register(defines.events.on_entity_died, rpg_nest_killed)
 Event.register(defines.events.on_research_finished, rpg_tech_researched)
 Event.register(defines.events.on_sector_scanned, rpg_bonus_scan)
 Event.register(defines.events.on_pre_player_died, rpg_im_too_smart_to_die)
+Event.register(defines.events.on_tick, rpg.heartbeat)
 --Event.register(defines.events.on_research_finished, rpg_nerf_tech)
 --Event.register(defines.events.on_tick, rpg_exp_tick) --For debug
 Event.register(-1, rpg_init)
