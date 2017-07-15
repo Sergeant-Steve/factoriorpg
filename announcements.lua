@@ -8,6 +8,7 @@ global.announcements.announcements = {
 --	"Someone was really f-ing lazy and forgot to change this. Shame on them.",
 	"Thank you for playing FactorioRPG!",
 	"Join us on the Factorio RPG discord! https://discord.gg/pqsGhaH",
+	"Enjoying FactorioRPG? Support the programmer on Patreon: https://www.patreon.com/mylon",
 	
 }
 
