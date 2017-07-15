@@ -35,6 +35,10 @@ function antigrief.decon(event)
     if event.alt then --This is a cancel order.
         return
     end
+    if event.area.left_top == event.area.bottom_right then
+        log("Antigrief: Deconstruction area is of zero size.")
+        return
+    end
     local player = game.players[event.player_index]
     local count = player.surface.count_entities_filtered{area=event.area, force=player.force}
     if count >= 50 then
@@ -117,6 +121,39 @@ function antigrief.armor_drop(event)
     end           
 end
 
+--Look for players merging roboport networks
+function antigrief.check_size_loginet_size(event)
+    if not (event.entity and event.entity.valid and event.entity.type == "roboport") then
+        return
+    end
+    if not (event.entity.last_user) then
+        --How did we get here?
+        return
+    end
+    local network = event.entity.logistic_network
+    local cells = network.cells
+    if not (cells[1] and cells[1].valid) then
+        return
+    end
+    local minx, miny, maxx, maxy = cells[1].owner.position.x, cells[1].owner.position.y, cells[1].owner.position.x, cells[1].owner.position.y
+    for k, v in pairs(cells) do
+        if v.owner.position.x < minx then
+            minx = v.owner.position.x
+        elseif v.owner.position.x > maxx then
+            maxx = v.owner.position.x
+        end
+        if v.owner.position.y < miny then
+            miny = v.owner.position.y
+        elseif v.owner.position.y > maxy then
+            maxy = v.owner.position.y
+        end
+    end
+
+    if math.abs(maxx-minx) > 2000 or math.abs(maxy-miny) then
+        antigrief.alert(event.entity.last_user.name .. "has placed a roboport in a large network.")
+    end
+end
+
 --Check if a message has been generated about this player recently.  If true, set cooldown.
 function antigrief.check_cooldown(player_index)
     local cooldown = global.antigrief_cooldown[player_index]
@@ -146,4 +183,6 @@ Event.register(defines.events.on_player_ammo_inventory_changed, antigrief.da_bom
 Event.register(defines.events.on_player_main_inventory_changed, antigrief.hoarder)
 Event.register(defines.events.on_player_left_game, antigrief.armor_drop)
 Event.register(defines.events.on_player_mined_entity, antigrief.pump)
+Event.register(defines.events.on_built_entity, antigrief.check_size_loginet_size)
+Event.register(defines.events.on_robot_built_entity, antigrief.check_size_loginet_size)
 Event.register(defines.events.on_player_deconstructed_area, antigrief.decon)
