@@ -26,48 +26,77 @@ global.char_mod.bonus_list = {"character_crafting_speed_modifier",
 							"character_health_bonus"}
 --INT (not dynamically generated these values due to different min / max values )
 
+global.char_mod.character_crafting_speed_modifier = global.char_mod.character_crafting_speed_modifier or {}
 global.char_mod.character_crafting_speed_modifier.val = global.char_mod.character_crafting_speed_modifier.val or {}
 global.char_mod.character_crafting_speed_modifier.fin = global.char_mod.character_crafting_speed_modifier.fin or {}
 global.char_mod.character_crafting_speed_modifier.info = {data = "double", minimum = -1, maximum = 100}
+
+global.char_mod.character_mining_speed_modifier = global.char_mod.character_mining_speed_modifier or {}
 global.char_mod.character_mining_speed_modifier.val = global.char_mod.character_mining_speed_modifier.val or {}
 global.char_mod.character_mining_speed_modifier.fin = global.char_mod.character_mining_speed_modifier.fin or {}
 global.char_mod.character_mining_speed_modifier.info = {data = "double", minimum = -1, maximum = 100}
+
+global.char_mod.character_running_speed_modifier = global.char_mod.character_running_speed_modifier or {}
 global.char_mod.character_running_speed_modifier.val = global.char_mod.character_running_speed_modifier.val or {}
 global.char_mod.character_running_speed_modifier.fin = global.char_mod.character_running_speed_modifier.fin or {}
 global.char_mod.character_running_speed_modifier.info = {data = "double", minimum = -1, maximum = 100}
+
+global.char_mod.character_build_distance_bonus = global.char_mod.character_build_distance_bonus or {}
 global.char_mod.character_build_distance_bonus.val = global.char_mod.character_build_distance_bonus.val or {}
 global.char_mod.character_build_distance_bonus.fin = global.char_mod.character_build_distance_bonus.fin or {}
 global.char_mod.character_build_distance_bonus.info = {data = "double", minimum = 0, maximum = 100}
+
+global.char_mod.character_item_drop_distance_bonus = global.char_mod.character_item_drop_distance_bonus or {}
 global.char_mod.character_item_drop_distance_bonus.val = global.char_mod.character_item_drop_distance_bonus.val or {}
 global.char_mod.character_item_drop_distance_bonus.fin = global.char_mod.character_item_drop_distance_bonus.fin or {}
 global.char_mod.character_item_drop_distance_bonus.info = {data = "double", minimum = 0, maximum = 100}
+
+global.char_mod.character_reach_distance_bonus = global.char_mod.character_reach_distance_bonus or {}
 global.char_mod.character_reach_distance_bonus.val = global.char_mod.character_reach_distance_bonus.val or {}
 global.char_mod.character_reach_distance_bonus.fin = global.char_mod.character_reach_distance_bonus.fin or {}
 global.char_mod.character_reach_distance_bonus.info = {data = "double", minimum = 0, maximum = 100}
+
+global.char_mod.character_resource_reach_distance_bonus = global.char_mod.character_resource_reach_distance_bonus or {}
 global.char_mod.character_resource_reach_distance_bonus.val = global.char_mod.character_resource_reach_distance_bonus.val or {}
 global.char_mod.character_resource_reach_distance_bonus.fin = global.char_mod.character_resource_reach_distance_bonus.fin or {}
 global.char_mod.character_resource_reach_distance_bonus.info = {data = "double", minimum = 0, maximum = 100}
+
+global.char_mod.character_item_pickup_distance_bonus = global.char_mod.character_item_pickup_distance_bonus or {}
 global.char_mod.character_item_pickup_distance_bonus.val = global.char_mod.character_item_pickup_distance_bonus.val or {}
 global.char_mod.character_item_pickup_distance_bonus.fin = global.char_mod.character_item_pickup_distance_bonus.fin or {}
 global.char_mod.character_item_pickup_distance_bonus.info = {data = "double", minimum = 0, maximum = 100}
+
+global.char_mod.character_loot_pickup_distance_bonus = global.char_mod.character_loot_pickup_distance_bonus or {}
 global.char_mod.character_loot_pickup_distance_bonus.val = global.char_mod.character_loot_pickup_distance_bonus.val or {}
 global.char_mod.character_loot_pickup_distance_bonus.fin = global.char_mod.character_loot_pickup_distance_bonus.fin or {}
 global.char_mod.character_loot_pickup_distance_bonus.info = {data = "double", minimum = 0, maximum = 100}
+
+global.char_mod.quickbar_count_bonus = global.char_mod.quickbar_count_bonus or {}
 global.char_mod.quickbar_count_bonus.val = global.char_mod.quickbar_count_bonus.val or {}
 global.char_mod.quickbar_count_bonus.fin = global.char_mod.quickbar_count_bonus.fin or {}
 global.char_mod.quickbar_count_bonus.info = {data = "int", minimum = 0, maximum = 10}
+
+global.char_mod.character_inventory_slots_bonus = global.char_mod.character_inventory_slots_bonus or {}
 global.char_mod.character_inventory_slots_bonus.val = global.char_mod.character_inventory_slots_bonus.val or {}
 global.char_mod.character_inventory_slots_bonus.fin = global.char_mod.character_inventory_slots_bonus.fin or {}
 global.char_mod.character_inventory_slots_bonus.info = {data = "int", minimum = 0, maximum = 100}
+
+global.char_mod.character_logistic_slot_count_bonus = global.char_mod.character_logistic_slot_count_bonus or {}
 global.char_mod.character_logistic_slot_count_bonus.val = global.char_mod.character_logistic_slot_count_bonus.val or {}
 global.char_mod.character_logistic_slot_count_bonus.fin = global.char_mod.character_logistic_slot_count_bonus.fin or {}
 global.char_mod.character_logistic_slot_count_bonus.info =  {data = "int", minimum = 0, maximum = 50}
+
+global.char_mod.character_trash_slot_count_bonus = global.char_mod.character_trash_slot_count_bonus or {}
 global.char_mod.character_trash_slot_count_bonus.val = global.char_mod.character_trash_slot_count_bonus.val or {}
 global.char_mod.character_trash_slot_count_bonus.fin = global.char_mod.character_trash_slot_count_bonus.fin or {}
 global.char_mod.character_trash_slot_count_bonus.info = {data = "int", minimum = 0, maximum = 50}
+
+global.char_mod.character_maximum_following_robot_count_bonus = global.char_mod.character_maximum_following_robot_count_bonus or {}
 global.char_mod.character_maximum_following_robot_count_bonus.val = global.char_mod.character_maximum_following_robot_count_bonus.val or {}
 global.char_mod.character_maximum_following_robot_count_bonus.fin = global.char_mod.character_maximum_following_robot_count_bonus.fin or {}
 global.char_mod.character_maximum_following_robot_count_bonus.info = {data = "int", minimum = 0, maximum = 500}
+
+global.char_mod.character_health_bonus = global.char_mod.character_health_bonus or {}
 global.char_mod.character_health_bonus.val = global.char_mod.character_health_bonus.val or {}
 global.char_mod.character_health_bonus.fin = global.char_mod.character_health_bonus.fin or {}
 global.char_mod.character_health_bonus.info = {data = "int", minimum = 0, maximum = 50000}
@@ -149,36 +178,71 @@ function char_mod_calculate_bonus(p, b, bypass)
 end
 
 function char_mod_apply_finals(p)
-	return false --void
+	for i, b in pairs (global.char_mod.bonus_list) do
+		char_mod_apply_bonus(p, b)
+	end
 end
 
 function char_mod_calculate_finals(p)
-	return false --void
+	for i, b in pairs (global.char_mod.bonus_list) do
+		char_mod_calculate_bonus(p, b, false)
+	end
 end
 
 function char_mod_add_bonus(p, b, d)
 	if char_mod_table_search(global.char_mod.bonus_list, b) then
 		global.char_mod[b].val[p.name] = global.char_mod[b].val[p.name] or {}
-		
+		local r = {}
+		if d.name ~= nil then
+			r[name] = d.name -- table index is nil
+		else
+			r.name = "unknown"
+		end
+		if d.op ~= nil then
+			r[op] = d.op
+		else
+			r[op] = "add"
+		end
+		if d.val ~= nil then
+			r[val] = d.val
+		else
+			if r.op == "add" or r.op == "sub" then
+				r[val] = 0
+			elseif r.op == "mul" or r.op == "div" then
+				r[val] = 1
+			else
+				return false
+			end
+		end
+		global.char_mod[b].val[p.name][r.name] = {op = r.op, val = r.val}
+		char_mod_apply_bonus(p, b)
 	else
 		return false -- bonus not found
 	end
 end
 
-function char_mod_change_bonus(p, b, d)
-	return false --void
-end
+-- function char_mod_change_bonus(p, b, d)
+	-- return false --void
+-- end
 
 function char_mod_remove_bonus(p, b, d)
-	return false --void
+	if char_mod_table_search(global.char_mod.bonus_list, b) then
+		if global.char_mod[b].val[p.name] ~= nil then
+			if global.char_mod[b].val[p.name][d.name] ~= nil then
+				global.char_mod[b].val[p.name][d.name] = nil
+				return true
+			end
+		end
+	end
+	return false
 end
 
 function char_mod_get_bonus(p, b)
-	return false --double
+	return global.char_mod[b].val[p.name]
 end
 
 function char_mod_get_final_bonus(p, b)
-	return false --double
+	return global.char_mod[b].fin[p.name]
 end
 
 --
