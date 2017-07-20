@@ -139,6 +139,9 @@ function modular_admin_spectate_set_normal(p)
 				-- p.teleport(pos)
 			-- end
 		end
+		if global.char_mod ~= nil then
+			char_mod_apply_all_bonus(p)
+		end
 		global.modular_admin_spectate.player_spectator_state[index] = false
 		modular_admin_spectate_gui_changed(p)
 	end
