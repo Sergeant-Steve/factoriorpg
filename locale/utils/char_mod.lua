@@ -127,7 +127,9 @@ function char_mod_apply_bonus(p, b)
 	if char_mod_table_search(global.char_mod.bonus_list, b) then
 		if global.char_mod[b].val[p.name] ~= nil then
 			char_mod_calculate_bonus(p, b, true)
-			p[b] = global.char_mod[b].fin[p.name]
+			if p.connected and (p.character ~= nil) then
+				p[b] = global.char_mod[b].fin[p.name]
+			end
 		end
 	else
 		return false -- bonus not found
