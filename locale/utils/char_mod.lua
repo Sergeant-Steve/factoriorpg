@@ -116,11 +116,11 @@ function char_mod_table_search(tbl, val)
 end
 
 function char_mod_enable()
-	return false --void
+	return false --Not Implemented
 end
 
 function char_mod_disable()
-	return false --void
+	return false --Not Implemented
 end
 
 function char_mod_apply_bonus(p, b)
@@ -153,7 +153,7 @@ function char_mod_calculate_bonus(p, b, bypass)
 			end
 			local total = 0
 			for _, s in pairs(add) do
-				total = tatal + s
+				total = total + s
 			end
 			for _, m in pairs(mul) do
 				total = total * m
@@ -170,7 +170,7 @@ function char_mod_calculate_bonus(p, b, bypass)
 			if global.char_mod[b].info.data == "int" then
 				total = math.floor(total)
 			end
-			global.char_mod[b].fin[p] = total
+			global.char_mod[b].fin[p.name] = total
 		end
 	else
 		return false -- bonus not found
@@ -194,22 +194,22 @@ function char_mod_add_bonus(p, b, d)
 		global.char_mod[b].val[p.name] = global.char_mod[b].val[p.name] or {}
 		local r = {}
 		if d.name ~= nil then
-			r[name] = d.name -- table index is nil
+			r.name = d.name -- table index is nil
 		else
 			r.name = "unknown"
 		end
 		if d.op ~= nil then
-			r[op] = d.op
+			r.op = d.op
 		else
-			r[op] = "add"
+			r.op = "add"
 		end
 		if d.val ~= nil then
-			r[val] = d.val
+			r.val = d.val
 		else
 			if r.op == "add" or r.op == "sub" then
-				r[val] = 0
+				r.val = 0
 			elseif r.op == "mul" or r.op == "div" then
-				r[val] = 1
+				r.val = 1
 			else
 				return false
 			end
@@ -221,15 +221,16 @@ function char_mod_add_bonus(p, b, d)
 	end
 end
 
+-- Kinda not needed since add also replaces if exists
 -- function char_mod_change_bonus(p, b, d)
-	-- return false --void
+	-- return false
 -- end
 
-function char_mod_remove_bonus(p, b, d)
+function char_mod_remove_bonus(p, b, e)
 	if char_mod_table_search(global.char_mod.bonus_list, b) then
 		if global.char_mod[b].val[p.name] ~= nil then
-			if global.char_mod[b].val[p.name][d.name] ~= nil then
-				global.char_mod[b].val[p.name][d.name] = nil
+			if global.char_mod[b].val[p.name][e] ~= nil then
+				global.char_mod[b].val[p.name][e] = nil
 				char_mod_apply_bonus(p, b)
 				return true
 			end

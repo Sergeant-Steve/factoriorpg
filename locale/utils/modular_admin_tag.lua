@@ -14,6 +14,7 @@ global.modular_admin_tag.enabled = true
 --	FUNCTIONS
 --
 function modular_admin_tag_enable()
+	modular_admin_add_submodule("modular_admin_tag")
 	if not global.modular_admin_tag.enabled then
 		global.modular_admin_tag.enabled = true
 		for i, p in pairs(game.connected_players) do
@@ -27,6 +28,7 @@ function modular_admin_tag_enable()
 end
 
 function modular_admin_tag_disable()
+	modular_admin_remove_submodule("modular_admin_tag")
 	if global.modular_admin_tag.enabled then
 		global.modular_admin_tag.enabled = false
 		for i, p in pairs(game.connected_players) do

@@ -195,3 +195,4 @@ Event.register(defines.events.on_gui_click, modular_admin_gui_clicked)
 require "modular_admin_tag"
 require "modular_admin_players"
 require "modular_admin_spectate"
+require "modular_admin_compensate"
