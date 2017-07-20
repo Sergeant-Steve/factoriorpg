@@ -177,7 +177,7 @@ function char_mod_calculate_bonus(p, b, bypass)
 	end
 end
 
-function char_mod_apply_finals(p)
+function char_mod_apply_all_bonus(p)
 	for i, b in pairs (global.char_mod.bonus_list) do
 		char_mod_apply_bonus(p, b)
 	end
@@ -230,6 +230,7 @@ function char_mod_remove_bonus(p, b, d)
 		if global.char_mod[b].val[p.name] ~= nil then
 			if global.char_mod[b].val[p.name][d.name] ~= nil then
 				global.char_mod[b].val[p.name][d.name] = nil
+				char_mod_apply_bonus(p, b)
 				return true
 			end
 		end
@@ -249,3 +250,7 @@ end
 -- Events
 --
 
+Event.register(defines.events.on_player_joined_game, function(event)
+	p = game.players[event.player_index]
+	char_mod_apply_all_bonus(p)
+end)
