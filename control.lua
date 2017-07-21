@@ -1,6 +1,8 @@
 -- TOOLS: Recommend all be turned on
 require "mod-gui" --required for all other modules
 require "locale/utils/topgui" --utility module to be able to order the buttons in the top left
+require "locale/utils/char_mod"	--utility module to prevent multiple modules conflicting when modifying player bonus
+require "locale/utils/force_mod" --utility module to prevent multiple modules conflicting when modifying force bonus
 --require "locale/utils/event" --Yes this line is seriously commented out, and yes without this it won't even work. I guess you now HAVE TO change the settings to match what you need.
 --require "permissions" --Permission manager
 --require "trusted" --Module to add trusted players to a seperate permission group
@@ -15,6 +17,7 @@ require "locale/utils/topgui" --utility module to be able to order the buttons i
 --require "rocket" --Module to stop people removing the rocket silo
 --require "gravemarker" --Create a map tag on player death for easier corpse finding
 --require "locale/utils/modular_admin" --New admin tools -untested
+
 
 -- World Generators: Pick only ONE
 --NOT UPDATED require "void" --Worldgenerator which randomly generates holes in the world
