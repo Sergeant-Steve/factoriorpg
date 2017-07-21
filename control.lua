@@ -24,10 +24,11 @@ require "divOresity" --Some ore gets scrambled and must be filtered.
 --require "dark harvest event" --Temp for testing.
 require "bluebuild" --Bluebuild softmod
 require "autofill" --Softmod autofill separated from Oarc
-require "belt_limit" --Limits number of belts per player.  Mostly for UPS reasons.
+--require "belt_limit" --Limits number of belts per player.  Mostly for UPS reasons.
 
 -- World Generators: Pick only ONE
 --require "oarc_events" --Oarc's separate spawn scenario.
+require "searious" --Everything not a resource tile is turned into water.
 --NOT UPDATED require "void" --Worldgenerator which randomly generates holes in the world
 --require "nuclear" --worldgenerator for nuclear scenario
 --NOT UPDATED require "grid" --Worldgenerator which devides the world into a grid.
