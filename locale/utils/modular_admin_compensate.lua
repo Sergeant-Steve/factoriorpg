@@ -1,6 +1,6 @@
 -- modular_admin_compensate sub-module
 -- Made by: I_IBlackI_I (Blackstone#4953 on discord) for FactorioMMO
--- This sub-module is a addon to the modular_admin module, it allows admins to "Compensate" their time spent as an admin
+-- This sub-module is a addon to the modular_admin module, it allows admins to "compensate" their time spent as an admin
 
 --
 --	VARIABLES
