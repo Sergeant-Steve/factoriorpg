@@ -4,6 +4,14 @@
 -- and optionally set a location so that the admin can teleport to the alert
 
 --
+--	PLAN
+--	
+--	This module is going to have a function to add alerts to it.
+--	It will also have a button in the modular_admin menu to open a GUI
+--	The gui will present a list of the last x alerts with options, for example teleport to the position of the alert
+--
+
+--
 --	VARIABLES
 --
 
