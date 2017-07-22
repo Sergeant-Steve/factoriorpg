@@ -28,6 +28,7 @@ function modular_admin_ghosts_create_force()
 end
 
 function modular_admin_ghosts_entity_mined(event)
+	if global.modular_admin_ghosts.enabled == false then return end
 	local entity = event.entity
 	if entity.force.name == "neutral" 
 	or entity.name == "entity-ghost" 
@@ -52,6 +53,7 @@ function modular_admin_ghosts_entity_mined(event)
 end
 
 function modular_admin_ghosts_entity_deconstructed(event)
+	if global.modular_admin_ghosts.enabled == false then return end
 	local entity = event.entity
 	if entity.force.name == "neutral" 
 	or entity.name == "entity-ghost" 
@@ -77,18 +79,12 @@ end
 function modular_admin_ghosts_enable()
 	global.modular_admin_ghosts.enabled = true
 	modular_admin_add_submodule("modular_admin_ghosts")
-	for i, p in pairs(game.connected_players) do
-		modular_admin_ghosts_update_menu_button(p)
-	end
 	modular_admin_ghosts_create_force()
 end
 
 function modular_admin_ghosts_disable()
 	global.modular_admin_ghosts.enabled = false
 	modular_admin_remove_submodule("modular_admin_ghosts")
-	for i, p in pairs(game.connected_players) do
-		modular_admin_ghosts_update_menu_button(p)
-	end
 end
 
 --
