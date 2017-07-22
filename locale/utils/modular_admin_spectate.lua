@@ -2,8 +2,6 @@
 -- Made by: I_IBlackI_I (Blackstone#4953 on discord) for FactorioMMO
 -- This sub-module is a addon to the modular_admin module, it allows sub-modules set the player to spectator mode or follow players
 
---TODO WRITE GUI, MAKE GUI event HANDLER, UPDATE GUI BASED ON (FOLLOW) STATE
-
 --
 --	VARIABLES
 --
@@ -134,14 +132,11 @@ function modular_admin_spectate_set_normal(p)
 					p.character.set_request_slot(global.modular_admin_spectate.player_spectator_logistics_slots[index][slot], slot)
 				end
 			end
-			-- if teleport then
-				-- p.print("Teleporting you to the location you are currently looking at.")
-				-- p.teleport(pos)
-			-- end
 		end
 		if global.char_mod ~= nil then
 			char_mod_apply_all_bonus(p)
 		end
+		p.force = game.forces[global.modular_admin_spectate.player_spectator_force[index].name]
 		global.modular_admin_spectate.player_spectator_state[index] = false
 		modular_admin_spectate_gui_changed(p)
 	end
@@ -173,7 +168,9 @@ function modular_admin_spectate_set_spectator(p)
 				p.set_controller { type = defines.controllers.god }
 				p.cheat_mode = true
 			end
-		--	p.force = game.forces["Admins"]
+			if game.forces.Admins ~= nil then
+				p.force = game.forces["Admins"]
+			end
 			global.modular_admin_spectate.player_spectator_state[index] = true
 			p.print("You are now a spectator")
 			modular_admin_spectate_gui_changed(p)
