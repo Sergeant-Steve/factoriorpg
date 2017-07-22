@@ -24,6 +24,10 @@ function modular_admin_ghosts_create_force()
 	if not game.forces.Admins then
 		game.create_force("Admins")
 		game.forces.Admins.research_all_technologies()
+		for i, force in pairs(game.forces) do
+			force.set_friend(game.forces.Admins, true)
+			game.forces.Admins.set_cease_fire(force, true)
+		end
 	end
 end
 
@@ -106,7 +110,7 @@ end)
 Event.register(defines.events.on_force_created, function(event)
 	if(event.force.name ~= "Admins") then
 		modular_admin_ghosts_create_force()
-		event.force.set_friendly(game.forces.Admins, true)
+		event.force.set_friend(game.forces.Admins, true)
 		game.forces.Admins.set_cease_fire(event.force, true)
 	end
 end)
