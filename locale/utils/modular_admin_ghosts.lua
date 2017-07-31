@@ -23,7 +23,7 @@ global.modular_admin_ghosts.enabled = true
 function modular_admin_ghosts_create_force()
 	if not game.forces.Admins then
 		game.create_force("Admins")
-		game.forces.Admins.research_all_technologies()
+--		game.forces.Admins.research_all_technologies()
 		for i, force in pairs(game.forces) do
 			force.set_friend(game.forces.Admins, true)
 			game.forces.Admins.set_cease_fire(force, true)

@@ -301,6 +301,10 @@ end
 --
 
 Event.register(defines.events.on_research_finished, function(event)
-	f = game.forces[event.research.force]
-	force_mod_apply_all_bonus(f)
+	f = event.research.force
+	if f ~= nil then
+		if f.valid then
+			force_mod_apply_all_bonus(f)
+		end
+	end
 end)
