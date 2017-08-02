@@ -69,55 +69,60 @@ function modular_admin_boost_gui_changed(p)
 			end
 			mabp.style.visible = global.modular_admin_boost.visible[p.name]
 			pbs = global.modular_admin_boost.bonus_state[p.name]
-			bpb = mabp.add {type = "button", name = "modular_admin_boost_pickup_button", caption = "Pickup"}
-			bmb = mabp.add {type = "button", name = "modular_admin_boost_mining_button", caption = "Mining"}
-			bcb = mabp.add {type = "button", name = "modular_admin_boost_crafting_button", caption = "Crafting"}
-			brb = mabp.add {type = "button", name = "modular_admin_boost_reach_button", caption = "Reach"}
-			bib = mabp.add {type = "button", name = "modular_admin_boost_invincible_button", caption = "Invincible"}
+			if pbs.pickup then
+				bpb = mabp.add {type = "button", name = "modular_admin_boost_pickup_button", caption = "Reset Pickup"}
+				bpb.style.font_color = global.modular_admin_boost.active_color
+			else
+				bpb = mabp.add {type = "button", name = "modular_admin_boost_pickup_button", caption = "Boost Pickup"}
+				bpb.style.font_color = global.modular_admin_boost.inactive_color 
+			end
+			if pbs.mining then
+				bmb = mabp.add {type = "button", name = "modular_admin_boost_mining_button", caption = "Reset Mining"}
+				bmb.style.font_color = global.modular_admin_boost.active_color
+			else
+				bmb = mabp.add {type = "button", name = "modular_admin_boost_mining_button", caption = "Boost Mining"}
+				bmb.style.font_color = global.modular_admin_boost.inactive_color 
+			end
+			if pbs.crafting then
+				bcb = mabp.add {type = "button", name = "modular_admin_boost_crafting_button", caption = "Reset Crafting"}
+				bcb.style.font_color = global.modular_admin_boost.active_color
+			else
+				bcb = mabp.add {type = "button", name = "modular_admin_boost_crafting_button", caption = "Boost Crafting"}
+				bcb.style.font_color = global.modular_admin_boost.inactive_color 
+			end
+			if pbs.reach then
+				brb = mabp.add {type = "button", name = "modular_admin_boost_reach_button", caption = "Reset Reach"}
+				brb.style.font_color = global.modular_admin_boost.active_color
+			else
+				brb = mabp.add {type = "button", name = "modular_admin_boost_reach_button", caption = "Boost Reach"}
+				brb.style.font_color = global.modular_admin_boost.inactive_color 
+			end
+			if pbs.invincible then
+				bib = mabp.add {type = "button", name = "modular_admin_boost_invincible_button", caption = "Disable Invincible"}
+				bib.style.font_color = global.modular_admin_boost.active_color
+			else
+				bib = mabp.add {type = "button", name = "modular_admin_boost_invincible_button", caption = "Enable Invincible"}
+				bib.style.font_color = global.modular_admin_boost.inactive_color 
+			end
 			bwl = mabp.add {type = "label", name = "modular_admin_boost_walking_label", caption = "Walking"}
 			bwt = mabp.add {type = "table", name = "modular_admin_boost_walking_table", colspan = 3}
 			bwdb = bwt.add {type = "button", name = "modular_admin_boost_walking_decrease_button", caption = "-"}
 			bwrb = bwt.add {type = "button", name = "modular_admin_boost_walking_reset_button", caption = pbs.walking}
 			bwib = bwt.add {type = "button", name = "modular_admin_boost_walking_increase_button", caption = "+"}
-			bpb.style.minimal_width = 125
-			bmb.style.minimal_width = 125
-			bcb.style.minimal_width = 125
-			brb.style.minimal_width = 125
-			bib.style.minimal_width = 125
-			bwl.style.minimal_width = 125
-			bwdb.style.minimal_width = 25
-			bwrb.style.minimal_width = 65
-			bwib.style.minimal_width = 25
-			if pbs.pickup then
-				bpb.style.font_color = global.modular_admin_boost.active_color
-			else
-				bpb.style.font_color = global.modular_admin_boost.inactive_color 
-			end
-			if pbs.mining then
-				bmb.style.font_color = global.modular_admin_boost.active_color
-			else
-				bmb.style.font_color = global.modular_admin_boost.inactive_color 
-			end
-			if pbs.crafting then
-				bcb.style.font_color = global.modular_admin_boost.active_color
-			else
-				bcb.style.font_color = global.modular_admin_boost.inactive_color 
-			end
-			if pbs.reach then
-				brb.style.font_color = global.modular_admin_boost.active_color
-			else
-				brb.style.font_color = global.modular_admin_boost.inactive_color 
-			end
-			if pbs.invincible then
-				bib.style.font_color = global.modular_admin_boost.active_color
-			else
-				bib.style.font_color = global.modular_admin_boost.inactive_color 
-			end
 			if pbs.walking == 0 then
 				bwrb.style.font_color = global.modular_admin_boost.inactive_color 
 			else
 				bwrb.style.font_color = global.modular_admin_boost.active_color
 			end
+			bpb.style.minimal_width = 175
+			bmb.style.minimal_width = 175
+			bcb.style.minimal_width = 175
+			brb.style.minimal_width = 175
+			bib.style.minimal_width = 175
+			bwl.style.minimal_width = 175
+			bwdb.style.minimal_width = 35
+			bwrb.style.minimal_width = 95
+			bwib.style.minimal_width = 35
 		else
 			if bf.modular_admin_boost_pane ~= nil then
 				bf.modular_admin_boost_pane.destroy()
