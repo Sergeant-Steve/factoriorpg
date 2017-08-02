@@ -7,7 +7,7 @@
 --
 
 global.force_mod = global.force_mod or {}
-global.force_mod.enabled = global.force_mod.enabled or true
+global.force_mod.enabled = global.force_mod.enabled or false
 global.force_mod.apply_enabled = global.force_mod.apply_enabled or true
 global.force_mod.bonus_list = {"manual_mining_speed_modifier", 
 							"manual_crafting_speed_modifier",
@@ -226,9 +226,11 @@ function force_mod_calculate_bonus(f, b, bypass)
 end
 
 function force_mod_apply_all_bonus(f)
-	f.reset_technology_effects()
-	for i, b in pairs (global.force_mod.bonus_list) do
-		force_mod_apply_bonus(f, b)
+	if global.force_mod.enabled then
+		f.reset_technology_effects()
+		for i, b in pairs (global.force_mod.bonus_list) do
+			force_mod_apply_bonus(f, b)
+		end
 	end
 end
 
@@ -301,7 +303,7 @@ end
 --
 
 Event.register(defines.events.on_research_finished, function(event)
-	f = event.research.force
+	f = game.forces[event.research.force.name]
 	if f ~= nil then
 		if f.valid then
 			force_mod_apply_all_bonus(f)
