@@ -18,8 +18,8 @@ global.modular_admin_boost = global.modular_admin_boost or {}
 global.modular_admin_boost.enabled = true
 global.modular_admin_boost.visible = global.modular_admin_boost.visible or {}
 global.modular_admin_boost.bonus_state = global.modular_admin_boost.bonus_state or {}
-global.modular_admin_boost.active_color = {r = 1, b = 0, g = 1}
-global.modular_admin_boost.inactive_color = {r = 0, b = 0.5, g = 0}
+global.modular_admin_boost.active_color = {r = 1, b = 0, g = 0}
+global.modular_admin_boost.inactive_color = {r = 0, b = 0, g = 1}
 
 --
 --	FUNCTIONS
@@ -68,23 +68,32 @@ function modular_admin_boost_gui_changed(p)
 				mabp = bf.add {type = "frame", name = "modular_admin_boost_pane", caption = "Character Menu", direction = "vertical"}
 			end
 			mabp.style.visible = global.modular_admin_boost.visible[p.name]
+			pbs = global.modular_admin_boost.bonus_state[p.name]
 			bpb = mabp.add {type = "button", name = "modular_admin_boost_pickup_button", caption = "Pickup"}
-			bmb = mabp.add {type = "button", name = "modular_admin_boost_movement_button", caption = "Movement"}
+			bmb = mabp.add {type = "button", name = "modular_admin_boost_mining_button", caption = "Mining"}
 			bcb = mabp.add {type = "button", name = "modular_admin_boost_crafting_button", caption = "Crafting"}
 			brb = mabp.add {type = "button", name = "modular_admin_boost_reach_button", caption = "Reach"}
 			bib = mabp.add {type = "button", name = "modular_admin_boost_invincible_button", caption = "Invincible"}
-			bpb.style.minimal_width = 150
-			bmb.style.minimal_width = 150
-			bcb.style.minimal_width = 150
-			brb.style.minimal_width = 150
-			bib.style.minimal_width = 150
-			pbs = global.modular_admin_boost.bonus_state[p.name]
+			bwl = mabp.add {type = "label", name = "modular_admin_boost_walking_label", caption = "Walking"}
+			bwt = mabp.add {type = "table", name = "modular_admin_boost_walking_table", colspan = 3}
+			bwdb = bwt.add {type = "button", name = "modular_admin_boost_walking_decrease_button", caption = "-"}
+			bwrb = bwt.add {type = "button", name = "modular_admin_boost_walking_reset_button", caption = pbs.walking}
+			bwib = bwt.add {type = "button", name = "modular_admin_boost_walking_increase_button", caption = "+"}
+			bpb.style.minimal_width = 125
+			bmb.style.minimal_width = 125
+			bcb.style.minimal_width = 125
+			brb.style.minimal_width = 125
+			bib.style.minimal_width = 125
+			bwl.style.minimal_width = 125
+			bwdb.style.minimal_width = 25
+			bwrb.style.minimal_width = 65
+			bwib.style.minimal_width = 25
 			if pbs.pickup then
 				bpb.style.font_color = global.modular_admin_boost.active_color
 			else
 				bpb.style.font_color = global.modular_admin_boost.inactive_color 
 			end
-			if pbs.movement then
+			if pbs.mining then
 				bmb.style.font_color = global.modular_admin_boost.active_color
 			else
 				bmb.style.font_color = global.modular_admin_boost.inactive_color 
@@ -104,6 +113,11 @@ function modular_admin_boost_gui_changed(p)
 			else
 				bib.style.font_color = global.modular_admin_boost.inactive_color 
 			end
+			if pbs.walking == 0 then
+				bwrb.style.font_color = global.modular_admin_boost.inactive_color 
+			else
+				bwrb.style.font_color = global.modular_admin_boost.active_color
+			end
 		else
 			if bf.modular_admin_boost_pane ~= nil then
 				bf.modular_admin_boost_pane.destroy()
@@ -121,17 +135,97 @@ function modular_admin_boost_gui_clicked(event)
 		if e.name == "modular_admin_boost_button" then
 			global.modular_admin_boost.visible[p.name] = (not global.modular_admin_boost.visible[p.name])
 			modular_admin_boost_update_menu_button(p)
-		elseif e.parent.name == "modular_admin_boost_pane" then
+		elseif e.parent.name == "modular_admin_boost_pane" or e.parent.name == "modular_admin_boost_walking_table" then
 			if e.name == "modular_admin_boost_pickup_button" then
-				global.modular_admin_boost.bonus_state[p.name].pickup = not global.modular_admin_boost.bonus_state[p.name].pickup
-			elseif e.name == "modular_admin_boost_movement_button" then
-				global.modular_admin_boost.bonus_state[p.name].movement = not global.modular_admin_boost.bonus_state[p.name].movement
+				if global.modular_admin_boost.bonus_state[p.name].pickup then
+					global.modular_admin_boost.bonus_state[p.name].pickup = false
+				else
+					global.modular_admin_boost.bonus_state[p.name].pickup = true
+				end
+				if global.char_mod ~= nil then
+					if global.modular_admin_boost.bonus_state[p.name].pickup then
+						char_mod_add_bonus(p, "character_loot_pickup_distance_bonus", {name = "modular_admin_boost", op = "add", val = 5})
+						char_mod_add_bonus(p, "character_item_pickup_distance_bonus", {name = "modular_admin_boost", op = "add", val = 5})
+					else
+						char_mod_remove_bonus(p, "character_item_pickup_distance_bonus", "modular_admin_boost")
+						char_mod_remove_bonus(p, "character_loot_pickup_distance_bonus", "modular_admin_boost")
+					end
+				end
+			elseif e.name == "modular_admin_boost_mining_button" then
+				if global.modular_admin_boost.bonus_state[p.name].mining then
+					global.modular_admin_boost.bonus_state[p.name].mining = false
+				else
+					global.modular_admin_boost.bonus_state[p.name].mining = true
+				end
+				if global.char_mod ~= nil then
+					if global.modular_admin_boost.bonus_state[p.name].mining then
+						char_mod_add_bonus(p, "character_mining_speed_modifier", {name = "modular_admin_boost", op = "add", val = 150})
+					else
+						char_mod_remove_bonus(p, "character_mining_speed_modifier", "modular_admin_boost")
+					end
+				end
 			elseif e.name == "modular_admin_boost_crafting_button" then
-				global.modular_admin_boost.bonus_state[p.name].crafting = not global.modular_admin_boost.bonus_state[p.name].crafting
+				if global.modular_admin_boost.bonus_state[p.name].crafting then
+					global.modular_admin_boost.bonus_state[p.name].crafting = false
+				else
+					global.modular_admin_boost.bonus_state[p.name].crafting = true
+				end
+				if global.char_mod ~= nil then
+					if global.modular_admin_boost.bonus_state[p.name].crafting then
+						char_mod_add_bonus(p, "character_crafting_speed_modifier", {name = "modular_admin_boost", op = "add", val = 60})
+					else
+						char_mod_remove_bonus(p, "character_crafting_speed_modifier", "modular_admin_boost")
+					end
+				end
 			elseif e.name == "modular_admin_boost_reach_button" then
-				global.modular_admin_boost.bonus_state[p.name].reach = not global.modular_admin_boost.bonus_state[p.name].reach
+				if global.modular_admin_boost.bonus_state[p.name].reach then
+					global.modular_admin_boost.bonus_state[p.name].reach = false
+				else
+					global.modular_admin_boost.bonus_state[p.name].reach = true
+				end
+				if global.char_mod ~= nil then
+					if global.modular_admin_boost.bonus_state[p.name].reach then
+						char_mod_add_bonus(p, "character_build_distance_bonus", {name = "modular_admin_boost", op = "add", val = 125})
+						char_mod_add_bonus(p, "character_item_drop_distance_bonus", {name = "modular_admin_boost", op = "add", val = 125})
+						char_mod_add_bonus(p, "character_reach_distance_bonus", {name = "modular_admin_boost", op = "add", val = 125})
+						char_mod_add_bonus(p, "character_resource_reach_distance_bonus", {name = "modular_admin_boost", op = "add", val = 125})
+					else
+						char_mod_remove_bonus(p, "character_build_distance_bonus", "modular_admin_boost")
+						char_mod_remove_bonus(p, "character_item_drop_distance_bonus", "modular_admin_boost")
+						char_mod_remove_bonus(p, "character_reach_distance_bonus", "modular_admin_boost")
+						char_mod_remove_bonus(p, "character_resource_reach_distance_bonus", "modular_admin_boost")
+					end
+				end
 			elseif e.name == "modular_admin_boost_invincible_button" then
-				global.modular_admin_boost.bonus_state[p.name].invincible = not global.modular_admin_boost.bonus_state[p.name].invincible
+				if global.modular_admin_boost.bonus_state[p.name].invincible then
+					global.modular_admin_boost.bonus_state[p.name].invincible = false
+				else
+					global.modular_admin_boost.bonus_state[p.name].invincible = true
+				end
+				if global.char_mod ~= nil then
+					if p.character ~= nil then
+						if global.modular_admin_boost.bonus_state[p.name].invincible then
+							p.character.destructible = false
+						else
+							p.character.destructible = true
+						end
+					end
+				end
+			elseif e.name == "modular_admin_boost_walking_increase_button" then
+				global.modular_admin_boost.bonus_state[p.name].walking = global.modular_admin_boost.bonus_state[p.name].walking + 0.5
+				if global.char_mod ~= nil then
+					char_mod_add_bonus(p, "character_running_speed_modifier", {name = "modular_admin_boost", op = "add", val = global.modular_admin_boost.bonus_state[p.name].walking})
+				end
+			elseif e.name == "modular_admin_boost_walking_reset_button" then
+				global.modular_admin_boost.bonus_state[p.name].walking = 0
+				if global.char_mod ~= nil then
+					char_mod_add_bonus(p, "character_running_speed_modifier", {name = "modular_admin_boost", op = "add", val = global.modular_admin_boost.bonus_state[p.name].walking})
+				end
+			elseif e.name == "modular_admin_boost_walking_decrease_button" then
+				global.modular_admin_boost.bonus_state[p.name].walking = global.modular_admin_boost.bonus_state[p.name].walking - 0.5
+				if global.char_mod ~= nil then
+					char_mod_add_bonus(p, "character_running_speed_modifier", {name = "modular_admin_boost", op = "add", val = global.modular_admin_boost.bonus_state[p.name].walking})
+				end
 			end
 			modular_admin_boost_gui_changed(p)
 		end
@@ -145,7 +239,7 @@ end
 Event.register(defines.events.on_player_joined_game, function(event)
 	p = game.players[event.player_index]
 	if p.admin then
-		global.modular_admin_boost.bonus_state[p.name] = global.modular_admin_boost.bonus_state[p.name] or {pickup = false, movement = false, crafting = false, reach = false, invincible = false}
+		global.modular_admin_boost.bonus_state[p.name] = global.modular_admin_boost.bonus_state[p.name] or {pickup = false, mining = false, crafting = false, reach = false, invincible = false, walking = 0}
 		if global.modular_admin_boost.enabled then
 			if global.modular_admin_boost.visible[p.name] then
 				modular_admin_add_button(p.name, {name="modular_admin_boost_button", caption="Close character", order = 50, color = {r = 1, b = 0, g = 0}})
