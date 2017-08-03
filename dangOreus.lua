@@ -184,16 +184,43 @@ function unchOret(event)
     end
 end
 
+--Limit exploring
+function flOre_is_lava(event)
+    if not (event.tick % (300) == 31) then
+        return
+    end
+    for n, p in pairs(game.connected_players) do
+        if not p.character then --Spectator or admin
+            return
+        end
+        if p.position.x > EASY_ORE_RADIUS or p.position.y > EASY_ORE_RADIUS then
+            --Check for nearby ore.
+            local count = p.surface.count_entities_filtered{type="resource", area={{p.position.x-0.5, p.position.y-0.5}, {p.position.x+0.5, p.position.y+0.5}}}
+            if count > 0 then
+                if p.vehicle then
+                    p.surface.create_entity{name="acid-projectile-purple", target=p.vehicle, position=p.vehicle.position, speed=10}
+                    p.vehicle.health = p.vehicle.health - 50
+                else
+                    p.surface.create_entity{name="acid-projectile-purple", target=p.character, position=p.character.position, speed=10}
+                    p.character.health = p.character.health - 10
+                end
+            end
+        end
+    end
+end
+
 --Build the list of ores
 function divOresity_init()
     --Each chunk picks a table to generate from.  Each table has either 3 copies of one ore, or 6 copies.
     global.easy_ore_list = {}
 	global.diverse_ore_list = {}
 
-    --These are depreciated.
-    global.easy_ores = {}
-    global.diverse_ores = {}
     global.ore_chunks = {}
+
+    --These are depreciated.
+    -- global.easy_ores = {}
+    -- global.diverse_ores = {}
+    
 
 	for k,v in pairs(game.entity_prototypes) do
 		if v.type == "resource" and v.resource_category == "basic-solid" then
@@ -204,56 +231,69 @@ function divOresity_init()
 		end
 	end
 
+    --Check to see if we're playing normal.  Marathon requires more copper.
+    if game.difficulty_settings.recipe_difficulty == 0 then
     --This is a hack to make the ratios easier to handle.
-    table.insert(global.diverse_ore_list, "iron-ore")
-    table.insert(global.easy_ore_list, "iron-ore")
-    table.insert(global.easy_ore_list, "iron-ore")
+        --This hack only makes sense for vanilla ores.
+        local vanilla_ores = false
+        for k,v in pairs(global.easy_ore_list) do
+            if v == "iron-ore" then
+                vanilla_ores = true
+                break
+            end
+        end
+        if vanilla_ores then
+            table.insert(global.diverse_ore_list, "iron-ore")
+            table.insert(global.easy_ore_list, "iron-ore")
+            table.insert(global.easy_ore_list, "iron-ore")
+        end
+    end
 
     --Easy ores
-    for k, v in pairs(global.easy_ore_list) do
-        local ore = {}
-        local biased = {}
-        local random = {}
+    -- for k, v in pairs(global.easy_ore_list) do
+    --     local ore = {}
+    --     local biased = {}
+    --     local random = {}
         
-        for i = 1, 2 do
-            table.insert(ore, v)
-            table.insert(biased, v)
-        end
-        for i = 1, 3 do
-            table.insert(biased, v)
-        end
-        for n, p in pairs(global.easy_ore_list) do
-            table.insert(ore, p)
-            table.insert(biased, p)
-            table.insert(random, p)
-        end
-        table.insert(global.easy_ores, ore)
-        table.insert(global.easy_ores, biased)
-        table.insert(global.easy_ores, random)
-    end
+    --     for i = 1, 2 do
+    --         table.insert(ore, v)
+    --         table.insert(biased, v)
+    --     end
+    --     for i = 1, 3 do
+    --         table.insert(biased, v)
+    --     end
+    --     for n, p in pairs(global.easy_ore_list) do
+    --         table.insert(ore, p)
+    --         table.insert(biased, p)
+    --         table.insert(random, p)
+    --     end
+    --     table.insert(global.easy_ores, ore)
+    --     table.insert(global.easy_ores, biased)
+    --     table.insert(global.easy_ores, random)
+    -- end
 
-    --Diverse ores
-    for k, v in pairs(global.diverse_ore_list) do
-        local ore = {}
-        local biased = {}
-        local random = {}
+    -- --Diverse ores
+    -- for k, v in pairs(global.diverse_ore_list) do
+    --     local ore = {}
+    --     local biased = {}
+    --     local random = {}
         
-        for i = 1, 2 do
-            table.insert(ore, v)
-            table.insert(biased, v)
-        end
-        for i = 1, 3 do
-            table.insert(biased, v)
-        end
-        for n, p in pairs(global.diverse_ore_list) do
-            table.insert(ore, p)
-            table.insert(biased, p)
-            table.insert(random, p)
-        end
-        table.insert(global.diverse_ores, ore)
-        table.insert(global.diverse_ores, biased)
-        table.insert(global.diverse_ores, random)
-    end
+    --     for i = 1, 2 do
+    --         table.insert(ore, v)
+    --         table.insert(biased, v)
+    --     end
+    --     for i = 1, 3 do
+    --         table.insert(biased, v)
+    --     end
+    --     for n, p in pairs(global.diverse_ore_list) do
+    --         table.insert(ore, p)
+    --         table.insert(biased, p)
+    --         table.insert(random, p)
+    --     end
+    --     table.insert(global.diverse_ores, ore)
+    --     table.insert(global.diverse_ores, biased)
+    --     table.insert(global.diverse_ores, random)
+    -- end
 
 end
 
@@ -262,4 +302,5 @@ Event.register(defines.events.on_robot_built_entity, dangOre)
 Event.register(defines.events.on_chunk_generated, gOre)
 Event.register(defines.events.on_entity_died, ore_rly)
 Event.register(defines.events.on_tick, unchOret)
+Event.register(defines.events.on_tick, flOre_is_lava)
 Event.register(-1, divOresity_init)
