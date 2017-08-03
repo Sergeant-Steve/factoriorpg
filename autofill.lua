@@ -53,6 +53,10 @@ end
 function TransferItemMultipleTypes(srcInv, destEntity, itemNameArray, itemCount)
     local ret = 0
     for _,itemName in pairs(itemNameArray) do
+        --If itemtype is fuel then ignore count and insert one stack.  Dirty hack so we don't try to insert 50 rocketfuel.
+        if game.item_prototypes[itemName].fuel_category == "chemical" then
+            itemCount = game.item_prototypes[itemName].stack_size
+        end
         ret = TransferItems(srcInv, destEntity, {name=itemName, count=itemCount})
         if (ret > 0) then
             return ret -- Return the value succesfully transferred
@@ -69,14 +73,14 @@ function AutofillTurret(player, turret)
     local ret = TransferItemMultipleTypes(mainInv, turret, {"uranium-rounds-magazine", "piercing-rounds-magazine", "firearm-magazine"}, AUTOFILL_TURRET_AMMO_QUANTITY)
 
     -- Check the result and print the right text to inform the user what happened.
-    if (ret > 0) then
-        -- Inserted ammo successfully
-        -- FlyingText("Inserted ammo x" .. ret, turret.position, my_color_red, player.surface)
-    elseif (ret == -1) then
-        FlyingText("Out of ammo!", turret.position, my_color_red, player.surface) 
-    elseif (ret == -2) then
-        FlyingText("Autofill ERROR! - Report this bug!", turret.position, my_color_red, player.surface)
-    end
+    -- if (ret > 0) then
+    --     -- Inserted ammo successfully
+    --     -- FlyingText("Inserted ammo x" .. ret, turret.position, my_color_red, player.surface)
+    -- elseif (ret == -1) then
+    --     FlyingText("Out of ammo!", turret.position, my_color_red, player.surface) 
+    -- elseif (ret == -2) then
+    --     FlyingText("Autofill ERROR! - Report this bug!", turret.position, my_color_red, player.surface)
+    -- end
 end
 
 -- Autofills a vehicle with fuel, bullets and shells where applicable
@@ -85,7 +89,7 @@ function AutoFillVehicle(player, vehicle)
 
     -- Attempt to transfer some fuel
     if ((vehicle.name == "car") or (vehicle.name == "tank") or (vehicle.name == "locomotive")) then
-        TransferItemMultipleTypes(mainInv, vehicle, {"raw-wood", "coal", "solid-fuel"}, 50)
+        TransferItemMultipleTypes(mainInv, vehicle, {"raw-wood", "coal", "solid-fuel", "rocket-fuel"}, 50)
     end
 
     -- Attempt to transfer some ammo
