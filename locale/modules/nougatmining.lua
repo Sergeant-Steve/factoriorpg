@@ -17,6 +17,15 @@ function nougat.bake()
             end
         end
     end
+    if game.entity_prototypes["electric-mining-drill"] then
+        local proto  = game.entity_prototypes["electric-mining-drill"]
+        --How much pollution to create per stack of products.
+        --This assumes a mining hardness of 0.9
+        global.nougat.pollution = (proto.electric_energy_source_prototype.emissions * proto.energy_usage * 60) / proto.mining_power / proto.mining_speed * 0.9
+    else
+        --Fallback if "electric-mining-drill" doesn't exist.
+        global.nougat.pollution = 9 * 0.9
+    end
 end
 
 function nougat.register(event)
@@ -61,15 +70,16 @@ function nougat.chewy(event)
         global.nougat.index = global.nougat.index + 1
         return
     end
-    --Filter out oil...
     if roboport.logistic_network.available_construction_robots < 20 then
-        --We shouldn't bother.
+        --We shouldn't bother. Need to advance index in case this is an isolated roboport.
+        global.nougat.index = global.nougat.index + 1
         return
     end
     local ores = roboport.surface.find_entities_filtered{type="resource", limit=30, area={{roboport.position.x - roboport.logistic_cell.construction_radius, roboport.position.y - roboport.logistic_cell.construction_radius}, {roboport.position.x + roboport.logistic_cell.construction_radius-1, roboport.position.y + roboport.logistic_cell.construction_radius-1}}}
+    --Filter out oil...
     if #ores > 0 then
         for i = #ores, 1, -1 do
-            if ores[i].prototype.resource_category == "basic-fluid" or ores[i].prototype.mineable_properties.required_fluid or ores[i].prototype.infinite_resource then
+            if ores[i].prototype.resource_category == "basic-fluid" or ores[i].prototype.mineable_properties.required_fluid or ores[i].prototype.infinite_resource or ores[i].prototype.mineable_properties.hardness > 100 then
                 table.remove(ores, i)
             end
         end
@@ -95,11 +105,13 @@ function nougat.chewy(event)
     local ore = ores[math.random(1,#ores)]
     local count = math.min(ore.amount, math.floor(roboport.logistic_network.available_construction_robots / 4))
     local position = ore.position --Just in case we kill the ore.
+    local productivity = roboport.force.mining_drill_productivity_bonus
     local products = {}
-    ore.amount = ore.amount - count
+            
     --game.print("Mining " .. ore.name .. " with " ..count .. " bots.")
     for k,v in pairs(ore.prototype.mineable_properties.products) do
         local product
+        local productivity_multiplier = 1
         if v.probability then
             if math.random < v.probability then
                 product = {name=v.name, count=math.random(v.amount_min, v.amount_max)}
@@ -109,6 +121,15 @@ function nougat.chewy(event)
         else
             product = {name=v.name, count=1}
         end
+        --Now add productivity.
+        while productivity > 0 do
+            if math.random() < productivity then
+                productivity_multiplier = productivity_multiplier + 1
+            end
+            productivity = productivity - 1
+        end
+        product.count = product.count * productivity_multiplier
+
         table.insert(products, {name=product.name, count=product.count})
     end 
     for i = 1, count do
@@ -118,7 +139,20 @@ function nougat.chewy(event)
             --game.print(oreitem.stack.name .. " #"..i.." created for pickup. ")
         end
     end
+    --Also add pollution.  This is based on count, not yield.
+    roboport.surface.pollute(position, global.nougat.pollution * count)
     --game.print("Created " .. #products .. " for pickup.")
+
+    --Deplete the ore.
+    if ore.amount > count then
+        ore.amount = ore.amount - count
+    else
+        script.raise_event(defines.events.on_resource_depleted, {entity=ore, name=defines.events.on_resource_depleted, tick=game.tick})
+        if ore and ore.valid then
+            ore.destroy()
+        end
+    end
+
     --Finally let's advance the index.
     global.nougat.index = global.nougat.index + 1
 end
