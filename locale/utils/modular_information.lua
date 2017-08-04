@@ -73,7 +73,7 @@ function modular_information_gui_changed(p)
 		else
 			b.style.font_color = {r=1, g=0, b=0}
 		end
-		b.style.minimal_width = 130
+		b.style.minimal_width = 140
 		tot = tot + 1
 	end
 	if tot == 0 then
@@ -86,6 +86,7 @@ function modular_information_gui_changed(p)
 		mini = miip.add {type="label", name="modular_information_no_info", caption="No information selected."}
 		mini.style.font_color = {r=1,g=0,b=0}
 	end
+	modular_information_set_information_pane_caption(p, "Information pane")
 end
 
 function modular_information_get_menu(p)
@@ -184,10 +185,8 @@ function modular_information_gui_clicked(event)
 	local p = game.players[i]
 	local e = event.element
 	if e ~= nil then
-		if p.admin then
-			if e.name == "modular_information_toggle_button" then
-				modular_information_gui_toggle_visibility(p)
-			end
+		if e.name == "modular_information_toggle_button" then
+			modular_information_gui_toggle_visibility(p)
 		end
 	end
 end
@@ -195,6 +194,12 @@ end
 function modular_information_set_active_button(p, b)
 	global.modular_information.active_button[p.name] = b
 	modular_information_gui_changed(p)
+end
+
+function modular_information_set_information_pane_caption(p, c)
+	if modular_information_get_flow(p).modular_information_pane ~= nil then
+		modular_information_get_flow(p).modular_information_pane.caption = c
+	end
 end
 
 function modular_information_get_active_button(p)
@@ -243,7 +248,8 @@ Event.register(defines.events.on_gui_click, modular_information_gui_clicked)
 --	SUB-MODULES
 --
 require "modular_information_rules"
---require "modular_information_team"
---require "modular_information_scenario"
---require "modular_information_about"
---require "modular_information_stats"
+require "modular_information_dummy"
+--require "modular_information_team"  --NOT DONE
+--require "modular_information_scenario"--NOT DONE
+--require "modular_information_about"--NOT DONE
+--require "modular_information_stats"--NOT DONE
