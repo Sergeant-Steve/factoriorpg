@@ -21,15 +21,13 @@ function modular_information_scenario_gui_clicked(event)
 	local i = event.player_index
 	local p = game.players[i]
 	local e = event.element
-	if e ~= nil then
-		if p.admin then
-			if e.name == "modular_information_scenario" then
-				if modular_information_get_active_button(p) == "modular_information_scenario" then
-					modular_information_set_active_button(p, "none")
-				else
-					modular_information_set_active_button(p, "modular_information_scenario")
-					modular_information_scenario_create_gui(p)
-				end
+	if e ~= nil then		
+		if e.name == "modular_information_scenario" then
+			if modular_information_get_active_button(p) == "modular_information_scenario" then
+				modular_information_set_active_button(p, "none")
+			else
+				modular_information_set_active_button(p, "modular_information_scenario")
+				modular_information_scenario_create_gui(p)
 			end
 		end
 	end

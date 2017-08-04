@@ -22,14 +22,12 @@ function modular_information_team_gui_clicked(event)
 	local p = game.players[i]
 	local e = event.element
 	if e ~= nil then
-		if p.admin then
-			if e.name == "modular_information_team" then
-				if modular_information_get_active_button(p) == "modular_information_team" then
-					modular_information_set_active_button(p, "none")
-				else
-					modular_information_set_active_button(p, "modular_information_team")
-					modular_information_team_create_gui(p)
-				end
+		if e.name == "modular_information_team" then
+			if modular_information_get_active_button(p) == "modular_information_team" then
+				modular_information_set_active_button(p, "none")
+			else
+				modular_information_set_active_button(p, "modular_information_team")
+				modular_information_team_create_gui(p)
 			end
 		end
 	end
