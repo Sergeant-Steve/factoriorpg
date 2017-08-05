@@ -7,7 +7,9 @@ if MODULE_LIST then
 end
 
 nougat = {}
-global.nougat = {roboports = {}, index=1, easy_ores={}}
+nougat.LOGISTIC_RADIUS = true --Use the logistic radius, else use construction radius.
+nougat.DEFAULT_RATIO = 0.5 --The ratio of choclate to chew.  Err, I mean how many bots we assign to mining.  Starts here, changes later based on bot availability.
+global.nougat = {roboports = {}, index=1, easy_ores={}, networks={}} --Networks is of format {network=network, ratio=ratio}
 
 function nougat.bake()
     for k,v in pairs(game.entity_prototypes) do
@@ -32,15 +34,28 @@ function nougat.register(event)
     --game.print("Built something!")
     if (event.created_entity and event.created_entity.valid and event.created_entity.type == "roboport") then
         --game.print("Built a roboport.")
-        if event.created_entity.logistic_cell and event.created_entity.logistic_cell.valid and event.created_entity.logistic_cell.construction_radius > 0 then
-            --game.print("Roboport is on.")
+        if event.created_entity.logistic_cell and event.created_entity.logistic_cell.valid then
             local roboport = event.created_entity
+            local radius = nougat.how_many_licks(roboport)
+            if not radius then --Some mods use weird roboports.
+                return
+            end
+            --game.print("Roboport is on.")
             --We'll check for solid-resource entities later.
             --game.print("Roboport Radius: "  .. roboport.logistic_cell.construction_radius)
-            local count = event.created_entity.surface.count_entities_filtered{type="resource", area={{roboport.position.x - roboport.logistic_cell.construction_radius, roboport.position.y - roboport.logistic_cell.construction_radius}, {roboport.position.x + roboport.logistic_cell.construction_radius-1, roboport.position.y + roboport.logistic_cell.construction_radius-1}}}
+            local count = event.created_entity.surface.count_entities_filtered{type="resource", area={{roboport.position.x - radius, roboport.position.y - radius}, {roboport.position.x + radius-1, roboport.position.y + radius-1}}}
             --game.print("Found number of ores: " .. count)
 
             if count > 0 then
+                local network_registered = false
+                for k,v in pairs(global.nougat.networks) do
+                    if v.network == event.created_entity.logistic_cell.logistic_network then
+                        network_registered = true
+                    end
+                end
+                if not network_registered then
+                    table.insert(global.nougat.networks, {network=event.created_entity.logistic_cell.logistic_network, ratio=nougat.DEFAULT_RATIO})
+                end
                 table.insert(global.nougat.roboports, event.created_entity)
                 --game.print("Adding mining roboport")
             end
@@ -49,10 +64,10 @@ function nougat.register(event)
 end
 
 function nougat.chewy(event)
-    if (#global.nougat.roboports == 0) then
+    if not (game.tick % 300 == 191) then
         return
     end
-    if not (game.tick % 300 == 191) then
+    if (#global.nougat.roboports == 0) then
         return
     end
     local index = global.nougat.index
@@ -70,12 +85,14 @@ function nougat.chewy(event)
         global.nougat.index = global.nougat.index + 1
         return
     end
-    if roboport.logistic_network.available_construction_robots < 20 then
-        --We shouldn't bother. Need to advance index in case this is an isolated roboport.
-        global.nougat.index = global.nougat.index + 1
+    local radius = nougat.how_many_licks(roboport)
+    --In case an update changes a roboport...
+    if not radius or radius == 0 then
+        table.remove(global.nougat.roboports, index)
         return
     end
-    local ores = roboport.surface.find_entities_filtered{type="resource", limit=30, area={{roboport.position.x - roboport.logistic_cell.construction_radius, roboport.position.y - roboport.logistic_cell.construction_radius}, {roboport.position.x + roboport.logistic_cell.construction_radius-1, roboport.position.y + roboport.logistic_cell.construction_radius-1}}}
+    local area = {{roboport.position.x - radius, roboport.position.y - radius}, {roboport.position.x + radius-1, roboport.position.y + radius-1}}
+    local ores = roboport.surface.find_entities_filtered{type="resource", area=area}
     --Filter out oil...
     if #ores > 0 then
         for i = #ores, 1, -1 do
@@ -88,7 +105,7 @@ function nougat.chewy(event)
     if #ores == 0 then
         --Try harder.
         for k,v in pairs(global.nougat.easy_ores) do
-            ores = roboport.surface.find_entities_filtered{name=v.name, limit=1, area={{roboport.position.x - roboport.logistic_cell.construction_radius, roboport.position.y - roboport.logistic_cell.construction_radius}, {roboport.position.x + roboport.logistic_cell.construction_radius-1, roboport.position.y + roboport.logistic_cell.construction_radius-1}}}
+            ores = roboport.surface.find_entities_filtered{name=v, limit=1, area=area}
             if #ores > 0 then
                 break
             end
@@ -100,13 +117,19 @@ function nougat.chewy(event)
         end
         --game.print("Removing roboport.  No ore found.")
     end
+    local count = nougat.oompa_loompa(roboport.logistic_cell.logistic_network)
+    if count < 30 then
+        --We shouldn't bother. Need to advance index in case this is an isolated roboport.
+        global.nougat.index = global.nougat.index + 1
+        return
+    end
     --Finally, let's do some mining.
     --game.print("Time to mine.")
     local ore = ores[math.random(1,#ores)]
-    local count = math.min(ore.amount, math.floor(roboport.logistic_network.available_construction_robots / 4))
     local position = ore.position --Just in case we kill the ore.
     local productivity = roboport.force.mining_drill_productivity_bonus
     local products = {}
+    count = math.min(ore.amount, count)
             
     --game.print("Mining " .. ore.name .. " with " ..count .. " bots.")
     for k,v in pairs(ore.prototype.mineable_properties.products) do
@@ -155,6 +178,48 @@ function nougat.chewy(event)
 
     --Finally let's advance the index.
     global.nougat.index = global.nougat.index + 1
+end
+
+--Determine roboport radius.
+function nougat.how_many_licks(entity)
+    local radius
+    if entity and entity.valid and entity.logistic_cell then
+        if nougat.LOGISTIC_RADIUS then
+            radius = entity.logistic_cell.logistic_radius
+        else
+            radius = entity.logistic_cell.construction_radius
+        end
+    end
+    if radius and radius > 0 then
+        return radius
+    else --Invalid entity/roboport
+        return nil
+    end
+end
+
+--Figure out how many bots we're assigning and update the ratio along the way.
+function nougat.oompa_loompa(network)
+    --Fetch the table associated with this network.
+    local data
+    for i = #global.nougat.networks, 1, -1 do
+        if not global.nougat.networks[i].network.valid then
+            table.remove(global.nougat.networks, i)
+        end
+        if global.nougat.networks[i].network == network then
+            data = global.nougat.networks[i]
+        end
+    end
+    if not data then --Register network.
+        data = {network=network, ratio=global.nougat.DEFAULT_RATIO}
+        table.insert(global.nougat.networks, data)
+    end
+    local desired_ratio = 0.10
+    if network.available_construction_robots / network.all_construction_robots > desired_ratio then
+        data.ratio = data.ratio + 0.01
+    else
+        data.ratio = math.max(data.ratio - 0.01, 0.01)
+    end
+    return math.floor(network.available_construction_robots * data.ratio)
 end
 
 Event.register(-1, nougat.bake)
