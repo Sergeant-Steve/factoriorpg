@@ -8,6 +8,8 @@ global.antigrief_cooldown = {}
 antigrief.TROLL_TIMER = 60 * 60 * 30 --30 minutes.  Players must be online this long to not throw some warnings.
 antigrief.SPAM_TIMER = 60 * 60 * 2 --10 minutes.  Limit inventory related messages to once per 10m.
 
+--antigrief.WARN_TYPES = {"destruction", "hoarding", "mining"} --We'll just pass a string for the type.
+
 --Print text to online admins and write to the log.
 function antigrief.alert(text)
     for n, p in pairs(game.players) do
@@ -72,7 +74,7 @@ function antigrief.da_bomb(event)
         return
     end
     if player.get_item_count("atomic-bomb") > 0 then
-        if antigrief.check_cooldown(event.player_index) then
+        if antigrief.check_cooldown(event.player_index, "atomic") then
             antigrief.alert(player.name .. " has equipped an Atomic Bomb.")
         end
     end
@@ -84,7 +86,7 @@ function antigrief.hoarder(event)
     if player.online_time > antigrief.TROLL_TIMER then
         return
     end
-    if antigrief.check_cooldown(event.player_index) then
+    if antigrief.check_cooldown(event.player_index, "hoarding") then
         if player.get_item_count("speed-module-3") > 10 or
         player.get_item_count("productivity-module-3") > 10 or
         player.get_item_count("effectivity-module-3") > 10 then
@@ -155,13 +157,24 @@ function antigrief.check_size_loginet_size(event)
 end
 
 --Check if a message has been generated about this player recently.  If true, set cooldown.
-function antigrief.check_cooldown(player_index)
+function antigrief.check_cooldown(player_index, type)
     local cooldown = global.antigrief_cooldown[player_index]
-    if (not cooldown) or cooldown < game.tick then
-        global.antigrief_cooldown[player_index] = game.tick + antigrief.SPAM_TIMER
+    if not cooldown then
+        cooldown = {}
+    end
+    if (not cooldown.tick) or cooldown.tick < game.tick then
+        cooldown.tick = game.tick + antigrief.SPAM_TIMER
+        cooldown.type = type
+        global.antigrief_cooldown[player_index] = cooldown
         return true
     else
-        return false
+        if not cooldown.type == type then
+            cooldown.tick = game.tick + antigrief.SPAM_TIMER
+            cooldown.type = type
+            return true
+        else
+            return false
+        end
     end
 end
 
@@ -170,12 +183,35 @@ function antigrief.is_well_pump(entity)
     if entity.name ~= "offshore-pump" then
         return false
     end
-    if entity.surface.get_tile(entity.position.x+1, entity.position.y).collides_with("ground-tile") and
-        entity.surface.get_tile(entity.position.x, entity.position.y+1).collides_with("ground-tile") and
-        entity.surface.get_tile(entity.position.x-1, entity.position.y).collides_with("ground-tile") and
-        entity.surface.get_tile(entity.position.x, entity.position.y-1).collides_with("ground-tile") then
+    if not (entity.surface.get_tile(entity.position.x+1, entity.position.y).collides_with("water-tile") or
+        entity.surface.get_tile(entity.position.x, entity.position.y+1).collides_with("water-tile") or
+        entity.surface.get_tile(entity.position.x-1, entity.position.y).collides_with("water-tile") or
+        entity.surface.get_tile(entity.position.x, entity.position.y-1).collides_with("water-tile")) then
 
         return true
+    end
+end
+
+function antigrief.wanton_destruction(event)
+    if not (event.entity and event.entity.valid) then
+        return
+    end
+    if not event.cause or not event.cause.player then
+        return
+    end
+    if event.cause.force == event.entity.force then
+        --Friendly fire detected!
+        if antigrief.is_well_pump(event.entity) then
+            antigrief.alert(event.cause.player.name .. " destroyed a well-water pump")
+            return
+        end
+        if event.entity.type == "player" and event.entity.player then
+            antigrief.alert(event.cause.player.name .. " killed " .. event.entity.player.name )
+            return
+        end
+        if antigrief.check_cooldown(event.cause.player.player_index, "destruction") then
+            antigrief.alert(event.cause.player.name .. " is destroying friendly entites.")
+        end       
     end
 end
 
@@ -183,6 +219,7 @@ Event.register(defines.events.on_player_ammo_inventory_changed, antigrief.da_bom
 Event.register(defines.events.on_player_main_inventory_changed, antigrief.hoarder)
 Event.register(defines.events.on_player_left_game, antigrief.armor_drop)
 Event.register(defines.events.on_player_mined_entity, antigrief.pump)
+Event.register(defines.events.on_entity_died, antigrief.wanton_destruction)
 Event.register(defines.events.on_built_entity, antigrief.check_size_loginet_size)
 Event.register(defines.events.on_robot_built_entity, antigrief.check_size_loginet_size)
 Event.register(defines.events.on_player_deconstructed_area, antigrief.decon)
