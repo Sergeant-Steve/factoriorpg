@@ -2,7 +2,11 @@
 --Written by Mylon
 --MIT licensed
 
-HARVEST_MULTIPLIER = 2
+if MODULE_LIST then
+	module_list_add("Dark Harvest")
+end
+
+HARVEST_MULTIPLIER = 0.2
 
 --Destroy any uranium, in case someone didn't change map gen settings
 function harvest_despawn(event)

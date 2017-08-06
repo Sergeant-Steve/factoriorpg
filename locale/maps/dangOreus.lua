@@ -1,5 +1,5 @@
 STARTING_RADIUS = 100
-EASY_ORE_RADIUS = 250
+EASY_ORE_RADIUS = 200
 
 if MODULE_LIST then
 	module_list_add("dangOreus")
@@ -193,7 +193,7 @@ function flOre_is_lava(event)
         if not p.character then --Spectator or admin
             return
         end
-        if p.position.x > EASY_ORE_RADIUS or p.position.y > EASY_ORE_RADIUS then
+        if math.abs(p.position.x) > EASY_ORE_RADIUS or math.abs(p.position.y) > EASY_ORE_RADIUS then
             --Check for nearby ore.
             local count = p.surface.count_entities_filtered{type="resource", area={{p.position.x-0.5, p.position.y-0.5}, {p.position.x+0.5, p.position.y+0.5}}}
             if count > 0 then
@@ -243,8 +243,8 @@ function divOresity_init()
             end
         end
         if vanilla_ores then
-            table.insert(global.diverse_ore_list, "iron-ore")
-            table.insert(global.easy_ore_list, "iron-ore")
+            --table.insert(global.diverse_ore_list, "iron-ore")
+            --table.insert(global.easy_ore_list, "iron-ore")
             table.insert(global.easy_ore_list, "iron-ore")
         end
     end
