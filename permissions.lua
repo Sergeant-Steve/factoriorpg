@@ -17,7 +17,7 @@ function permissions_init()
 end
 
 function permissions_upgrade(event)
-	if event.tick % (5 * 60 * 60) == 500 then --Check once every 5 minutes
+	if event.tick % 18000 == 500 then --Check once every 5 minutes
 		for n, p in pairs(game.connected_players) do
 			if p.permission_group.name == "Default" then
 				if p.online_time / 60 / 60 > 30 then --30 minutes
@@ -36,4 +36,5 @@ function permissions_precheck(event)
 end
 
 Event.register(defines.events.on_player_created, permissions_precheck)
+Event.register(defines.events.on_player_created, permissions_upgrade)
 Event.register(-1, permissions_init)
