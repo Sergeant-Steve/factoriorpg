@@ -524,7 +524,7 @@ function rpg_satellite_launched(event)
 		bonus = math.max(100, bonus / (global.satellites_launched^1.5))
 		for n, player in pairs(game.players) do
 			--Scale this so players only need to be online for 80% of the time to achieve full reward.
-			local fraction_online = math.max(1, player.online_time / game.tick / 0.8)
+			local fraction_online = math.min(1, player.online_time / game.tick / 0.8)
 			rpg_add_exp(player, bonus * fraction_online)
 		end
 	end
