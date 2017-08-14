@@ -202,15 +202,14 @@ function nougat.oompa_loompa(network)
     --Fetch the table associated with this network.
     local data
     for i = #global.nougat.networks, 1, -1 do
-        if not global.nougat.networks[i].network.valid then
+        if not (global.nougat.networks[i].network and global.nougat.networks[i].network.valid) then
             table.remove(global.nougat.networks, i)
-        end
-        if global.nougat.networks[i].network == network then
+        elseif global.nougat.networks[i].network == network then
             data = global.nougat.networks[i]
         end
     end
     if not data then --Register network.
-        data = {network=network, ratio=global.nougat.DEFAULT_RATIO}
+        data = {network=network, ratio=nougat.DEFAULT_RATIO}
         table.insert(global.nougat.networks, data)
     end
     local desired_ratio = 0.10

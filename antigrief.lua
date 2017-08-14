@@ -196,7 +196,7 @@ function antigrief.wanton_destruction(event)
     if not (event.entity and event.entity.valid) then
         return
     end
-    if not event.cause or not event.cause.player then
+    if not (event.cause and event.cause.player) then
         return
     end
     if event.cause.force == event.entity.force then

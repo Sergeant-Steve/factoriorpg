@@ -6,10 +6,12 @@
 -- /silent-command do local hoarder = {amount=0} for k,v in pairs(game.players) do if v.get_item_count("uranium-235") > hoarder.amount then hoarder.name = v.name hoarder.amount = v.get_item_count("uranium-235") end end game.print(hoarder.name .. " is hoarding " .. hoarder.amount .. " uranium-235!") end
 -- /c for k,v in pairs(game.player.surface.find_entities_filtered{name="programmable-speaker"}) do game.print(v.last_user.name .. "is making noise.") end
 
+rpg = {}
+
 require "rpg_beastmaster" --New class gets its own file for class-related events.
+--require "rpg_builder" --Very unfinished.  Adds a limited number of higher level turrets for builders.
 --require "rpgdata" --Savedata.  This is externally generated.
 
-rpg = {}
 rpg.classes = {"Engineer", "Miner", "Builder", "Soldier", "Scientist", "Beastmaster"}
 
 --Savedata is of form: player_name = {bank = exp, class1 = exp, class2 = exp, etc}
