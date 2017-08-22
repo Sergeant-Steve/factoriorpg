@@ -248,8 +248,8 @@ Event.register(defines.events.on_gui_click, modular_information_gui_clicked)
 --	SUB-MODULES
 --
 require "modular_information_rules"
-require "modular_information_dummy"
+--require "modular_information_dummy"
 --require "modular_information_team"  --NOT DONE
---require "modular_information_scenario"--NOT DONE
+require "modular_information_scenario"
 --require "modular_information_about"--NOT DONE
 --require "modular_information_stats"--NOT DONE
