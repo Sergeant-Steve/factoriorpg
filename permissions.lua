@@ -14,6 +14,9 @@ function permissions_init()
 	default.set_allows_action(defines.input_action.set_train_stopped, false)
 	default.set_allows_action(defines.input_action.change_train_stop_station, false)
 	game.permissions.create_group("trusted") --For level 5+ players.
+	
+	global.patreon.patreons = {}
+	global.trusted.list = {}
 end
 
 function permissions_upgrade(event)
@@ -32,11 +35,8 @@ function permissions_precheck(event)
 	local player = game.players[player_index]
 	if patreon_check(player) or player.admin then
 		p.permission_group = game.permissions.get_group("trusted")
-
+	end
 end
-
-global.patreon.patreons
-global.trusted.list
 
 Event.register()
 Event.register(defines.events.on_player_created, permissions_precheck)
