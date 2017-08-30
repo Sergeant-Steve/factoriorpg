@@ -17,6 +17,8 @@ require "popup" --Module to create and display an popup in the center of all pla
 --require "rocket" --Module to stop people removing the rocket silo
 require "gravemarker" --Create a map tag on player death for easier corpse finding
 require "locale/utils/modular_admin" --New admin tools -untested
+require "locale/utils/modular_information" --New player information system -untested
+
 
 
 -- World Generators: Pick only ONE
