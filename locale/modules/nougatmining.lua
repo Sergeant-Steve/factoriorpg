@@ -158,8 +158,10 @@ function nougat.chewy(event)
     for i = 1, count do
         for k, v in pairs(products) do
             local oreitem = roboport.surface.create_entity{name="item-on-ground", stack=v, position=position}
-            oreitem.order_deconstruction(roboport.force)
-            --game.print(oreitem.stack.name .. " #"..i.." created for pickup. ")
+            if oreitem and oreitem.valid then --Why is oreitem sometimes nil or invalid?
+                oreitem.order_deconstruction(roboport.force)
+                --game.print(oreitem.stack.name .. " #"..i.." created for pickup. ")
+            end
         end
     end
     --Also add pollution.  This is based on count, not yield.
@@ -214,7 +216,7 @@ function nougat.oompa_loompa(network)
     end
     local desired_ratio = 0.10
     if network.available_construction_robots / network.all_construction_robots > desired_ratio then
-        data.ratio = data.ratio + 0.01
+        data.ratio = math.min(data.ratio + 0.01, 2)
     else
         data.ratio = math.max(data.ratio - 0.01, 0.01)
     end

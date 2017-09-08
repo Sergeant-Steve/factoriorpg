@@ -26,12 +26,12 @@ function hexi.init()
     --local settings = global.maze_settings.global --Not valid for a scenario.
     global.maze_settings = {}
     
-    global.maze_settings.maze_width = 20
-    global.maze_settings.maze_height = 20
+    global.maze_settings.maze_width = 10
+    global.maze_settings.maze_height = 10
     local maze_total_cells = global.maze_settings.maze_width * global.maze_settings.maze_height
     
-    global.maze_settings.maze_tile_size = 40
-    global.maze_settings.maze_tile_border = 4
+    global.maze_settings.maze_tile_size = 147
+    global.maze_settings.maze_tile_border = 47
     
     global.maze_settings.maze_width_raw = (global.maze_settings.maze_width+1) * global.maze_settings.maze_tile_size
     global.maze_settings.maze_height_raw = (global.maze_settings.maze_height+1) * global.maze_settings.maze_tile_size
@@ -47,7 +47,7 @@ function hexi.init()
         global.maze_settings.spawn_cutout = global.maze_settings.maze_height - 1
     end
     
-    global.maze_settings.ore_spawn_grass = true
+    global.maze_settings.ore_spawn_grass = false
     global.maze_settings.ore_spawn_grass_start = true
     global.maze_settings.block_crossroad = true
     global.maze_settings.disable_water = false
@@ -373,7 +373,7 @@ local function handle_maze_tile(x, y, surf, seed, settings)
     global_maze_x, global_maze_y, local_maze_x, local_maze_y, x, y = global_to_maze_pos(x, y, settings)
     
     local almost_cutout = false
-    if (global_maze_x == 0 or global_maze_x == -1) and (global_maze_y == 0 or global_maze_y == -1) then
+    if settings.spawn_cutout > 0 and (global_maze_x == 0 or global_maze_x == -1) and (global_maze_y == 0 or global_maze_y == -1) then
         local local_global_x = global_maze_x * (global.maze_settings.maze_width+2) + local_maze_x
         local local_global_y = global_maze_y * (global.maze_settings.maze_height+2) + local_maze_y
         if math.abs(local_global_x) < global.maze_settings.spawn_cutout+1 and math.abs(local_global_y) < global.maze_settings.spawn_cutout+1 then return nil end
@@ -439,11 +439,11 @@ local function handle_maze_tile_ore(x, y, surf, seed, settings)
     if ore_name then
         local dist_x = orig_x
         local dist_y = orig_y
-        if dist_x < 0 then dist_x = dist_x * -1 end
-        if dist_y < 0 then dist_y = dist_y * -1 end
+        --if dist_x < 0 then dist_x = dist_x * -1 end
+        --if dist_y < 0 then dist_y = dist_y * -1 end
         
-        local dist = dist_x
-        if dist_y > dist then dist = dist_y end
+        local dist = math.abs(dist_x * dist_y)^0.6
+        --if dist_y > dist then dist = dist_y end
         
         local resource_amount_max =global.maze_settings.ore_options[ore_name].ore_scale.start +global.maze_settings.ore_options[ore_name].ore_scale.mult * dist
         
@@ -456,7 +456,7 @@ local function handle_maze_tile_ore(x, y, surf, seed, settings)
         if dist_y < dist then dist = dist_y end
         dist = dist + 1
         
-        local cell_dist = dist / global.maze_settings.maze_tile_size * 2
+        local cell_dist = dist / (settings.maze_tile_size - settings.maze_tile_border) * 2
         local ore_size =global.maze_settings.ore_options[ore_name].size
         
         if cell_dist > 1-ore_size then
@@ -465,6 +465,7 @@ local function handle_maze_tile_ore(x, y, surf, seed, settings)
             end
             if surf.can_place_entity{name=ore_name, position={orig_x, orig_y}} then
                 cell_dist = 1-(1-cell_dist)/ore_size
+
                 local resource_amount = resource_amount_max * cell_dist
                 if start_zone then resource_amount = resource_amount * global.maze_settings.start_ore_multiplier
                 else resource_amount = resource_amount * global.maze_settings.ore_multiplier end

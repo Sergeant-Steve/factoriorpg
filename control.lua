@@ -28,8 +28,8 @@ require "locale/modules/nougatmining" --Logistic mining softmod.
 
 -- World Generators: Most are exclusive.
 --require "locale/maps/dangOreus" --Ore is everywhere.  Cannot build on it!
-require "oarc_events" --Oarc's separate spawn scenario.
---require "locale/maps/searious" --Everything not a resource tile is turned into water.
+require "locale/maps/searious" --Everything not a resource tile is turned into water.
+--require "oarc_events" --Oarc's separate spawn scenario.
 --require "locale/maps/heximaze" --A labyrinth. --Harder to adapt than I thought.  I'll generate the map via the mod and then launch without.
 --NOT UPDATED require "void" --Worldgenerator which randomly generates holes in the world
 --require "nuclear" --worldgenerator for nuclear scenario
@@ -87,13 +87,13 @@ Event.register(defines.events.on_player_respawned, player_respawned)
 
 --Time for the debug code.  If any (not global.) globals are written to at this point, an error will be thrown.
 --eg, x = 2 will throw an error because it's not global.x or local x
-function global_debug()
+--function global_debug()
 	setmetatable(_G, {
 		__newindex = function(_, n)
 			log("Attempt to write to undeclared var " .. n)
 			game.print("Attempt to write to undeclared var " .. n)
 		end
 	})
-end
+--end
 
-Event.register(-1, global_debug)
+--Event.register(-1, global_debug)

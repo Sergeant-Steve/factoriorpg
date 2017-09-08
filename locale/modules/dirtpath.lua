@@ -40,8 +40,8 @@ function dirtDirt()
 					-- end
 					if not waterfix then
 					-- Check for water to prevent landfill exploit
-						for xx = -1, 1 do
-							for yy = -1, 1 do
+						for xx = -1, 2 do
+							for yy = -1, 2 do
 								local waterCheck = p.surface.get_tile(tile.position.x + xx, tile.position.y + yy)
 								if not waterCheck or not waterCheck.valid or waterCheck.collides_with("water-tile") then
 									return

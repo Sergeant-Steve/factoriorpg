@@ -196,7 +196,7 @@ function antigrief.wanton_destruction(event)
     if not (event.entity and event.entity.valid) then
         return
     end
-    if not (event.cause and event.cause.player) then
+    if not (event.cause and event.cause.type == "player") then
         return
     end
     if event.cause.force == event.entity.force then
@@ -209,7 +209,7 @@ function antigrief.wanton_destruction(event)
             antigrief.alert(event.cause.player.name .. " killed " .. event.entity.player.name )
             return
         end
-        if antigrief.check_cooldown(event.cause.player.player_index, "destruction") then
+        if antigrief.check_cooldown(event.cause.player.index, "destruction") then
             antigrief.alert(event.cause.player.name .. " is destroying friendly entites.")
         end       
     end

@@ -223,7 +223,7 @@ function divOresity_init()
     
 
 	for k,v in pairs(game.entity_prototypes) do
-		if v.type == "resource" and v.resource_category == "basic-solid" then
+		if v.type == "resource" and v.resource_category == "basic-solid" and not game.surfaces[1].map_gen_settings.autoplace_controls[v.name].size == "none" then
             table.insert(global.diverse_ore_list, v.name)
             if v.mineable_properties.required_fluid == nil then
 			    table.insert(global.easy_ore_list, v.name)
@@ -233,7 +233,7 @@ function divOresity_init()
 
     --Check to see if we're playing normal.  Marathon requires more copper.
     if game.difficulty_settings.recipe_difficulty == 0 then
-    --This is a hack to make the ratios easier to handle.
+        --This is a hack to make the ratios easier to handle.
         --This hack only makes sense for vanilla ores.
         local vanilla_ores = false
         for k,v in pairs(global.easy_ore_list) do

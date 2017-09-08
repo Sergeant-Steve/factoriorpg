@@ -6,7 +6,7 @@ if MODULE_LIST then
 	module_list_add("Dark Harvest")
 end
 
-HARVEST_MULTIPLIER = 0.2
+HARVEST_MULTIPLIER = 0.4
 
 --Destroy any uranium, in case someone didn't change map gen settings
 function harvest_despawn(event)
@@ -40,7 +40,7 @@ end
 
 function harvest_reap(event, amount)
 	amount = math.max(1, math.ceil(amount * HARVEST_MULTIPLIER))
-	loot = event.entity.surface.spill_item_stack(event.entity.position, {name="uranium-ore", count=amount}, true)
+	event.entity.surface.spill_item_stack(event.entity.position, {name="uranium-ore", count=amount}, true)
 end
 
 function harvest_prettifier()

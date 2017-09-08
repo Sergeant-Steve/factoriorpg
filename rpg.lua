@@ -72,6 +72,9 @@ commands.add_command("loaddata", "Loads rpg data", function(data)
 			global.rpg_tmp[player.name].oarc = true
 		end
 	end
+	--Give bonuses on login.
+	rpg_give_bonuses(player)
+	rpg_give_team_bonuses(player.force)
 end)
 
 function rpg.heartbeat(event)
@@ -408,10 +411,11 @@ function rpg_connect(event)
 		--Init did not fire.  This is due to oarc not liking the 3ra event handler.
 		rpg_init()
 	end
-	if global.rpg_tmp[player.name] and global.rpg_tmp[player.name].ready then
-		rpg_give_bonuses(player)
-		rpg_give_team_bonuses(player.force)
-	end
+	--This no longer fires.  We should do this on the load data command.
+	-- if global.rpg_tmp[player.name] and global.rpg_tmp[player.name].ready then
+	-- 	rpg_give_bonuses(player)
+	-- 	rpg_give_team_bonuses(player.force)
+	-- end
 end
 
 --Leaving the game causes team bonuses to be re-calculated
@@ -431,20 +435,37 @@ end
 -- EXP STUFF --
 function rpg_nest_killed(event)
 	--game.print("Entity died.")
-	if event.entity and event.entity.surface.get_pollution(event.entity.position) < 20 then
+	if not (event.entity and event.entity.valid) then
 		return
 	end
+
+	--Check all 4 directions around to see if any are in pollution cloud.  Spawners consume pollution so their own position may not count, even if they should.
+	local function is_in_pollution()
+		if event.entity.surface.get_pollution{event.entity.position.x + 32, event.entity.position.y} >= 20 or
+			event.entity.surface.get_pollution{event.entity.position.x, event.entity.position.y + 32} >= 20 or
+			event.entity.surface.get_pollution{event.entity.position.x - 32, event.entity.position.y} >= 20 or
+			event.entity.surface.get_pollution{event.entity.position.x, event.entity.position.y - 32} >= 20 or
+			event.entity.surface.get_pollution{event.entity.position.x, event.entity.position.y} >= 20 then
+			return true
+		else
+			return false
+		end
+	end
+
 	if event.entity.type == "unit-spawner" then
 		--game.print("Spawner died.")
-		if event.cause and event.cause.type == "player" then
+		if event.cause and event.cause.type == "player" and is_in_pollution() then
 			--game.print("Spawner died by player.  Awarding exp.")
 			rpg_nearby_exp(event.entity.position, event.cause.force, 100)
+			return
 		else
-			if event.cause and event.cause.last_user then
+			if event.cause and event.cause.last_user and is_in_pollution() then
 				rpg_nearby_exp(event.entity.position, event.cause.force, 100)
+				return
 			end
 		end		
 	end
+
 	if event.entity.type == "turret" and string.find(event.entity.name, "worm") then
 		--Worm turret died.
 		--game.print("Worm died at ".. event.entity.position.x .. "," .. event.entity.position.y .. " by the hands of " .. event.cause.player.name )
@@ -452,7 +473,10 @@ function rpg_nest_killed(event)
 		-- if event.cause then
 			-- rpg_nearby_exp(event.entity.position, event.cause.force, 50)
 		-- end
-		
+		if not is_in_pollution() then
+			return
+		end
+
 		--Temporary measure.  This can cause players on different teams to get exp.  Super edge-case stuff.
 		local radius = 64
 		local position = event.entity.position
