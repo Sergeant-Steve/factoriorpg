@@ -91,9 +91,9 @@ function FindUnusedSpawns(event)
         end
 
         -- Remove a force if this player created it and they are the only one on it
-        if ((#player.force.players <= 1) and (player.force.name ~= MAIN_FORCE)) then
-            game.merge_forces(player.force, MAIN_FORCE)
-        end
+        -- if ((#player.force.players <= 1) and (player.force.name ~= MAIN_FORCE)) then
+        --     game.merge_forces(player.force, MAIN_FORCE)
+        -- end
 		
 		--Move player to spawn
 		player.teleport({0,0})

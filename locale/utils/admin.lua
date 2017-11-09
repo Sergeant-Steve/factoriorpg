@@ -46,6 +46,7 @@ function entity_mined(event)
 	local entity = event.entity
 	if entity.force.name == "neutral" 
 	or entity.name == "entity-ghost" 
+	ore entity.name == "underground-pipe" --To stop the pipe bug.
 	or entity.type == "locomotive" 
 	or entity.type == "cargo-wagon"
 	or entity.type == "fluid-wagon"

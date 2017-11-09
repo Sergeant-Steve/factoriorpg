@@ -37,7 +37,7 @@ function antigrief.decon(event)
     if event.alt then --This is a cancel order.
         return
     end
-    if event.area.left_top == event.area.bottom_right then
+    if event.area.left_top.x == event.area.right_bottom.x or event.area.left_top.y == event.area.right_bottom.y then
         log("Antigrief: Deconstruction area is of zero size.")
         return
     end

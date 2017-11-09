@@ -6,6 +6,9 @@
 -- /silent-command do local hoarder = {amount=0} for k,v in pairs(game.players) do if v.get_item_count("uranium-235") > hoarder.amount then hoarder.name = v.name hoarder.amount = v.get_item_count("uranium-235") end end game.print(hoarder.name .. " is hoarding " .. hoarder.amount .. " uranium-235!") end
 -- /c for k,v in pairs(game.player.surface.find_entities_filtered{name="programmable-speaker"}) do game.print(v.last_user.name .. "is making noise.") end
 
+--Idea: Only mine ore if a valid requester is in the network.
+--To do that, need to do iterate over logistic_network.requester_points and then iterate over each of those to find a filter that matches an ore.
+
 rpg = {}
 
 require "rpg_beastmaster" --New class gets its own file for class-related events.
@@ -36,6 +39,7 @@ commands.add_command("loaddata", "Loads rpg data", function(data)
 	
 	--game.print(serpent.line(data))
 	if not data.playername then
+		log("Invalid data.")
 		--Invalid data
 		return
 	end
@@ -43,6 +47,7 @@ commands.add_command("loaddata", "Loads rpg data", function(data)
 	local player = game.players[data.playername]
 	if not player then
 		--Stale load data file
+		log("Player ''" .. data.playername .. "'' is not playing.")		
 		return
 	end
 	player.print("RPG data loaded.")
@@ -52,13 +57,15 @@ commands.add_command("loaddata", "Loads rpg data", function(data)
 			if global.rpg_exp[player.name][v] then
 				if data[v] > global.rpg_exp[player.name][v] then
 					global.rpg_exp[player.name][v] = data[v]
+					global.rpg_tmp[player.name][v] = data[v]
 				else
 					log("Tried to load stale data for an existing player.")
 				end
 			else
 				global.rpg_exp[player.name][v] = data[v]
+				global.rpg_tmp[player.name][v] = data[v]
 			end
-			global.rpg_tmp[player.name][v] = data[v]
+			--global.rpg_tmp[player.name][v] = data[v] --Changing this will prevent overwriting current exp if the data server goes down.
 		end
 	end
 	if global.rpg_exp[player.name].class == "Engineer" then
@@ -68,17 +75,19 @@ commands.add_command("loaddata", "Loads rpg data", function(data)
 	--Let's do the oarc spawns on this step.
 	if ENABLE_SEPARATE_SPAWNS then
 		if not global.rpg_tmp[player.name].oarc then
-			SeparateSpawnsPlayerCreated({player_index=player.index})
 			global.rpg_tmp[player.name].oarc = true
+			SeparateSpawnsPlayerCreated({player_index=player.index})
 		end
 	end
 	--Give bonuses on login.
 	rpg_give_bonuses(player)
 	rpg_give_team_bonuses(player.force)
+
+	log("Loaded RPG data for " .. player.name)
 end)
 
 function rpg.heartbeat(event)
-	if not (game.tick % 600 == 0) then
+	if not (game.tick % (60 * 60 * 5) == 0) then
 		return
 	end
 	for k, v in pairs(global.rpg.heartbeat) do
