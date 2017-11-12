@@ -22,7 +22,7 @@ require "locale/modules/dirtpath" --For some silliness.
 require "locale/modules/divOresity" --Some ore gets scrambled and must be filtered.
 --require "locale/modules/dark harvest" --Only way to get uranium is from biter deaths.
 --require "dark harvest event" --Temp for testing.
---require "bluebuild" --Bluebuild softmod
+--require "locale/modules/bluebuild" --Bluebuild softmod
 require "locale/modules/autofill" --Softmod autofill separated from Oarc
 require "locale/modules/nougatmining" --Logistic mining softmod.
 --require "belt_limit" --Limits number of belts per player.  Mostly for UPS reasons.

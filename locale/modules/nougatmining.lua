@@ -9,7 +9,7 @@ end
 nougat = {}
 nougat.LOGISTIC_RADIUS = true --Use the logistic radius, else use construction radius.
 nougat.DEFAULT_RATIO = 0.5 --The ratio of choclate to chew.  Err, I mean how many bots we assign to mining.  Starts here, changes later based on bot availability.
-global.nougat = {roboports = {}, index=1, easy_ores={}, networks={}} --Networks is of format {network=network, ratio=ratio}
+global.nougat = {roboports = {}, index=1, easy_ores={}, networks={}, optout={}} --Networks is of format {network=network, ratio=ratio}
 
 function nougat.bake()
     for k,v in pairs(game.entity_prototypes) do
@@ -33,6 +33,14 @@ end
 function nougat.register(event)
     --game.print("Built something!")
     if (event.created_entity and event.created_entity.valid and event.created_entity.type == "roboport") then
+        --Check opt-out status
+        if event.created_entity.last_user then
+            for k, v in pairs(global.nougat.optout) do
+                if event.created_entity.last_user == v then
+                    return
+                end
+            end
+        end
         --game.print("Built a roboport.")
         if event.created_entity.logistic_cell and event.created_entity.logistic_cell.valid then
             local roboport = event.created_entity
@@ -226,6 +234,22 @@ function nougat.oompa_loompa(network)
     end
     return math.floor(network.available_construction_robots * data.ratio)
 end
+
+commands.add_command("nougat", "Toggle nougat mining", function()
+    if global.nougat.optout[game.player.index] then
+        global.nougat.optout[game.player.index] = nil
+        game.player.print("Nougat Mining turned on.")
+    else
+        global.nougat.optout[game.player.index] = true
+        game.player.print("Nougat Mining turned off.")
+        for i = #global.nougat.roboports, 1, -1 do
+            v = global.nougat.roboports[i]
+            if v and v.valid and v.last_user == game.player then
+                table.remove(global.nougat.roboports, i)
+            end
+        end
+    end
+end)
 
 Event.register(-1, nougat.bake)
 Event.register(defines.events.on_tick, nougat.chewy)
