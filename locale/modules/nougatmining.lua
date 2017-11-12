@@ -85,7 +85,7 @@ function nougat.chewy(event)
         global.nougat.index = global.nougat.index + 1
         return
     end
-    if not roboport.prototype.electric_energy_source_prototype.buffer_capacity == roboport.selected.energy then --Low power
+    if not (roboport.prototype.electric_energy_source_prototype.buffer_capacity == roboport.energy) then --Low power
         global.nougat.index = global.nougat.index + 1
         return
     end
