@@ -81,7 +81,11 @@ function nougat.chewy(event)
         table.remove(global.nougat.roboports, index)
         return
     end
-    if not roboport.logistic_cell and roboport.logistic_cell.valid then --Not powered.
+    if not (roboport.logistic_cell and roboport.logistic_cell.valid and roboport.logistic_cell.logistic_network) then --Not powered.
+        global.nougat.index = global.nougat.index + 1
+        return
+    end
+    if not roboport.prototype.electric_energy_source_prototype.buffer_capacity == roboport.selected.energy then --Low power
         global.nougat.index = global.nougat.index + 1
         return
     end

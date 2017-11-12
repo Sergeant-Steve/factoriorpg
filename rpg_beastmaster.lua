@@ -36,6 +36,7 @@ function rpg_beast_sickem(event)
 							end
 						--elseif not global.rpg_tmp[p.name].pets.state == defines.group_state.moving then
 						elseif global.rpg_tmp[p.name].pets.state == defines.group_state.finished then
+							--TODO: Set the destination to position + direction so biters keep up better.
 							global.rpg_tmp[p.name].pets.set_command{type=defines.command.go_to_location, destination=p.position}
 						end
 					else
