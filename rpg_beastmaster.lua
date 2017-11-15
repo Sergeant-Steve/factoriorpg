@@ -82,14 +82,12 @@ function rpg_add_pet(player)
 	if global.rpg_tmp[player.name].pets and global.rpg_tmp[player.name].pets.valid and #global.rpg_tmp[player.name].pets.members > global.rpg_tmp[player.name].level / 4 then
 		return
 	end
-	local biter_type = "medium-biter" --Default biter type.
+	local biter_type = "big-biter" --Default biter type.
 	if game.forces.enemy.evolution_factor > 0.9 and math.random() < 0.05 then
 		biter_type = "behemoth-biter"
 	elseif game.forces.enemy.evolution_factor > 0.7 and math.random() < 0.10 then
 		biter_type = "big-spitter"
 	elseif game.forces.enemy.evolution_factor > 0.6 and math.random() < 0.10 then
-		biter_type = "big-biter"
-	elseif game.forces.enemy.evolution_factor > 0.5 and math.random() < 0.10 then
 		biter_type = "medium-spitter"
 	end
 	local pos = player.surface.find_non_colliding_position("behemoth-biter", player.position, 10, 2)

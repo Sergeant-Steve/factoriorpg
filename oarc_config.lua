@@ -130,12 +130,12 @@ PLAYER_RESPAWN_START_ITEMS = {
 CHECK_SPAWN_UNGENERATED_CHUNKS_RADIUS = 5
 
 -- Near Distance in chunks
-NEAR_MIN_DIST = 22 --25
-NEAR_MAX_DIST = 60 --100
+NEAR_MIN_DIST = 30 --25
+NEAR_MAX_DIST = 50 --100
                    --
 -- Far Distance in chunks
-FAR_MIN_DIST = 80 --150
-FAR_MAX_DIST = 200 --200
+FAR_MIN_DIST = 50 --150
+FAR_MAX_DIST = 90 --200
           
 ---------------------------------------
 -- Resource & Spawn Circle Options

@@ -195,7 +195,7 @@ function rpg_starting_resources(player)
 	-- global.rpg_tmp[player.name].maxlevel = math.max(global.rpg_exp[player.name].level, global.rpg_tmp[player.name].maxlevel)
 	local bonuslevel = total_level - 1
 	if bonuslevel > 0 then
-		player.insert{name="iron-plate", count=bonuslevel * 10}
+		player.insert{name="iron-plate", count=bonuslevel * 20}
 		player.insert{name="copper-plate", count=math.max(1, math.floor(bonuslevel / 4) * 10) }
 		player.insert{name="stone", count=math.max(1, math.floor(bonuslevel / 4) * 10) }
 	end
@@ -450,10 +450,10 @@ function rpg_nest_killed(event)
 
 	--Check all 4 directions around to see if any are in pollution cloud.  Spawners consume pollution so their own position may not count, even if they should.
 	local function is_in_pollution()
-		if event.entity.surface.get_pollution{event.entity.position.x + 32, event.entity.position.y} >= 20 or
-			event.entity.surface.get_pollution{event.entity.position.x, event.entity.position.y + 32} >= 20 or
-			event.entity.surface.get_pollution{event.entity.position.x - 32, event.entity.position.y} >= 20 or
-			event.entity.surface.get_pollution{event.entity.position.x, event.entity.position.y - 32} >= 20 or
+		if event.entity.surface.get_pollution{event.entity.position.x + 128, event.entity.position.y} >= 20 or
+			event.entity.surface.get_pollution{event.entity.position.x, event.entity.position.y + 128} >= 20 or
+			event.entity.surface.get_pollution{event.entity.position.x - 128, event.entity.position.y} >= 20 or
+			event.entity.surface.get_pollution{event.entity.position.x, event.entity.position.y - 128} >= 20 or
 			event.entity.surface.get_pollution{event.entity.position.x, event.entity.position.y} >= 20 then
 			return true
 		else
@@ -477,11 +477,6 @@ function rpg_nest_killed(event)
 
 	if event.entity.type == "turret" and string.find(event.entity.name, "worm") then
 		--Worm turret died.
-		--game.print("Worm died at ".. event.entity.position.x .. "," .. event.entity.position.y .. " by the hands of " .. event.cause.player.name )
-		--0.15.13 bug: cause is nil
-		-- if event.cause then
-			-- rpg_nearby_exp(event.entity.position, event.cause.force, 50)
-		-- end
 		if not is_in_pollution() then
 			return
 		end
