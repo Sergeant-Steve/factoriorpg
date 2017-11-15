@@ -1,3 +1,43 @@
+TRUST_COUNT = 3
+global.vetting = {}
+
+--Note, this command relies on a hardcoded group named "trusted"
+--Name is case insensitive.
+commands.add_command("vet", "Vet a player as trusted.", function(params)
+	local name = params.parameter
+	name = name:lower()
+	if global.vetting[name] then
+		game.player.print("Vetted players cannot vet.")
+		return
+	end
+	if not (game.players[name]) then
+		game.player.print("Invalid name.")
+		return
+	end
+	if not (game.player.permission_group == game.permissions.get_group("trusted")) then
+		game.player.print("Must be trusted to use this command.")
+		return
+	end
+	if not (game.players[name].permission_group == game.permissions.get_group("trusted")) then
+		if not global.vetting[name] then
+			global.vetting[name] = {}
+		end
+		if not global.vetting[name][game.player.name] then
+			global.vetting[name][game.player.name] = true
+			if #global.vetting[name] >= TRUST_COUNT then
+				game.players[name].permission_group = game.permissions.get_group("trusted")
+				game.players[name].print("Players have vetted you and given you permissions.")
+			end
+		else
+			game.player.print("You have already vetted " .. params.parameter .. ".")
+		end
+		game.player.print("You have vetted " .. params.parameter .. ".")
+	else
+		game.player.print("Player is already trusted.")
+	end
+
+end)
+
 function rpg_permissions_init()
 	local default = game.permissions.groups[1]
 	default.set_allows_action(defines.input_action.deconstruct, false)
