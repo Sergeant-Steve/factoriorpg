@@ -32,6 +32,21 @@ function antigrief.pump(event)
     end
 end
 
+--Look for players mining ghosts far away.
+function antigrief.ghosting(event)
+    if not event.entity and not event.entity.valid then
+        return
+    end
+    if event.entity.type == "entity-ghost" then
+        --Look for units mined 200 tiles away.
+        if math.abs(event.entity.position.x - event.player.position.x) + math.abs(event.entity.position.y - event.player.position.y) > 200 then
+            if antigrief.check_cooldown(event.player.index, "ghosting") then
+                antigrief.alert(event.player.name .. " is removing blueprint ghosts.")
+            end
+        end
+    end
+end
+
 --When someone decons > 50 entities, fire an alert
 function antigrief.decon(event)
     if event.alt then --This is a cancel order.
@@ -219,6 +234,7 @@ Event.register(defines.events.on_player_ammo_inventory_changed, antigrief.da_bom
 Event.register(defines.events.on_player_main_inventory_changed, antigrief.hoarder)
 Event.register(defines.events.on_player_left_game, antigrief.armor_drop)
 Event.register(defines.events.on_player_mined_entity, antigrief.pump)
+Event.register(defines.events.on_player_mined_entity, antigrief.ghosting)
 Event.register(defines.events.on_entity_died, antigrief.wanton_destruction)
 Event.register(defines.events.on_built_entity, antigrief.check_size_loginet_size)
 Event.register(defines.events.on_robot_built_entity, antigrief.check_size_loginet_size)
