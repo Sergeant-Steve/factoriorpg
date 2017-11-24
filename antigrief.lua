@@ -34,14 +34,15 @@ end
 
 --Look for players mining ghosts far away.
 function antigrief.ghosting(event)
-    if not event.entity and not event.entity.valid then
+    local player = game.players[event.player_index]
+    if not event.entity and not event.entity.valid and not player and not player.valid then
         return
     end
     if event.entity.type == "entity-ghost" then
         --Look for units mined 200 tiles away.
-        if math.abs(event.entity.position.x - event.player.position.x) + math.abs(event.entity.position.y - event.player.position.y) > 200 then
-            if antigrief.check_cooldown(event.player.index, "ghosting") then
-                antigrief.alert(event.player.name .. " is removing blueprint ghosts.")
+        if math.abs(event.entity.position.x - player.position.x) + math.abs(event.entity.position.y - player.position.y) > 200 then
+            if antigrief.check_cooldown(event.player_index, "ghosting") then
+                antigrief.alert(player.name .. " is removing blueprint ghosts.")
             end
         end
     end
