@@ -533,7 +533,8 @@ function rpg_tech_researched(event)
 			value = value + ingredient.amount * event.research.research_unit_count
 		end
 	end
-	value = value ^ 0.85
+	--value = value ^ 0.85 --Old formula
+	value = 20 * value ^0.55
 	for _, player in pairs(event.research.force.players) do
 		if player.connected then
 			rpg_add_exp(player, value)
@@ -857,7 +858,7 @@ function rpg_give_team_bonuses(force)
 	
 	force.character_health_bonus = scientistbonus / 3 --Base health is 250, so this is scaled up similarly
 	force.character_running_speed_modifier = scientistbonus / 400
-	force.worker_robots_speed_modifier = scientistbonus / 50 + force.worker_robots_speed_modifier * 0.6 - 0.4
+	force.worker_robots_speed_modifier = scientistbonus / 40 + force.worker_robots_speed_modifier * 0.80 - 0.4
 	force.worker_robots_battery_modifier = scientistbonus / 50
 	
 	--This one can't decrease, or players logging out would cause stuff to drop!
@@ -922,6 +923,7 @@ function rpg_im_too_smart_to_die(event)
 		else
 			--Non Oarc respawn:
 			player.teleport(player.force.get_spawn_position(player.surface))
+			player.print("Emergency teleporter activated.")
 		end
 	end
 end
@@ -950,8 +952,7 @@ function rpg_init()
 	global.base_evolution_pollution = game.map_settings.enemy_evolution.pollution_factor
 	global.base_evolution_time = game.map_settings.enemy_evolution.time_factor
 	--Players can give bonuses to the team, so let's nerf the base values so players can re-buff them.
-	--game.forces.player.manual_crafting_speed_modifier = -0.3 --Oops, game is not available at this step.
-
+	
 	--Doh, can't have a negative bonus.  This does not work.
 	--game.forces.player.character_health_bonus = -50
 
