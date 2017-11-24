@@ -8,6 +8,7 @@ end
 
 nougat = {}
 nougat.LOGISTIC_RADIUS = true --Use the logistic radius, else use construction radius.
+nougat.TARGET_RATIO = 0.10 --Aim to keep this proportion of construction bots free.
 nougat.DEFAULT_RATIO = 0.5 --The ratio of choclate to chew.  Err, I mean how many bots we assign to mining.  Starts here, changes later based on bot availability.
 global.nougat = {roboports = {}, index=1, easy_ores={}, networks={}, optout={}} --Networks is of format {network=network, ratio=ratio}
 
@@ -140,8 +141,9 @@ function nougat.chewy(event)
     local ore = ores[math.random(1,#ores)]
     local position = ore.position --Just in case we kill the ore.
     local productivity = roboport.force.mining_drill_productivity_bonus
+    local cargo_multiplier = roboport.force.worker_robots_storage_bonus + 1
     local products = {}
-    count = math.min(ore.amount, count)
+    count = math.min(math.ceil(ore.amount / cargo_multiplier), count)
             
     --game.print("Mining " .. ore.name .. " with " ..count .. " bots.")
     for k,v in pairs(ore.prototype.mineable_properties.products) do
@@ -163,7 +165,9 @@ function nougat.chewy(event)
             end
             productivity = productivity - 1
         end
-        product.count = product.count * productivity_multiplier
+        --Stack ore according to force.worker_robots_storage_bonus
+
+        product.count = product.count * productivity_multiplier * cargo_multiplier
 
         table.insert(products, {name=product.name, count=product.count})
     end 
@@ -176,15 +180,16 @@ function nougat.chewy(event)
             end
         end
     end
-    --Also add pollution.  This is based on count, not yield.
-    roboport.surface.pollute(position, global.nougat.pollution * count)
+    --Also add pollution.  Mining productivity is omitted.
+    roboport.surface.pollute(position, global.nougat.pollution * count * cargo_multiplier)
     --game.print("Created " .. #products .. " for pickup.")
 
     --Deplete the ore.
-    if ore.amount > count then
-        ore.amount = ore.amount - count
+    --Note, a few extra ore may be produced per entity. (amount / cargo_multiplier) is rounded up.
+    if ore.amount > (count * cargo_multiplier) then
+        ore.amount = ore.amount - (count * cargo_multiplier)
     else
-        script.raise_event(defines.events.on_resource_depleted, {entity=ore, name=defines.events.on_resource_depleted, tick=game.tick})
+        script.raise_event(defines.events.on_resource_depleted, {entity=ore, name=defines.events.on_resource_depleted})
         if ore and ore.valid then
             ore.destroy()
         end
@@ -220,14 +225,14 @@ function nougat.oompa_loompa(network)
             table.remove(global.nougat.networks, i)
         elseif global.nougat.networks[i].network == network then
             data = global.nougat.networks[i]
+            break
         end
     end
     if not data then --Register network.
         data = {network=network, ratio=nougat.DEFAULT_RATIO}
         table.insert(global.nougat.networks, data)
     end
-    local desired_ratio = 0.10
-    if network.available_construction_robots / network.all_construction_robots > desired_ratio then
+    if network.available_construction_robots / network.all_construction_robots > nougat.TARGET_RATIO then
         data.ratio = math.min(data.ratio + 0.01, 2)
     else
         data.ratio = math.max(data.ratio - 0.01, 0.01)
@@ -243,7 +248,7 @@ commands.add_command("nougat", "Toggle nougat mining", function()
         global.nougat.optout[game.player.index] = true
         game.player.print("Nougat Mining turned off.")
         for i = #global.nougat.roboports, 1, -1 do
-            v = global.nougat.roboports[i]
+            local v = global.nougat.roboports[i]
             if v and v.valid and v.last_user == game.player then
                 table.remove(global.nougat.roboports, i)
             end
