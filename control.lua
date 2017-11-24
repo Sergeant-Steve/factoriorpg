@@ -18,7 +18,7 @@ require "rules" --Module which displays a popup with the rules when a player joi
 --require "rocket" --Module to stop people removing the rocket silo
 require "locale/modules/gravemarker" --Mark player death locations on map for corpse runs.
 require "locale/modules/dirtpath" --For some silliness.
---require "locale/modules/tOredumonde" --Ore spawns in directions. This must be called before divOresity.
+--require "locale/modules/tOredumonde" --Ore spawns in directions. This must be called before divOresity. NOTE: STONE_BYPRODUCT must be false.
 require "locale/modules/divOresity" --Some ore gets scrambled and must be filtered.
 --require "locale/modules/dark harvest" --Only way to get uranium is from biter deaths.
 --require "dark harvest event" --Temp for testing.
@@ -30,7 +30,7 @@ require "locale/modules/nougatmining" --Logistic mining softmod.
 -- World Generators: Most are exclusive.
 --require "locale/maps/dangOreus" --Ore is everywhere.  Cannot build on it!
 --require "locale/maps/searious" --Everything not a resource tile is turned into water.
-require "oarc_events" --Oarc's separate spawn scenario.
+--require "oarc_events" --Oarc's separate spawn scenario.
 --require "locale/maps/heximaze" --A labyrinth. --Harder to adapt than I thought.  I'll generate the map via the mod and then launch without.
 --require "void" --Worldgenerator which randomly generates holes in the world
 --require "nuclear" --worldgenerator for nuclear scenario
