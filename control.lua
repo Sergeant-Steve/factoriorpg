@@ -3,6 +3,7 @@ require "locale/utils/event" --Yes this line is seriously commented out, and yes
 require "mod-gui" --required for all other modules
 require "locale/utils/topgui" --utility module to be able to order the buttons in the top left
 require "locale/utils/char_mod"	--utility module to prevent multiple modules conflicting when modifying player bonus
+require "locale/utils/bot"	--3ra shit
 --CRASH TO DESKTOPrequire "locale/utils/force_mod" --utility module to prevent multiple modules conflicting when modifying force bonus
 --require "permissions" --Permission manager
 --require "trusted" --Module to add trusted players to a seperate permission group
@@ -12,7 +13,7 @@ require "announcements"	--Module to announce stuff ingame / give the players a w
 require "tag" --Module to let players set a tag behind their names to improve teamwork
 --require "fmcd" --Module to consolidate saving data to an output file for the agent
 --require "stats" --Module to generate stats and print them to the filesystem
-require "popup" --Module to create and display an popup in the center of all players their screens.
+--require "popup" --Module to create and display an popup in the center of all players their screens.
 --require "rules" --Module which displays a popup with the rules when a player joins, or presses the open rules button
 --require "rocket" --Module to stop people removing the rocket silo
 require "gravemarker" --Create a map tag on player death for easier corpse finding

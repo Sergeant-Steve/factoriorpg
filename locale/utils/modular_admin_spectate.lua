@@ -81,9 +81,13 @@ end
 function modular_admin_spectate_set_follow_target(p, target)
 	if global.modular_admin_spectate.follow_enabled and global.modular_admin_spectate.enabled then
 		if p.connected and target.connected and p.admin then
-			global.modular_admin_spectate.follow_target[p.index] = target.index
-			p.print("You are now following " .. target.name)
-			modular_admin_spectate_gui_changed(p)
+			if global.modular_admin_spectate.follow_target[p.index] == target.index then
+				modular_admin_spectate_stop_follow(p)
+			else
+				global.modular_admin_spectate.follow_target[p.index] = target.index
+				p.print("You are now following " .. target.name)
+				modular_admin_spectate_gui_changed(p)
+			end
 		end
 	else
 		p.print("Following is disabled")

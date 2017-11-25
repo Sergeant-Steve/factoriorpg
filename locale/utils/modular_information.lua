@@ -83,7 +83,7 @@ function modular_information_gui_changed(p)
 	if global.modular_information.active_button[p.name] == "none" then
 		miip = modular_information_get_information_pane(p)
 		miip.clear()
-		mini = miip.add {type="label", name="modular_information_no_info", caption="No information selected."}
+		mini = miip.add {type="label", name="modular_information_no_info", caption="No information selected, use a button on the left to select."}
 		mini.style.font_color = {r=1,g=0,b=0}
 	end
 	modular_information_set_information_pane_caption(p, "Information pane")
