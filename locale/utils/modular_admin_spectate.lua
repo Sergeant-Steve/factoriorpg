@@ -124,6 +124,11 @@ function modular_admin_spectate_set_normal(p)
 			if global.modular_admin_spectate.player_spectator_character[index] and global.modular_admin_spectate.player_spectator_character[index].valid then
 				if not teleport then p.print("Returning you to your character.") end
 				p.set_controller { type = defines.controllers.character, character = global.modular_admin_spectate.player_spectator_character[index] }
+				p.character.destructible = true
+				if global.modular_admin_boost ~= nil then
+					global.modular_admin_boost.bonus_state[p.name].invincible = false
+					modular_admin_boost_gui_changed(p)
+				end
 			else
 				p.print("Character missing, will create new character at spawn.")
 				p.set_controller { type = defines.controllers.character, character = p.surface.create_entity { name = "player", position = { 0, 0 }, force = global.modular_admin_spectate.player_spectator_force[index] } }
