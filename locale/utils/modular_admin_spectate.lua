@@ -127,7 +127,7 @@ function modular_admin_spectate_set_normal(p)
 				p.character.destructible = true
 				if global.modular_admin_boost ~= nil then
 					global.modular_admin_boost.bonus_state[p.name].invincible = false
-					modular_admin_boost_gui_changed(p)
+					modular_admin_boost_update_menu_button(p)
 				end
 			else
 				p.print("Character missing, will create new character at spawn.")
