@@ -8,10 +8,13 @@ end
 --Sprinkle ore everywhere
 function gOre(event)
     local oldores = event.surface.find_entities_filtered{type="resource", area=event.area}
+    local oils = {}
     for k, v in pairs(oldores) do
         if v.prototype.resource_category == "basic-solid" then
             v.destroy()
-        end
+        else
+			table.insert(oils, v)
+		end
     end
 
     --Generate our random once for the whole chunk.
@@ -118,6 +121,16 @@ function gOre(event)
             end
         end
     end
+
+    --Ore blocks oil from rendering the resource radius.  Clean up any resources around oil.
+	for k, v in pairs(oils) do
+		local overlap = v.surface.find_entities_filtered{type="resource", area=v.bounding_box}
+		for n, p in pairs(overlap) do
+			if p.prototype.resource_category == "basic-solid" then
+				p.destroy()
+			end
+		end
+	end
 end
 
 --Auto-destroy non-mining drills.
