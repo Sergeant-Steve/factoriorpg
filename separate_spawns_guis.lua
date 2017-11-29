@@ -5,8 +5,10 @@
 
 require("separate_spawns")
 
-local SPAWN_GUI_MAX_WIDTH = 450
+local SPAWN_GUI_MAX_WIDTH = 600
 local SPAWN_GUI_MAX_HEIGHT = 750
+-- local SPAWN_GUI_MIN_WIDTH = 400
+-- local SPAWN_GUI_MIN_HEIGHT = 400
 
 -- Use this for testing shared spawns...
 -- local sharedSpawnExample1 = {openAccess=true,
@@ -29,53 +31,28 @@ function DisplayWelcomeTextGui(player)
     player.gui.center.add{name = "welcome_msg",
                             type = "frame",
                             direction = "vertical",
-                            caption=global.welcome_msg_title}
+                            caption=WELCOME_MSG_TITLE}
     local wGui = player.gui.center.welcome_msg
 
     wGui.style.maximal_width = SPAWN_GUI_MAX_WIDTH
     wGui.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
 
-
-
-    wGui.add{name = "welcome_msg_lbl1", type = "label",
-                    caption=WELCOME_MSG1}
-    wGui.add{name = "welcome_msg_lbl2", type = "label",
-                    caption=WELCOME_MSG2}
-    wGui.add{name = "welcome_msg_spacer1", type = "label",
-                    caption=" "}
-
-    ApplyStyle(wGui.welcome_msg_lbl1, my_label_style)
-    ApplyStyle(wGui.welcome_msg_lbl2, my_label_style)
-    ApplyStyle(wGui.welcome_msg_spacer1, my_spacer_style)
-
-    wGui.add{name = "other_msg_lbl1", type = "label",
-                    caption=OTHER_MSG1}
-    wGui.add{name = "other_msg_lbl2", type = "label",
-                    caption=OTHER_MSG2}
-    wGui.add{name = "other_msg_spacer1", type = "label",
-                    caption=" "}
-
-    ApplyStyle(wGui.other_msg_lbl1, my_label_style)
-    ApplyStyle(wGui.other_msg_lbl2, my_label_style)
-    ApplyStyle(wGui.other_msg_spacer1, my_spacer_style)
-
-    wGui.add{name = "welcome_msg_lbl3", type = "label",
-                    caption=WELCOME_MSG3}
-    wGui.add{name = "welcome_msg_lbl4", type = "label",
-                    caption=WELCOME_MSG4}
-    wGui.add{name = "welcome_msg_lbl5", type = "label",
-                    caption=WELCOME_MSG5}
-    wGui.add{name = "welcome_msg_lbl6", type = "label",
-                    caption=WELCOME_MSG6}
-    wGui.add{name = "welcome_msg_spacer2", type = "label",
-                    caption=" "}
-
-    ApplyStyle(wGui.welcome_msg_lbl3, my_warning_style)
-    ApplyStyle(wGui.welcome_msg_lbl4, my_warning_style)
-    ApplyStyle(wGui.welcome_msg_lbl5, my_warning_style)
-    ApplyStyle(wGui.welcome_msg_lbl6, my_label_style)
-    ApplyStyle(wGui.welcome_msg_spacer2, my_spacer_style)
-
+    local ix = 0
+    for _,msg in pairs(scenario.config.welcomeMessages) do
+        local name = "welcome_msg_lbl" .. ix
+        local style = my_label_style
+        if  string.sub(msg,1,2) == "/w" then
+            style = my_warning_style
+            msg = string.sub(msg,4)
+        end
+        wGui.add{name = name, type = "label", caption=msg}
+        if msg == "" then
+            ApplyStyle(wGui[name], my_spacer_style)
+        else
+            ApplyStyle(wGui[name], style)
+        end
+        ix = ix + 1
+    end
 
 
     wGui.add{name = "welcome_okay_btn",
@@ -108,6 +85,8 @@ function DisplaySpawnOptions(player)
     local sGui = player.gui.center.spawn_opts
     sGui.style.maximal_width = SPAWN_GUI_MAX_WIDTH
     sGui.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
+--    sGui.style.maximal_width = SPAWN_GUI_MIN_WIDTH
+--    sGui.style.maximal_height = SPAWN_GUI_MIN_HEIGHT
 
 
     -- Warnings and explanations...
@@ -124,9 +103,12 @@ function DisplaySpawnOptions(player)
                     caption=SPAWN_MSG2}
     sGui.add{name = "spawn_msg_lbl3", type = "label",
                     caption=SPAWN_MSG3}
+    sGui.add{name = "spawn_msg_spacer", type = "label",
+                    caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
     ApplyStyle(sGui.spawn_msg_lbl1, my_label_style)
     ApplyStyle(sGui.spawn_msg_lbl2, my_label_style)
     ApplyStyle(sGui.spawn_msg_lbl3, my_label_style)
+    ApplyStyle(sGui.spawn_msg_spacer, my_spacer_style)
 
 
     if ENABLE_DEFAULT_SPAWN then
@@ -151,47 +133,28 @@ function DisplaySpawnOptions(player)
                     caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
     ApplyStyle(sGui.normal_spawn_spacer, my_spacer_style)
 
-
-    -- The main spawning options. Solo near and solo far.
-    -- If enable, you can also choose to be on your own team.
-    local soloSpawnFlow = sGui.add{name = "spawn_solo_flow",
-                                    type = "flow",
-                                    direction="vertical"}
-    
-    if (ENABLE_SEPARATE_TEAMS) then
-        soloSpawnFlow.add{name = "isolated_spawn_main_team_radio",
-                        type = "radiobutton",
-                        caption="Join Main Team (shared research)",
-                        state=true}
-        soloSpawnFlow.add{name = "isolated_spawn_new_team_radio",
-                        type = "radiobutton",
-                        caption="Create Your Own Team (own research tree)",
-                        state=false}
-        soloSpawnFlow.add{name = "team_chat_warning_lbl1", type = "label",
-                        caption="You must type '/s' before your msg to chat with other teams!!!"}
-        ApplyStyle(soloSpawnFlow.team_chat_warning_lbl1, my_warning_style)
-        soloSpawnFlow.add{name = "team_chat_warning_spacer", type = "label",
-                    caption=" "}
-        ApplyStyle(soloSpawnFlow.team_chat_warning_spacer, my_spacer_style)
+    if GetNumberOfAvailableSoloSpawns() > 0 then  
+        -- The main spawning options. Solo near and solo far.
+    --    sGui.add{name = "isolated_spawn_near",
+    --                    type = "button",
+    --                    caption="Solo Spawn (Near)"}
+        sGui.add{name = "isolated_spawn_far",
+                        type = "button",
+                        caption="Solo Spawn (Far)"}
+        sGui.add{name = "isolated_spawn_lbl1", type = "label",
+                        caption="You are spawned in a new area, with some starting resources."}
+        sGui.add{name = "isolated_spawn_lbl2", type = "label",
+                        caption="You will still be part of the default team."}
+        sGui.add{name = "isolated_spawn_spacer", type = "label",
+                        caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
+        ApplyStyle(sGui.isolated_spawn_lbl1, my_label_style)
+        ApplyStyle(sGui.isolated_spawn_lbl2, my_label_style)
+        ApplyStyle(sGui.isolated_spawn_spacer, my_spacer_style)
+    else
+        sGui.add{name = "isolated_spawn_lbl1", type = "label",
+                        caption="There are no more solo spawns available."}
+        ApplyStyle(sGui.normal_spawn_lbl1, my_warning_style)
     end
-
-    soloSpawnFlow.add{name = "isolated_spawn_near",
-                    type = "button",
-                    caption="Solo Spawn (Near)"}
-	--Disabled for marathon mode.
-	if game.difficulty_settings.recipe_difficulty == 0 and rpg_level_sum(player) >= 10 then
-		soloSpawnFlow.add{name = "isolated_spawn_far",
-						type = "button",
-						caption="Solo Spawn (Far)"}
-	end
-    
-    soloSpawnFlow.add{name = "isolated_spawn_lbl1", type = "label",
-                    caption="You are spawned in a new area, with some starting resources."}    
-    ApplyStyle(soloSpawnFlow.isolated_spawn_lbl1, my_label_style)
-
-    sGui.add{name = "isolated_spawn_spacer", type = "label",
-                    caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
-    ApplyStyle(sGui.isolated_spawn_spacer, my_spacer_style)
 
 
     -- Spawn options to join another player's base.
@@ -232,7 +195,7 @@ function DisplaySpawnOptions(player)
 
     -- Some final notes
     sGui.add{name = "note_spacer1", type = "label",
-                    caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
+                    caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
     sGui.add{name = "note_spacer2", type = "label",
                     caption=" "}
 
@@ -241,16 +204,16 @@ function DisplaySpawnOptions(player)
                     caption="If you create your own spawn point you can allow up to " .. MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN-1 .. " other online players to join." }
         ApplyStyle(sGui.shared_spawn_note1, my_note_style)
     end
-    sGui.add{name = "note_lbl1", type = "label",
-                    caption="Near spawn is between " .. NEAR_MIN_DIST*CHUNK_SIZE .. "-" .. NEAR_MAX_DIST*CHUNK_SIZE ..  " tiles away from the center of the map."}
-    sGui.add{name = "note_lbl2", type = "label",
-                    caption="Far spawn is between " .. FAR_MIN_DIST*CHUNK_SIZE .. "-" .. FAR_MAX_DIST*CHUNK_SIZE ..  " tiles away from the center of the map."}
+--    sGui.add{name = "note_lbl1", type = "label",
+--                    caption="Near spawn is between " .. NEAR_MIN_DIST*CHUNK_SIZE .. "-" .. NEAR_MAX_DIST*CHUNK_SIZE ..  " tiles away from the center of the map."}
+--    sGui.add{name = "note_lbl2", type = "label",
+--                    caption="Far spawn is between " .. FAR_MIN_DIST*CHUNK_SIZE .. "-" .. FAR_MAX_DIST*CHUNK_SIZE ..  " tiles away from the center of the map."}
     sGui.add{name = "note_lbl3", type = "label",
                     caption="Solo spawns are dangerous! Expect a fight to reach other players."}
     sGui.add{name = "note_spacer3", type = "label",
                     caption=" "}
-    ApplyStyle(sGui.note_lbl1, my_note_style)
-    ApplyStyle(sGui.note_lbl2, my_note_style)
+--    ApplyStyle(sGui.note_lbl1, my_note_style)
+--    ApplyStyle(sGui.note_lbl2, my_note_style)
     ApplyStyle(sGui.note_lbl3, my_note_style)
     ApplyStyle(sGui.note_spacer1, my_spacer_style)
     ApplyStyle(sGui.note_spacer2, my_spacer_style)
@@ -262,117 +225,149 @@ end
 function SpawnOptsGuiClick(event)
     if not (event and event.element and event.element.valid) then return end
     local player = game.players[event.player_index]
-    local elemName = event.element.name
+    local buttonClicked = event.element.name
 
-    if (player.gui.center.spawn_opts == nil) then
-        return -- Gui event unrelated to this gui.
-    end
-
-    local joinMainTeamRadio, joinOwnTeamRadio = false
 
     -- Check if a valid button on the gui was pressed
     -- and delete the GUI
-    if ((elemName == "default_spawn_btn") or
-        (elemName == "isolated_spawn_near") or
-        (elemName == "isolated_spawn_far") or
-        (elemName == "join_other_spawn") or
-        (elemName == "join_other_spawn_check")) then
+    if ((buttonClicked == "default_spawn_btn") or
+        (buttonClicked == "isolated_spawn_near") or
+        (buttonClicked == "isolated_spawn_far") or
+        (buttonClicked == "join_other_spawn") or
+        (buttonClicked == "join_other_spawn_check")) then
 
-        if (ENABLE_SEPARATE_TEAMS) then
-            joinMainTeamRadio =
-                player.gui.center.spawn_opts.spawn_solo_flow.isolated_spawn_main_team_radio.state
-            joinOwnTeamRadio =
-                player.gui.center.spawn_opts.spawn_solo_flow.isolated_spawn_new_team_radio.state
+        if (player.gui.center.spawn_opts ~= nil) then
+            player.gui.center.spawn_opts.destroy()
         end
-        player.gui.center.spawn_opts.destroy()
 
-    -- This just updates the radio buttons.
-    elseif ((elemName == "isolated_spawn_main_team_radio") or
-        (elemName == "isolated_spawn_new_team_radio")) then
-        if (elemName == "isolated_spawn_main_team_radio") then
-            event.element.parent.isolated_spawn_new_team_radio.state=false
-        elseif (elemName == "isolated_spawn_new_team_radio") then
-            event.element.parent.isolated_spawn_main_team_radio.state=false
-        end
-    
-    else
-        return -- Do nothing, no valid element item was clicked.
     end
 
-    if (elemName == "default_spawn_btn") then
-        --CreateSpawnCtrlGui(player)
+    if (buttonClicked == "default_spawn_btn") then
+        CreateSpawnCtrlGui(player)
         GivePlayerStarterItems(player)
-        ChangePlayerSpawn(player, player.force.get_spawn_position(GAME_SURFACE_NAME))
+        ChangePlayerSpawn(player, player.force.get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME, 0)
+        SendPlayerToSpawn(player)
         SendBroadcastMsg(player.name .. " joined the main force!")
-        ChartArea(player.force, player.position, 4, player.surface)
+        ChartArea(player.force, player.position, 4)
 
-   
+    elseif ((buttonClicked == "isolated_spawn_near") or (buttonClicked == "isolated_spawn_far")) then
+        CreateSpawnCtrlGui(player)
 
-    elseif ((elemName == "isolated_spawn_near") or (elemName == "isolated_spawn_far")) then
-        --CreateSpawnCtrlGui(player)
-
+        local newSpawn = nil;
         -- Create a new spawn point
-        local newSpawn = {x=0,y=0}
-
-        -- Create a new force for player if they choose that radio button
-        if ENABLE_SEPARATE_TEAMS and joinOwnTeamRadio then
-            local newForce = CreatePlayerCustomForce(player)
-
-            if (FRONTIER_ROCKET_SILO_MODE and (newForce ~= nil)) then
-                ChartRocketSiloArea(newForce, game.surfaces[GAME_SURFACE_NAME])
-            end
+        if player.index == 1 and scenario.config.separateSpawns.extraSpawn ~= nil then
+            newSpawn = global.allSpawns[#global.allSpawns];
         end
-
-        -- Re-used abandoned spawns...
-        if (#global.unusedSpawns >= 1) then
-            newSpawn = table.remove(global.unusedSpawns)
-            global.uniqueSpawns[player.name] = newSpawn
-            player.print("Sorry! You have been assigned to an abandoned base! This is done to keep map size small.")
-            ChangePlayerSpawn(player, newSpawn)
+        if newSpawn == nil then
+            newSpawn = PickRandomSpawn( global.allSpawns, buttonClicked == "isolated_spawn_far");
+        end
+        if newSpawn == nil then
+            -- no spawn of the type requested. just pick one
+            newSpawn = PickRandomSpawn( global.allSpawns, buttonClicked ~= "isolated_spawn_far");
+        end
+        
+        
+        GivePlayerStarterItems(player)
+        if newSpawn == nil then
+            player.print("Sorry! You have been assigned to the default spawn.")
+            ChangePlayerSpawn(player, player.force.get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME, 0)
             SendPlayerToSpawn(player)
-            GivePlayerStarterItems(player)
-            SendBroadcastMsg(player.name .. " joined an abandoned base!")
+            SendBroadcastMsg(player.name .. " joined the default spawn!")
+            ChartArea(player.force, player.position, 4)
         else
+            local used = newSpawn.used;
+            newSpawn.used = true;
+            newSpawn.createdFor = player.name
 
-            -- Find coordinates of a good place to spawn
-            if (elemName == "isolated_spawn_far") then
-                newSpawn = FindUngeneratedCoordinates(FAR_MIN_DIST,FAR_MAX_DIST, player.surface)
-            elseif (elemName == "isolated_spawn_near") then
-                newSpawn = FindUngeneratedCoordinates(NEAR_MIN_DIST,NEAR_MAX_DIST, player.surface)
+            if used then
+                ChangePlayerSpawn(player, newSpawn, GAME_SURFACE_NAME, newSpawn.seq)
+                SendPlayerToSpawn(player)
+                player.print("Sorry! You have been assigned to an abandoned base! This is done to keep map size small.")
+                SendBroadcastMsg(player.name .. " joined an abandoned base!")
+            else
+                ChangePlayerSpawn(player, newSpawn, GAME_SURFACE_NAME, newSpawn.seq)
+                SendPlayerToNewSpawnAndCreateIt(player, newSpawn)
+                player.print("PLEASE WAIT WHILE YOUR SPAWN POINT IS GENERATED!")
+                SendBroadcastMsg(player.name .. " joined a new base!")
+                ChartArea(player.force, player.position, 4)
             end
-
-            -- If that fails, find a random map edge in a rand direction.
-            if ((newSpawn.x == 0) and (newSpawn.x == 0)) then
-                newSpawn = FindMapEdge(GetRandomVector(), player.surface)
-                DebugPrint("Resorting to find map edge! x=" .. newSpawn.x .. ",y=" .. newSpawn.y)
-            end
-
-            -- Create that spawn in the global vars
-            ChangePlayerSpawn(player, newSpawn)
-            
-            -- Send the player there
-            SendPlayerToNewSpawnAndCreateIt(player, newSpawn)
-            if (elemName == "isolated_spawn_near") then
-                SendBroadcastMsg(player.name .. " joined the game from a distance!")
-            elseif (elemName == "isolated_spawn_far") then
-                SendBroadcastMsg(player.name .. " joined the game from a great distance!")
-            end
-
-            player.print("PLEASE WAIT WHILE YOUR SPAWN POINT IS GENERATED!")
-            player.print("PLEASE WAIT WHILE YOUR SPAWN POINT IS GENERATED!!")
-            player.print("PLEASE WAIT WHILE YOUR SPAWN POINT IS GENERATED!!!")
         end
-
-    elseif (elemName == "join_other_spawn") then
+    elseif (buttonClicked == "join_other_spawn") then
         DisplaySharedSpawnOptions(player)
     
     -- Provide a way to refresh the gui to check if people have shared their
     -- bases.
-    elseif (elemName == "join_other_spawn_check") then
+    elseif (buttonClicked == "join_other_spawn_check") then
         DisplaySpawnOptions(player)
     end
 end
 
+function boolToString( b )
+  if b then
+    return "true"
+  else
+    return "false";
+  end
+end
+
+function SpawnIsCompatible( spawnPos, far )
+  local distSqr = spawnPos.x^2 + spawnPos.y^2;
+  local dist = math.sqrt(distSqr);
+  local isFar = true
+  local compatible = (isFar == far);
+  local player = game.players[1];
+  
+  -- player.print("Spawn " .. spawnPos.x .. ", " .. spawnPos.y .. " dist" .. dist .. " is far = " .. boolToString(isFar) .. " compatible=" .. boolToString(compatible) .. " req far " .. boolToString(far)  );
+  return compatible;
+end
+
+function DistanceFromUsedSpawns( pick )
+  local minDist = 999999
+  for key, spawnPos in pairs(global.allSpawns) do
+    if spawnPos.used then
+        local dx = spawnPos.x - pick.x
+        local dy = spawnPos.y - pick.y
+        local dist = math.sqrt( dx*dx + dy*dy)
+        if dist < minDist then
+            minDist = dist
+        end
+    end
+  end
+  return minDist
+end
+
+function PickRandomSpawn( t, far )
+  -- local player = game.players[1];
+  local candidates = {}
+  for key, spawnPos in pairs(t) do
+    if spawnPos ~= nil and (not spawnPos.used) and SpawnIsCompatible( spawnPos, far ) then
+        spawnPos.key = key;
+	if scenario.config.separateSpawns.preferFar then
+            spawnPos.dist = DistanceFromUsedSpawns(spawnPos)
+        else
+            spawnPos.dist = math.abs(spawnPos.y)
+        end
+        table.insert( candidates, spawnPos );
+    end
+  end
+  if scenario.config.separateSpawns.preferFar then
+    table.sort (candidates, function (k1, k2) return k1.dist > k2.dist end )
+  else
+    table.sort (candidates, function (k1, k2) return k1.dist < k2.dist end )
+  end
+  local ncandidates = TableLength(candidates)
+  if ncandidates > 5 then
+        ncandidates = math.floor((ncandidates+1)/3)
+  end
+  -- player.print("choosing a spawn from " .. ncandidates .. " candidates");
+  if ncandidates > 0 then
+    local pick = math.random(1,ncandidates)
+    spawnPos = candidates[pick];
+    -- player.print("chose " .. spawnPos.x .. "," .. spawnPos.y .. " distance " .. spawnPos.dist);
+    return spawnPos;
+  end
+  return nil;
+end
 
 -- Display the spawn options and explanation
 function DisplaySharedSpawnOptions(player)
@@ -386,6 +381,8 @@ function DisplaySharedSpawnOptions(player)
     ApplyStyle(shGui, my_fixed_width_style)
     shGui.style.maximal_width = SPAWN_GUI_MAX_WIDTH
     shGui.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
+--    shGui.style.minimal_width = SPAWN_GUI_MIN_WIDTH
+--    shGui.style.minimal_height = SPAWN_GUI_MIN_HEIGHT
     shGui.horizontal_scroll_policy = "never"
 
 
@@ -413,12 +410,6 @@ function SharedSpwnOptsGuiClick(event)
     local player = game.players[event.player_index]
     local buttonClicked = event.element.name  
 
-    if (event.element.parent) then
-        if (event.element.parent.name ~= "spawns_scroll_pane") then
-            return
-        end
-    end
-
     -- Check for cancel button, return to spawn options
     if (buttonClicked == "shared_spawn_cancel") then
         DisplaySpawnOptions(player)
@@ -431,13 +422,12 @@ function SharedSpwnOptsGuiClick(event)
     else
         for spawnName,sharedSpawn in pairs(global.sharedSpawns) do
             if (buttonClicked == spawnName) then
-                --CreateSpawnCtrlGui(player)
-                ChangePlayerSpawn(player,sharedSpawn.position)
+                CreateSpawnCtrlGui(player)
+                ChangePlayerSpawn(player,sharedSpawn.position, GAME_SURFACE_NAME, sharedSpawn.seq)
                 SendPlayerToSpawn(player)
                 GivePlayerStarterItems(player)
                 table.insert(sharedSpawn.players, player.name)
                 SendBroadcastMsg(player.name .. " joined " .. spawnName .. "'s base!")
-                player.force = game.players[spawnName].force
                 if (player.gui.center.shared_spawn_opts ~= nil) then
                     player.gui.center.shared_spawn_opts.destroy()
                 end
@@ -465,30 +455,9 @@ local function IsSharedSpawnActive(player)
 end
 
 
--- Get a random warp point to go to
-function GetRandomSpawnPoint()
-    local numSpawnPoints = TableLength(global.sharedSpawns)
-    if (numSpawnPoints > 0) then
-        local randSpawnNum = math.random(1,numSpawnPoints)
-        local counter = 1
-        for _,sharedSpawn in pairs(global.sharedSpawns) do
-            if (randSpawnNum == counter) then
-                return sharedSpawn.position
-            end
-            counter = counter + 1
-        end
-    end
-
-    return {x=0,y=0}
-end
-
-
 -- This is a toggle function, it either shows or hides the spawn controls
 function ExpandSpawnCtrlGui(player, tick)
     local spwnCtrlPanel = player.gui.left["spwn_ctrl_panel"]
-	if not global.playerCooldowns[player.name] then
-		return
-	end
     if (spwnCtrlPanel) then
         spwnCtrlPanel.destroy()
     else
@@ -501,7 +470,7 @@ function ExpandSpawnCtrlGui(player, tick)
         spwnCtrls.horizontal_scroll_policy = "never"
 
         if ENABLE_SHARED_SPAWNS then
-            if (global.uniqueSpawns[player.name] ~= nil) then
+            if (GetUniqueSpawn(player.name) ~= nil) then
                 -- This checkbox allows people to join your base when they first
                 -- start the game.
                 spwnCtrls.add{type="checkbox", name="accessToggle",
@@ -549,12 +518,6 @@ function SpawnCtrlGuiClick(event)
         ExpandSpawnCtrlGui(player, event.tick)       
     end
 
-    if (event.element.parent) then
-        if (event.element.parent.name ~= "spwn_ctrl_panel") then
-            return
-        end
-    end
-
     if (name == "accessToggle") then
         if event.element.state then
             if DoesPlayerHaveCustomSpawn(player) then
@@ -577,7 +540,9 @@ function SpawnCtrlGuiClick(event)
     -- Sets a new respawn point and resets the cooldown.
     if (name == "setRespawnLocation") then
         if DoesPlayerHaveCustomSpawn(player) then
-            ChangePlayerSpawn(player, player.position)
+            local playerSpawn = global.playerSpawns[player.name];
+            ChangePlayerSpawn(player, player.position, player.surface.name, playerSpawn.seq)
+            global.playerCooldowns[player.name].setRespawn = event.tick
             ExpandSpawnCtrlGui(player, event.tick) 
             player.print("Re-spawn point updated!")
         end

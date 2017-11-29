@@ -17,6 +17,18 @@ require "tag" --Module to let players set a tag behind their names to improve te
 require "rules" --Module which displays a popup with the rules when a player joins, or presses the open rules button
 --require "rocket" --Module to stop people removing the rocket silo
 
+-- Jvm Scenario
+require("oarc_utils")
+require("jvmguy_utils")
+require("config")
+require("rso_control")
+require("separate_spawns")
+require("separate_spawns_guis")
+require("frontier_silo")
+spawnGenerator = require("RiverworldSpawns")
+require("jvmguy_main") --This includes starting items.
+
+
 --Modules
 require "locale/modules/gravemarker" --Mark player death locations on map for corpse runs.
 require "locale/modules/dirtpath" --For some silliness.
@@ -85,18 +97,17 @@ function player_respawned(event)
 	end
 end
 
-Event.register(defines.events.on_player_created, player_joined)
-Event.register(defines.events.on_player_respawned, player_respawned)
+-- Event.register(defines.events.on_player_created, player_joined)
+-- Event.register(defines.events.on_player_respawned, player_respawned)
 
 --Time for the debug code.  If any (not global.) globals are written to at this point, an error will be thrown.
 --eg, x = 2 will throw an error because it's not global.x or local x
 --function global_debug()
-	setmetatable(_G, {
-		__newindex = function(_, n)
-			log("Attempt to write to undeclared var " .. n)
-			game.print("Attempt to write to undeclared var " .. n)
-		end
-	})
+	-- setmetatable(_G, {
+		-- __newindex = function(_, n)
+			-- log("Attempt to write to undeclared var " .. n)
+			-- game.print("Attempt to write to undeclared var " .. n)
+		-- end
+	-- })
 --end
 
---Event.register(-1, global_debug)
