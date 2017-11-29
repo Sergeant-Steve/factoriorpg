@@ -5,7 +5,7 @@
 
 
 if MODULE_LIST then
-	module_list_add("Oarc separate spawns")
+	module_list_add("Jvmguy's River World spawns")
 end
 
 --------------------------------------------------------------------------------
