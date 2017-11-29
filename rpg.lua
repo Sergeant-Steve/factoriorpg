@@ -73,12 +73,12 @@ commands.add_command("loaddata", "Loads rpg data", function(data)
 		rpg_starting_resources(player)
 	end
 	--Let's do the oarc spawns on this step.
-	if ENABLE_SEPARATE_SPAWNS then
-		if not global.rpg_tmp[player.name].oarc then
-			global.rpg_tmp[player.name].oarc = true
-			SeparateSpawnsPlayerCreated({player_index=player.index})
-		end
-	end
+	-- if ENABLE_SEPARATE_SPAWNS then
+		-- if not global.rpg_tmp[player.name].oarc then
+			-- global.rpg_tmp[player.name].oarc = true
+			-- SeparateSpawnsPlayerCreated({player_index=player.index})
+		-- end
+	-- end
 	--Give bonuses on login.
 	rpg_give_bonuses(player)
 	rpg_give_team_bonuses(player.force)
@@ -513,9 +513,9 @@ end
 --This respects research multiplier setting
 function rpg_tech_researched(event)
 	--rpg_give_team_bonuses calls this event a lot.
-	if event.by_script then
-		return
-	end
+	-- if event.by_script then
+	-- 	return
+	-- end
 	local value = 0
 	--Space science packs aren't worth anything.  You already got exp for the rocket!
 	for _, ingredient in pairs(event.research.research_unit_ingredients) do
@@ -535,6 +535,7 @@ function rpg_tech_researched(event)
 	end
 	--value = value ^ 0.85 --Old formula
 	value = 20 * value ^0.55
+	game.print("Awarding exp: " .. str(value))
 	for _, player in pairs(event.research.force.players) do
 		if player.connected then
 			rpg_add_exp(player, value)

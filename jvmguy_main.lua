@@ -80,7 +80,7 @@ function jvm.on_init(event)
     end
 
     -- if scenario.config.wipespawn.enabled then
-        -- wipespawn.init()
+        wipespawn.init()
     -- elseif scenario.config.regrow.enabled then
         -- regrow.init()
     -- end
@@ -276,7 +276,7 @@ Event.register(defines.events.on_built_entity, jvm.on_built_entity)
 
 function jvm.on_tick(event)
     -- if scenario.config.wipespawn.enabled then
-        -- wipespawn.onTick(event)
+        wipespawn.onTick(event)
     -- elseif scenario.config.regrow.enabled then
         -- regrow.onTick(event)
     -- end

@@ -10,21 +10,21 @@ scenario.config.mapsettings = scenario.config.mapsettings or {}
 -- Messages
 --------------------------------------------------------------------------------
 scenario.config.joinedMessages = {
-    "Welcome to jvmguy's server.",
+    "Welcome to the FactorioRPG server hosted by FMMO.",
     "In the current game mode, a satellite must be launched from the rocket silo in the center to win!",
-    "Mods Enabled: Separate Spawns, RSO, Long-Reach, Autofill",
+--    "Mods Enabled: Separate Spawns, RSO, Long-Reach, Autofill",
     "",
 --    "Look in the car at your spawn for fast start items.",
 --    "The car is also your personal transport to and from the silo.",
-    "Discord chat: https://discord.gg/q6gfYa9",
+    "Discord chat: https://discord.gg/pqsGhaH",
 }
 
-WELCOME_MSG_TITLE = "Welcome to Jvmguy's Server"
+WELCOME_MSG_TITLE = "Welcome to FactorioRPG"
 
 scenario.config.welcomeMessages = {
-    "This scenario is a variant of a scenario created by Oarc",
+    "This scenario is a variant of a scenario created by Oarc and Jvmguy",
     "",
-    "Rules: Be polite. Ask before changing other players's stuff. Have fun!",
+--    "Rules: Be polite. Ask before changing other players's stuff. Have fun!",
 --    "This server is running a custom scenario that changes spawn locations.",
     "",
 --    "/w Due to the way this scenario works, it may take some time for the land",
@@ -32,12 +32,12 @@ scenario.config.welcomeMessages = {
 --    "/w Please wait for 10-20 seconds when you select your first spawn.",
 --    "",
 --    "/w Biter expansion is on, so watch out!",
-    "Discord chat https://discord.gg/q6gfYa9",
+    "Discord chat https://discord.gg/pqsGhaH",
     "",
     "Good Luck!",
     
-    "Oarc contact: SteamID:Oarc | Twitter:@_Oarc_ | oarcinae@gmail.com",
-    "jvmguy contact: SteamID:jvmguy | Discord:@jvmguy | jvmguy@gmail.com",
+--    "Oarc contact: SteamID:Oarc | Twitter:@_Oarc_ | oarcinae@gmail.com",
+--  "jvmguy contact: SteamID:jvmguy | Discord:@jvmguy | jvmguy@gmail.com",
 }
 
 scenario.config.wipespawn = {
