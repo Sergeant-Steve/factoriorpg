@@ -5,8 +5,15 @@ global.vetting = {}
 --Name is case insensitive.
 commands.add_command("vet", "Vet a player as trusted.", function(params)
 	local name = params.parameter
+	if not game.player then --Server cannot run this command.
+		return
+	end
+	if name == nil
+		game.player.print("Do /vet <name> to vet that player.")
+		return
+	end
 	name = name:lower()
-	if global.vetting[name] then
+	if global.vetting[game.player.name] then
 		game.player.print("Vetted players cannot vet.")
 		return
 	end
@@ -24,7 +31,7 @@ commands.add_command("vet", "Vet a player as trusted.", function(params)
 		end
 		if not global.vetting[name][game.player.name] then
 			global.vetting[name][game.player.name] = true
-			if #global.vetting[name] >= TRUST_COUNT then
+			if #global.vetting[name] >= TRUST_COUNT or #global.vetting[name] == #game.connected_players - 1 then
 				game.players[name].permission_group = game.permissions.get_group("trusted")
 				game.players[name].print("Players have vetted you and given you permissions.")
 			end
