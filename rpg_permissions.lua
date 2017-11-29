@@ -8,7 +8,7 @@ commands.add_command("vet", "Vet a player as trusted.", function(params)
 	if not game.player then --Server cannot run this command.
 		return
 	end
-	if name == nil
+	if name == nil then
 		game.player.print("Do /vet <name> to vet that player.")
 		return
 	end
