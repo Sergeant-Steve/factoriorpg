@@ -24,7 +24,7 @@ require("config")
 require("rso_control")
 require("separate_spawns")
 require("separate_spawns_guis")
-require("frontier_silo")
+--require("frontier_silo")
 spawnGenerator = require("RiverworldSpawns")
 wipespawn = require("jvm-wipespawn")
 require("jvmguy_main") --This includes starting items.
