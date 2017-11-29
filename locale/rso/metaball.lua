@@ -1,6 +1,6 @@
 --[[--
 Metaball implementation for LUA by Dark
-For bruteforce usage, nor efficient nor fast
+For bruteforce usage, not efficient nor fast
 
 Force scales to from inf to 1 at R
 --]]--
@@ -69,7 +69,7 @@ end
 function MetaSquare:force(x, y)
   --Calculate force at point x y
   local force = ( abs( (x - self.x)*self.cosa + (y - self.y)*self.sina )/self.x_scale + 
-          abs( (y - self.y)*self.cosa - (x - self.x)*self.sina )/self.y_scale ) 
+				  abs( (y - self.y)*self.cosa - (x - self.x)*self.sina )/self.y_scale ) 
   if force == 0 then return zero_value end
   return (self.radius / force)^self.goo
 end

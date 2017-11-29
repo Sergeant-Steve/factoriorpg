@@ -1,6 +1,6 @@
--- TOOLS: Recommend all be turned on
+--Heavy lifting stuff here.
 require "mod-gui"
-require "locale/utils/event" --Yes this line is seriously commented out, and yes without this it won't even work. I guess you now HAVE TO change the settings to match what you need.
+require "locale/utils/event" --This is so all of the modules play nice with each other.
 require "antigrief" --Look for suspicious behavior and report it to admins/log it.
 require "locale/modules/module_list" --Creates and displays a list of active modules on login.
 require "rpg_permissions" --Limit certain actions to players level 5 or greater
@@ -16,6 +16,8 @@ require "tag" --Module to let players set a tag behind their names to improve te
 --require "popup" --Module to create and display an popup in the center of all players their screens.
 require "rules" --Module which displays a popup with the rules when a player joins, or presses the open rules button
 --require "rocket" --Module to stop people removing the rocket silo
+
+--Modules
 require "locale/modules/gravemarker" --Mark player death locations on map for corpse runs.
 require "locale/modules/dirtpath" --For some silliness.
 --require "locale/modules/tOredumonde" --Ore spawns in directions. This must be called before divOresity. NOTE: STONE_BYPRODUCT must be false.
