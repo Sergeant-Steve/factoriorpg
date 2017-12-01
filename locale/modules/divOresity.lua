@@ -34,7 +34,7 @@ function diversify(event)
 					local refugee = global.diverse_ores[math.random(#global.diverse_ores)]
 					event.surface.create_entity{name=refugee, position=v.position, amount=v.amount}
 					v.destroy()
-				elseif random < STONE_BYPRODUCT_RATIO then --Replace with stone!
+				elseif STONE_BYPRODUCT and random < STONE_BYPRODUCT_RATIO then --Replace with stone!
 					event.surface.create_entity{name="stone", position=v.position, amount=v.amount}
 					v.destroy()
 				end
