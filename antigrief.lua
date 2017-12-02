@@ -48,7 +48,7 @@ function antigrief.ghosting(event)
     end
 end
 
---When someone decons > 50 entities, fire an alert
+--When someone decons > 150 entities, fire an alert
 function antigrief.decon(event)
     if event.alt then --This is a cancel order.
         return
@@ -59,7 +59,7 @@ function antigrief.decon(event)
     end
     local player = game.players[event.player_index]
     local count = player.surface.count_entities_filtered{area=event.area, force=player.force}
-    if count >= 50 then
+    if count >= 150 then
         --Need a proper check of entities.  Most might be filtered out and not actually deconned.
         local ents = player.surface.find_entities_filtered{area=event.area, force=player.force}
         count = 0
