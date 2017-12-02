@@ -255,24 +255,24 @@ end
 
 Event.register(defines.events.on_player_left_game, jvm.on_player_left_game)
 
-function jvm.on_built_entity(event)
-    -- if ENABLE_AUTOFILL then
-    --     Autofill(event)
-    -- end
+-- function jvm.on_built_entity(event)
+--     -- if ENABLE_AUTOFILL then
+--     --     Autofill(event)
+--     -- end
 
-    -- if scenario.config.regrow.enabled then
-        -- regrow.onBuiltEntity(event);
-    -- end
+--     -- if scenario.config.regrow.enabled then
+--         -- regrow.onBuiltEntity(event);
+--     -- end
 
-    local type = event.created_entity.type    
-    if type == "entity-ghost" or type == "tile-ghost" or type == "item-request-proxy" then
-        if GHOST_TIME_TO_LIVE ~= 0 then
-            event.created_entity.time_to_live = GHOST_TIME_TO_LIVE
-        end
-    end
-end
+--     local type = event.created_entity.type    
+--     if type == "entity-ghost" or type == "tile-ghost" or type == "item-request-proxy" then
+--         if GHOST_TIME_TO_LIVE ~= 0 then
+--             event.created_entity.time_to_live = GHOST_TIME_TO_LIVE
+--         end
+--     end
+-- end
 
-Event.register(defines.events.on_built_entity, jvm.on_built_entity)
+-- Event.register(defines.events.on_built_entity, jvm.on_built_entity)
 
 function jvm.on_tick(event)
     -- if scenario.config.wipespawn.enabled then

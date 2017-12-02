@@ -26,7 +26,7 @@ scenario.config.welcomeMessages = {
     "",
 --    "Rules: Be polite. Ask before changing other players's stuff. Have fun!",
 --    "This server is running a custom scenario that changes spawn locations.",
-    "",
+--    "",
 --    "/w Due to the way this scenario works, it may take some time for the land",
 --    "/w around your new spawn area to generate...",
 --    "/w Please wait for 10-20 seconds when you select your first spawn.",
@@ -35,6 +35,7 @@ scenario.config.welcomeMessages = {
     "Discord chat https://discord.gg/pqsGhaH",
     "",
     "Good Luck!",
+    "",
     
 --    "Oarc contact: SteamID:Oarc | Twitter:@_Oarc_ | oarcinae@gmail.com",
 --  "jvmguy contact: SteamID:jvmguy | Discord:@jvmguy | jvmguy@gmail.com",
@@ -70,19 +71,20 @@ scenario.config.startKit = {
         {name = "power-armor", count = 1,
             equipment = {
                   -- the order of these does matter.
-                  {name = "fusion-reactor-equipment"},
+--                  {name = "fusion-reactor-equipment"},
 --                  {name = "exoskeleton-equipment"},
 --                  {name = "battery-mk2-equipment", count=1},
-                  {name = "personal-roboport-mk2-equipment", count=1},
---                  {name = "solar-panel-equipment", count = 7 }
+                --   {name = "personal-roboport-mk2-equipment", count=1},
+                {name ="personal-roboport-equipment", count=1},
+                  {name = "solar-panel-equipment", count = 7 }
             }
         },
         {name = "belt-immunity-equipment", count = 1},
 --        {name = "night-vision-equipment", count = 1},
         {name = "construction-robot", count = 10},
         {name = "steel-axe", count = 5},
-        {name = "roboport", count = 1},
-        {name = "logistic-chest-storage", count = 1},
+        -- {name = "roboport", count = 1},`
+        -- {name = "logistic-chest-storage", count = 1},
 		{name = "burner-mining-drill", count = 1},
 		{name = "stone-furnace", count = 1},
 		{name = "submachine-gun", count=1},
@@ -99,8 +101,8 @@ scenario.config.startKit = {
         {name = "pipe-to-ground", count=2},
         {name = "small-electric-pole", count = 20},
         {name = "inserter", count=20},
-        {name = "assembling-machine-1", count=9},
-        {name = "assembling-machine-3", count=1},
+        {name = "assembling-machine-1", count=10},
+        -- {name = "assembling-machine-3", count=1},
         
 --        {name = "electric-mining-drill", count = 8},
 --        {name = "small-electric-pole", count = 50},
@@ -169,7 +171,7 @@ ENABLE_SEPARATE_SPAWNS = true
 ENABLE_ALL_RESEARCH_DONE = false
 
 -- Enable Scenario version of RSO
-ENABLE_RSO = true
+ENABLE_RSO = false
 
 -- Enable Gravestone Chests
 -- DEPRECIATED: Removed entirely.
@@ -328,7 +330,7 @@ ENABLE_DEFAULT_SPAWN = false
 
 -- Enable if people can allow others to join their base
 ENABLE_SHARED_SPAWNS = true
-MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN = 3
+MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN = 10
 
 ---------------------------------------
 -- Ghost Time to live
@@ -345,7 +347,7 @@ RESPAWN_COOLDOWN_TICKS = TICKS_PER_MINUTE * RESPAWN_COOLDOWN_IN_MINUTES
 
 -- Require playes to be online for at least 15 minutes
 -- Else their character is removed and their spawn point is freed up for use
-MIN_ONLIME_TIME_IN_MINUTES = 15
+MIN_ONLIME_TIME_IN_MINUTES = 30
 MIN_ONLINE_TIME = TICKS_PER_MINUTE * MIN_ONLIME_TIME_IN_MINUTES
 
 

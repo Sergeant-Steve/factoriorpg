@@ -98,6 +98,13 @@ function GenerateSpawnChunk( event, spawnPos)
                     entity.destroy()
                 end
             end
+            -- Remove resources in the immediate area.
+            for k, entity in pairs(surface.find_entities_filtered{area=chunkArea, type="resource"}) do
+                if ((spawnPos.x - entity.position.x)^2 + (spawnPos.y - entity.position.y)^2 < ENFORCE_LAND_AREA_TILE_DIST^2) then
+                    entity.destroy()
+                end
+            end
+            
 			if (ENABLE_CROP_OCTAGON) then
 	            CreateCropOctagon(surface, spawnPos, chunkArea, scenario.config.separateSpawns.land, scenario.config.separateSpawns.trees, scenario.config.separateSpawns.moat)
 			else
@@ -331,8 +338,8 @@ function InitSpawnGlobalsAndForces()
     local gameForce = game.create_force(MAIN_FORCE)
 
     gameForce.set_spawn_position(game.forces["player"].get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME)
-    gameForce.worker_robots_storage_bonus=scenario.config.bots.worker_robots_storage_bonus;
-    gameForce.worker_robots_speed_modifier=scenario.config.bots.worker_robots_speed_modifier;
+    -- gameForce.worker_robots_storage_bonus=scenario.config.bots.worker_robots_storage_bonus;
+    -- gameForce.worker_robots_speed_modifier=scenario.config.bots.worker_robots_speed_modifier;
     
     SetCeaseFireBetweenAllForces()
     AntiGriefing(gameForce)
