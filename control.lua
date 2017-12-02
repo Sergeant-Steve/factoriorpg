@@ -40,6 +40,7 @@ require "locale/modules/divOresity" --Some ore gets scrambled and must be filter
 --require "locale/modules/bluebuild" --Bluebuild softmod
 require "locale/modules/autofill" --Softmod autofill separated from Oarc
 require "locale/modules/nougatmining" --Logistic mining softmod.
+require "locale/modules/piety" --Way to consume random excess stone.
 --require "belt_limit" --Limits number of belts per player.  Mostly for UPS reasons.
 
 -- World Generators: Most are exclusive.
