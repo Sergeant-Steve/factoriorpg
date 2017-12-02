@@ -1,26 +1,27 @@
 -- frontier_silo.lua
 -- Nov 2016
 
-require("config")
+--require("config")
 --require("oarc_utils")
 
 frontier_silo = {}
 
 function frontier_silo.init()
+    --log(game.forces[MAIN_FORCE].name)
     if ENABLE_RANDOM_SILO_POSITION then
-        SetRandomSiloPosition()
+        frontier_silo.SetRandomSiloPosition()
     else
         global.siloPosition = SILO_POSITION
     end
     if FRONTIER_ROCKET_SILO_MODE then
-        ChartRocketSiloArea(game.forces[MAIN_FORCE])
+        game.forces[MAIN_FORCE].chart(game.surfaces[GAME_SURFACE_NAME], {{global.siloPosition.x-(CHUNK_SIZE*4), global.siloPosition.y-(CHUNK_SIZE*4)}, {global.siloPosition.x+(CHUNK_SIZE*4), global.siloPosition.y+(CHUNK_SIZE*4)}})
     end
 end
 
 -- This creates a random silo position, stored to global.siloPosition
 -- It uses the config setting SILO_CHUNK_DISTANCE and spawns the silo somewhere
 -- on a circle edge with radius using that distance.
-function SetRandomSiloPosition()
+function frontier_silo.SetRandomSiloPosition()
     if (global.siloPosition == nil) then
         -- Get an X,Y on a circle far away.
         distX = math.random(0,SILO_CHUNK_DISTANCE_X)
@@ -262,7 +263,7 @@ end
 
 -- Generates the rocket silo during chunk generation event
 -- Includes a crop circle
-function GenerateRocketSiloChunk(event)
+function frontier_silo.GenerateRocketSiloChunk(event)
     local surface = event.surface
     if surface.name ~= GAME_SURFACE_NAME then return end
     local chunkArea = event.area
@@ -287,10 +288,6 @@ function GenerateRocketSiloChunk(event)
     frontier_silo.CreateCropCircle(surface, global.siloPosition, chunkArea, 70)
 end
 
-function ChartRocketSiloArea(force)
-    --force.chart(game.surfaces[GAME_SURFACE_NAME], {{global.siloPosition.x-(CHUNK_SIZE*2), global.siloPosition.y-(CHUNK_SIZE*2)}, {global.siloPosition.x+(CHUNK_SIZE*2), global.siloPosition.y+(CHUNK_SIZE*2)}})
-end
-
 Event.register(-1, frontier_silo.init)
-Event.register(defines.events.on_research_finished, frontier_silo.RemoveRocketSiloRecipe)
+--Event.register(defines.events.on_research_finished, frontier_silo.RemoveRocketSiloRecipe)
 Event.register(defines.events.on_chunk_generated, frontier_silo.GenerateRocketSiloChunk)
