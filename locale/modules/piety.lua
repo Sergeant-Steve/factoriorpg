@@ -11,8 +11,8 @@ piety = {}
 
 function piety.tribute(event)
     --Check once per hour, offset by 7 minutes
-    --if game.tick % 216000 ~= 25200 then
-    if game.tick % 600 ~= 0 then --Debug
+    if game.tick % 216000 ~= 25200 then
+    --if game.tick % 600 ~= 0 then --Debug
         return
     end
     --Check all forces

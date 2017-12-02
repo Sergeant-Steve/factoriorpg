@@ -881,7 +881,10 @@ function rpg_give_team_bonuses(force)
 	game.map_settings.enemy_evolution.pollution_factor = global.base_evolution_pollution * beastmasterbonus
 	game.map_settings.enemy_evolution.time_factor = global.base_evolution_time * beastmasterbonus
 	
-	
+	--Fix for frontier silo:
+	if FRONTIER_ROCKET_SILO_MODE then
+		force.recipes["rocket-silo"].enabled = false
+	end
 end
 
 -- Soldier reward: Bonus radius to radar scanning
