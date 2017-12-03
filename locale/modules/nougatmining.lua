@@ -36,10 +36,8 @@ function nougat.register(event)
     if (event.created_entity and event.created_entity.valid and event.created_entity.type == "roboport") then
         --Check opt-out status
         if event.created_entity.last_user then
-            for k, v in pairs(global.nougat.optout) do
-                if event.created_entity.last_user == v then
-                    return
-                end
+            if global.nougat.optout[event.created_entity.last_user.index] then
+                return
             end
         end
         --game.print("Built a roboport.")
