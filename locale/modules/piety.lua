@@ -21,7 +21,8 @@ function piety.tribute(event)
             for __, surface_list in pairs(force.logistic_networks) do
                 for ___, network in pairs(surface_list) do
                     if network and network.valid then
-                        if network.get_item_count("landfill") >= 15000 then
+                        --Check for overflow
+                        if if network.get_item_count("landfill") < 1500000000 and network.get_item_count("landfill") >= 15000 then
                             --Pick a roboport at random.
                             local cell = network.cells[math.random(#network.cells)]
                             if cell and cell.valid and cell.owner and cell.owner.valid then
