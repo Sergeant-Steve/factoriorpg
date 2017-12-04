@@ -33,6 +33,7 @@ function antigrief.pump(event)
 end
 
 --Look for players mining ghosts far away.
+--Spooky action at a distance!
 function antigrief.ghosting(event)
     local player = game.players[event.player_index]
     if not event.entity and not event.entity.valid and not player and not player.valid then
