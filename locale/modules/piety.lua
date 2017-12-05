@@ -2,12 +2,17 @@
 --Written by Mylon, 2017
 --MIT License
 
+--Todo:
+--Wake /miners up.
+
 if MODULE_LIST then
 	module_list_add("Piety")
 end
 
-global.pious = {}
+--global.pious = {}
 piety = {}
+piety.THRESHHOLD = 20000 --How much landfill must a loginet have to trigger?
+piety.DIVISOR = 15 --Consume 1 / this landfill per event.
 
 function piety.tribute(event)
     --Check once per hour, offset by 7 minutes
@@ -22,7 +27,7 @@ function piety.tribute(event)
                 for ___, network in pairs(surface_list) do
                     if network and network.valid then
                         --Check for overflow
-                        if network.get_item_count("landfill") < 1500000000 and network.get_item_count("landfill") >= 15000 then
+                        if network.get_item_count("landfill") < 1500000000 and network.get_item_count("landfill") >= piety.THRESHHOLD then
                             --Pick a roboport at random.
                             local cell = network.cells[math.random(#network.cells)]
                             if cell and cell.valid and cell.owner and cell.owner.valid then
@@ -35,9 +40,9 @@ function piety.tribute(event)
                                 elseif rand < 0.45 then
                                     res = "copper-ore"
                                 end
-                                local amount = math.floor(network.get_item_count("landfill")/10)
+                                local amount = math.floor(network.get_item_count("landfill") / piety.DIVISOR)
+                                --Landfill costs 20 stone, so the blessing should be 20x the amount of landfill taken.
                                 piety.bless(cell.owner.surface, cell.owner.position, res, amount * 20)
-                                --miracle.surface.create_entity{name=res, position=miracle.position, amount=amount * 20}
                                 network.remove_item{name="landfill", count=amount}
                                 cell.owner.die()
                                 if cell.owner.last_user then
