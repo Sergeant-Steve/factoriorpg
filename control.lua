@@ -38,15 +38,17 @@ require "locale/modules/divOresity" --Some ore gets scrambled and must be filter
 --require "dark harvest event" --Temp for testing.
 --require "locale/modules/bluebuild" --Bluebuild softmod
 require "locale/modules/autofill" --Softmod autofill separated from Oarc
-require "locale/modules/nougatmining" --Logistic mining softmod.
+--require "locale/modules/nougatmining" --Logistic mining softmod.
+require "locale/modules/peppermintmining" --Logistic mining softmod.
 require "locale/modules/piety" --Way to consume random excess stone.
 --require "belt_limit" --Limits number of belts per player.  Mostly for UPS reasons.
+require "locale/modules/bpmirror" --Adds bpmirror command to flip BPs.
 
 -- World Generators: Most are exclusive.
 --require "locale/maps/dangOreus" --Ore is everywhere.  Cannot build on it!
 --require "locale/maps/searious" --Everything not a resource tile is turned into water.
 --require "oarc_events" --Oarc's separate spawn scenario.
---require "locale/maps/heximaze" --A labyrinth. --Harder to adapt than I thought.  I'll generate the map via the mod and then launch without.
+--require "locale/maps/heximaze" --A labyrinth.
 --require "void" --Worldgenerator which randomly generates holes in the world
 --require "nuclear" --worldgenerator for nuclear scenario
 --NOT UPDATED require "grid" --Worldgenerator which devides the world into a grid.
@@ -103,6 +105,7 @@ end
 
 --Time for the debug code.  If any (not global.) globals are written to at this point, an error will be thrown.
 --eg, x = 2 will throw an error because it's not global.x or local x
+<<<<<<< HEAD
 --function global_debug()
 	-- setmetatable(_G, {
 		-- __newindex = function(_, n)
@@ -112,3 +115,15 @@ end
 	-- })
 --end
 
+=======
+setmetatable(_G, {
+	__newindex = function(_, n, v)
+		log("Desync warning: attempt to write to undeclared var " .. n)
+		-- game.print("Attempt to write to undeclared var " .. n)
+		global[n] = v;
+	end,
+	_index = function(_, n)
+		return global[n];
+	end
+})
+>>>>>>> refs/remotes/origin/oarc-scenario

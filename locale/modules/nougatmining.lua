@@ -138,9 +138,12 @@ function nougat.chewy(event)
     --game.print("Time to mine.")
     local ore = ores[math.random(1,#ores)]
     local position = ore.position --Just in case we kill the ore.
-    local productivity = roboport.force.mining_drill_productivity_bonus
-    local cargo_multiplier = roboport.force.worker_robots_storage_bonus + 1
+    local force = roboport.force
+    local surface = roboport.surface
+    local productivity = force.mining_drill_productivity_bonus
+    local cargo_multiplier = worker_robots_storage_bonus + 1
     local products = {}
+    
     count = math.min(math.ceil(ore.amount / cargo_multiplier), count)
             
     --game.print("Mining " .. ore.name .. " with " ..count .. " bots.")
@@ -171,15 +174,15 @@ function nougat.chewy(event)
     end 
     for i = 1, count do
         for k, v in pairs(products) do
-            local oreitem = roboport.surface.create_entity{name="item-on-ground", stack=v, position=position}
+            local oreitem = surface.create_entity{name="item-on-ground", stack=v, position=position}
             if oreitem and oreitem.valid then --Why is oreitem sometimes nil or invalid?
-                oreitem.order_deconstruction(roboport.force)
+                oreitem.order_deconstruction(force)
                 --game.print(oreitem.stack.name .. " #"..i.." created for pickup. ")
             end
         end
     end
     --Also add pollution.  Mining productivity is omitted.
-    roboport.surface.pollute(position, global.nougat.pollution * count * cargo_multiplier)
+    surface.pollute(position, global.nougat.pollution * count * cargo_multiplier)
     --game.print("Created " .. #products .. " for pickup.")
 
     --Deplete the ore.

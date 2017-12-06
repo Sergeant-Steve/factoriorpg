@@ -45,6 +45,16 @@ commands.add_command("vet", "Vet a player as trusted.", function(params)
 
 end)
 
+function auto_promote(event)
+	local player = game.players[event.player_index]
+	if not (player and player.valid) then
+		return
+	end
+	if player.admin then
+		player.permission_group = game.permissions.get_group("trusted")
+	end
+end
+
 function rpg_permissions_init()
 	local default = game.permissions.groups[1]
 	default.set_allows_action(defines.input_action.deconstruct, false)
@@ -59,4 +69,5 @@ function rpg_permissions_init()
 	game.permissions.create_group("trusted") --For level 5+ players.
 end
 
+Event.register(defines.events.on_player_joined_game, auto_promote)
 Event.register(-1, rpg_permissions_init)
