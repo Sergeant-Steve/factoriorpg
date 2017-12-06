@@ -169,7 +169,7 @@ function peppermint.mine(event)
         local cargo_multiplier = force.worker_robots_storage_bonus + 1
         local products = {}
         
-        count = math.min(math.ceil(ore.amount / cargo_multiplier), count)
+        count = math.min(math.ceil(ore.amount / cargo_multiplier), peppermint.MAX_ITEMS, count)
 
         for k,v in pairs(ore.prototype.mineable_properties.products) do
             local product
