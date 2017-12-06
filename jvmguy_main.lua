@@ -184,6 +184,8 @@ function jvm.on_player_joined_game(event)
     
     PlayerJoinedMessages(event)
 
+    PlayerSpawnItems(event)
+
     -- if ENABLE_TAGS then
     --     CreateTagGui(event)
     -- end

@@ -76,8 +76,8 @@ scenario.config.startKit = {
 --                  {name = "battery-mk2-equipment", count=1},
                 --   {name = "personal-roboport-mk2-equipment", count=1},
                 {name ="personal-roboport-equipment", count=1},
-                  {name = "solar-panel-equipment", count = 7 },
-                  {name="battery-equipment", count = 2}
+                {name="battery-equipment", count = 2},
+                {name = "solar-panel-equipment", count = 7 }
             }
         },
         {name = "belt-immunity-equipment", count = 1},

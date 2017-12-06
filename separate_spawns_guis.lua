@@ -244,7 +244,7 @@ function SpawnOptsGuiClick(event)
 
     if (buttonClicked == "default_spawn_btn") then
         CreateSpawnCtrlGui(player)
-        GivePlayerStarterItems(player)
+        --GivePlayerStarterItems(player)
         ChangePlayerSpawn(player, player.force.get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME, 0)
         SendPlayerToSpawn(player)
         SendBroadcastMsg(player.name .. " joined the main force!")
@@ -267,7 +267,7 @@ function SpawnOptsGuiClick(event)
         end
         
         
-        GivePlayerStarterItems(player)
+        --GivePlayerStarterItems(player)
         if newSpawn == nil then
             player.print("Sorry! You have been assigned to the default spawn.")
             ChangePlayerSpawn(player, player.force.get_spawn_position(GAME_SURFACE_NAME), GAME_SURFACE_NAME, 0)
@@ -362,7 +362,7 @@ function PickRandomSpawn( t, far )
   -- player.print("choosing a spawn from " .. ncandidates .. " candidates");
   if ncandidates > 0 then
     local pick = math.random(1,ncandidates)
-    spawnPos = candidates[pick];
+    local spawnPos = candidates[pick];
     -- player.print("chose " .. spawnPos.x .. "," .. spawnPos.y .. " distance " .. spawnPos.dist);
     return spawnPos;
   end
@@ -425,7 +425,7 @@ function SharedSpwnOptsGuiClick(event)
                 CreateSpawnCtrlGui(player)
                 ChangePlayerSpawn(player,sharedSpawn.position, GAME_SURFACE_NAME, sharedSpawn.seq)
                 SendPlayerToSpawn(player)
-                GivePlayerStarterItems(player)
+                --GivePlayerStarterItems(player)
                 table.insert(sharedSpawn.players, player.name)
                 SendBroadcastMsg(player.name .. " joined " .. spawnName .. "'s base!")
                 if (player.gui.center.shared_spawn_opts ~= nil) then

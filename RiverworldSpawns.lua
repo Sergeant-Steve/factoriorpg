@@ -83,7 +83,7 @@ local function GenerateRails(surface, chunkArea, railX, rails)
                 local pt = { x=railX+14, y=y+1 };
                 local ent = surface.create_entity({name="big-electric-pole", position=pt, force=MAIN_FORCE})
                 ent.destructible = false
-                ent.mineable = false
+                ent.minable = false
                 local pt = { x=railX+19, y=y };                 
                 surface.create_entity({name="rail-signal", position=pt, force=MAIN_FORCE, direction=4})
                 local pt = { x=railX+27, y=y };                 

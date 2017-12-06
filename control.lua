@@ -108,7 +108,7 @@ end
 setmetatable(_G, {
 	__newindex = function(_, n, v)
 		log("Desync warning: attempt to write to undeclared var " .. n)
-		-- game.print("Attempt to write to undeclared var " .. n)
+		game.print("Desync warning!  Attempted to set var " .. n .." at ".. serpent.line(debug))
 		global[n] = v;
 	end,
 	_index = function(_, n)
