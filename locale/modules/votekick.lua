@@ -34,7 +34,7 @@ commands.add_command("votekick", "Usage: /votekick <player>", function(params)
 		return
 	end
     if not global.votekick[name] then
-        global.votekick[na  me] = {}
+        global.votekick[name] = {}
         game.print("Voting has started to kick player " .. name)
     end
     if not global.votekick[name][game.player.name] then
