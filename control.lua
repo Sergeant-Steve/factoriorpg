@@ -43,6 +43,7 @@ require "locale/modules/peppermintmining" --Logistic mining softmod.
 require "locale/modules/piety" --Way to consume random excess stone.
 --require "belt_limit" --Limits number of belts per player.  Mostly for UPS reasons.
 require "locale/modules/bpmirror" --Adds bpmirror command to flip BPs.
+require "locale/modules/votekick" --Allows users to kick other users.
 
 -- World Generators: Most are exclusive.
 --require "locale/maps/dangOreus" --Ore is everywhere.  Cannot build on it!
