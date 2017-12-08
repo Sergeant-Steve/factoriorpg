@@ -133,7 +133,7 @@ function peppermint.mine(event)
         end
         local ore = minty.ores[math.random(size)]
         if not (ore and ore.valid) then
-            table.remove(global.pepper.ores, minty.index)
+            table.remove(global.peppermint.ores, minty.index)
             --Do not advance index.
             return
         end
@@ -202,9 +202,8 @@ function peppermint.mine(event)
         --game.print("Created " .. #products .. " for pickup.")
 
         --Deplete the ore.
-        --Note, a few extra ore may be produced per entity. (amount / cargo_multiplier) is rounded up.
-        if ore.amount > (count * cargo_multiplier / productivity) then
-            ore.amount = ore.amount - (count * cargo_multiplier / productivity)
+        if ore.amount > math.ceil(count * cargo_multiplier / productivity) then
+            ore.amount = ore.amount - math.ceil(count * cargo_multiplier / productivity)
         else
             script.raise_event(defines.events.on_resource_depleted, {entity=ore, name=defines.events.on_resource_depleted})
             if ore and ore.valid then
