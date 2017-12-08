@@ -3,7 +3,7 @@
 -- 
 -- My general purpose utility functions for factorio
 -- Also contains some constants and gui styles
-
+-- This file is used by Oarc (NOT jvm's scenario)
 
 --------------------------------------------------------------------------------
 -- Useful constants

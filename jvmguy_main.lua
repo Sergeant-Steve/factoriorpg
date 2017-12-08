@@ -184,7 +184,7 @@ function jvm.on_player_joined_game(event)
     
     PlayerJoinedMessages(event)
 
-    PlayerSpawnItems(event)
+    --PlayerSpawnItems(event)
 
     -- if ENABLE_TAGS then
     --     CreateTagGui(event)
@@ -205,22 +205,22 @@ function jvm.on_player_created(event)
 --      RSO_PlayerCreated(event)
 --  end
 
-    if ENABLE_LONGREACH then
-        GivePlayerLongReach(game.players[event.player_index])
-    end
+    -- if ENABLE_LONGREACH then
+    --     GivePlayerLongReach(game.players[event.player_index])
+    -- end
 
-    GivePlayerBonuses(game.players[event.player_index])
+    --GivePlayerBonuses(game.players[event.player_index])
 
-    if not ENABLE_SEPARATE_SPAWNS then
+    --if not ENABLE_SEPARATE_SPAWNS then
         PlayerSpawnItems(event)
-    else
+    --else
         SeparateSpawnsPlayerCreated(event)
-    end
+    --end
 
     -- Not sure if this should be here or in player joined....
-    if ENABLE_BLUEPRINT_STRING then
-        bps_player_joined(event)
-    end
+    -- if ENABLE_BLUEPRINT_STRING then
+    --     bps_player_joined(event)
+    -- end
 end
 
 Event.register(defines.events.on_player_created, jvm.on_player_created)
@@ -241,10 +241,10 @@ function jvm.on_player_respawned(event)
         SeparateSpawnsPlayerRespawned(event)
     end
 
-    if ENABLE_LONGREACH then
-        GivePlayerLongReach(game.players[event.player_index])
-    end
-    GivePlayerBonuses(game.players[event.player_index])
+    -- if ENABLE_LONGREACH then
+    --     GivePlayerLongReach(game.players[event.player_index])
+    -- end
+    -- GivePlayerBonuses(game.players[event.player_index])
 end
 
 Event.register(defines.events.on_player_respawned, jvm.on_player_respawned)
@@ -298,18 +298,18 @@ end
 ----------------------------------------
 -- On Research Finished
 ----------------------------------------
-function jvm.on_research_finished(event)
-    -- if FRONTIER_ROCKET_SILO_MODE then
-    --     RemoveRocketSiloRecipe(event)
-    -- end
+-- function jvm.on_research_finished(event)
+--     -- if FRONTIER_ROCKET_SILO_MODE then
+--     --     RemoveRocketSiloRecipe(event)
+--     -- end
 
-    if ENABLE_BLUEPRINT_STRING then
-        bps_on_research_finished(event)
-    end
+--     -- if ENABLE_BLUEPRINT_STRING then
+--     --     bps_on_research_finished(event)
+--     -- end
 
-end
+-- end
 
-Event.register(defines.events.on_research_finished, jvm.on_research_finished)
+-- Event.register(defines.events.on_research_finished, jvm.on_research_finished)
 
 -- if scenario.config.regrow.enabled then
     -- Event.register(defines.events.on_sector_scanned, regrow.onSectorScan)

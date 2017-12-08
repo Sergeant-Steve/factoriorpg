@@ -3,7 +3,7 @@
 -- 
 -- My general purpose utility functions for factorio
 -- Also contains some constants and gui styles
-
+-- This file is used by jvm's Scenario
 
 --------------------------------------------------------------------------------
 -- Useful constants
