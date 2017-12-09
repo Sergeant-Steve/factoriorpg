@@ -35,7 +35,7 @@ function peppermint.mark(event)
     end
     local minty = global.peppermint[force.name]
 
-    if event.area.left_top == event.area.right_bottom then
+    if event.area.left_top.x == event.area.right_bottom.x or event.area.left_top.y == event.area.right_bottom.y then
         log("Selected area of size 0")
         return
     end
@@ -133,7 +133,7 @@ function peppermint.mine(event)
         end
         local ore = minty.ores[math.random(size)]
         if not (ore and ore.valid) then
-            table.remove(minty.ores, minty.index)
+            table.remove(global.peppermint.ores, minty.index)
             --Do not advance index.
             return
         end
