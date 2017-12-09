@@ -62,7 +62,7 @@ function entity_mined(event)
 	ghost.last_user = game.players[event.player_index]
 end
 
-Event.register(defines.events.on_preplayer_mined_item, entity_mined)
+Event.register(defines.events.on_pre_player_mined_item, entity_mined)
 -- Handle various gui clicks, either spectate or character modification
 -- @param event gui click event
 function gui_click(event)

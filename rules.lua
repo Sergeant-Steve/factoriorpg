@@ -36,7 +36,7 @@ function rules_show(player_name)
 	if not p.gui.center.rules then
 		local rules = p.gui.center.add{type="frame", name="rules", caption="FactorioMMO Rules", direction="vertical"}
 		rules.add{type="button", name="rules_close", caption="X"}
-		local rules_table = p.gui.center.rules.add{type="table", name="rules_table", colspan=1}
+		local rules_table = p.gui.center.rules.add{type="table", name="rules_table", column_count=1}
 		for i, r in pairs(global.rules.rules) do
 			local e = rules_table.add{type="label", caption= i .. ". " .. r}
 			e.style.font_color = global.rules.color.rule
