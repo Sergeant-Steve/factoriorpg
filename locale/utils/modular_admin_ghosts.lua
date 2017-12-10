@@ -95,7 +95,7 @@ end
 --	EVENTS
 --
 
-Event.register(defines.events.on_preplayer_mined_item, modular_admin_ghosts_entity_mined)
+Event.register(defines.events.on_pre_player_mined_item, modular_admin_ghosts_entity_mined)
 Event.register(defines.events.on_robot_pre_mined, modular_admin_ghosts_entity_deconstructed)
 
 Event.register(-1, function(event)

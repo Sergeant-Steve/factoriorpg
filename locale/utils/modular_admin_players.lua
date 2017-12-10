@@ -100,7 +100,7 @@ function modular_admin_players_gui_changed(p)
 	end
 	if global.modular_admin_players.enabled and global.modular_admin_players.visable[p.name] and p.admin then
 		mapp = bf.add {name = "modular_admin_players_pane", type = "frame", caption = "Player manager", direction = "vertical"}
-		mapts = mapp.add {name = "modular_admin_players_table_search", type = "table", colspan = 3}
+		mapts = mapp.add {name = "modular_admin_players_table_search", type = "table", column_count = 3}
 		mapts.add {name = "modular_admin_players_search_label", type = "label", caption = "Name: "}
 		mapts.add {name = "modular_admin_players_search", type = "textfield"}
 		mapts.add {name = "modular_admin_players_search_refresh", type = "button", caption = "refresh list"}
@@ -117,14 +117,14 @@ function modular_admin_players_update_player_list(p)
 		if mapp.modular_admin_players_table_header ~= nil then
 			mapp.modular_admin_players_table_header.destroy()
 		end
-		mapth = mapp.add {name = "modular_admin_players_table_header", type = "table", colspan = 4}
+		mapth = mapp.add {name = "modular_admin_players_table_header", type = "table", column_count = 4}
 		mapth.add {name = "modular_admin_players_label_player_name", type = "label", caption = "Player name"}
 		mapth.add {name = "modular_admin_players_label_online_time", type = "label", caption = "Online time"}
 		mapth.add {name = "modular_admin_players_label_follow", type = "label", caption = "Follow"}
 		mapth.add {name = "modular_admin_players_label_teleport", type = "label", caption = "Teleport"}
 		mapps = mapp.add {name = "modular_admin_players_scrolllist", type = "scroll-pane", vertical_scroll_policy = "auto", horizontal_scroll_policy = "never"}
 		mapps.style.maximal_height = 300
-		mapt = mapps.add {name = "modular_admin_players_table", type = "table", colspan = 4}
+		mapt = mapps.add {name = "modular_admin_players_table", type = "table", column_count = 4}
 		mapt.style.horizontal_spacing = 8
 		for k, player in pairs(game.connected_players) do
 			if player.index ~= p.index then
