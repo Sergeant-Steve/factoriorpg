@@ -35,7 +35,7 @@ commands.add_command("loaddata", "Loads rpg data", function(data)
 	--rpg_tmp stores value on load so we can do a diff and store only the diff.
 	--Let's convert it from type string to type table
 	--game.print(serpent.line(str))
-	data = loadstring('return ' .. data.parameter)() --Warning: This is insecure.  I don't like it one bit.
+	local data = loadstring('return ' .. data.parameter)() --Warning: This is insecure.  I don't like it one bit.
 	
 	--game.print(serpent.line(data))
 	if not data.playername then
