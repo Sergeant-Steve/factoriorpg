@@ -37,7 +37,7 @@ require "locale/modules/votekick" --Allows users to kick other users.
 --require "locale/maps/dangOreus" --Ore is everywhere.  Cannot build on it!
 --require "locale/maps/searious" --Everything not a resource tile is turned into water.
 --require "oarc_events" --Oarc's separate spawn scenario.
---require "locale/maps/heximaze" --A labyrinth.
+require "locale/maps/heximaze" --A labyrinth.
 --require "void" --Worldgenerator which randomly generates holes in the world
 --require "nuclear" --worldgenerator for nuclear scenario
 --NOT UPDATED require "grid" --Worldgenerator which devides the world into a grid.
