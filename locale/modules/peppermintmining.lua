@@ -133,7 +133,7 @@ function peppermint.mine(event)
         end
         local ore = minty.ores[math.random(size)]
         if not (ore and ore.valid) then
-            table.remove(global.peppermint.ores, minty.index)
+            table.remove(minty.ores, minty.index)
             --Do not advance index.
             return
         end
