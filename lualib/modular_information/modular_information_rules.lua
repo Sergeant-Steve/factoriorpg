@@ -39,9 +39,11 @@ function modular_information_rules_show_rule(p, r)
 			mirt.style.left_padding = 0
 			mirt.style.right_padding = 0
 			mirt.style.bottom_padding = 0
-			short  = mirt.add{type="label", name="modular_information_rules_short_label", caption = rule.short, single_line = false}
+			short  = mirt.add{type="label", name="modular_information_rules_short_label", caption = rule.short}
+			short.style.single_line = false
 			if rule.long ~= nil then
-				long  = mirt.add{type="label", name="modular_information_rules_long_label", caption = rule.long , single_line = false}
+				long = mirt.add{type="label", name="modular_information_rules_long_label", caption = rule.long}
+				long.style.single_line = false
 			end
 			short.style.font_color = {r=1,b=0,g=0}
 			short.style.font = "default-large-semibold"

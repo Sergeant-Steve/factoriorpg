@@ -46,7 +46,8 @@ function popup_create_popup(title, message)
 		local tick = game.tick
 		local popup = x.gui.center.add{type="frame", name="popup" .. tick, caption=title, direction="vertical"}
 		popup.style.maximal_width = 400
-		popup.add{type="label", caption=message, single_line=false}
+		pl = popup.add{type="label", caption=message}
+		pl.style.single_line = false
 		local button = popup.add{type="button", name="popup_close", caption="Close this message"}
 		button.style.minimal_width = 380
 	end

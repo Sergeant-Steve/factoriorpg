@@ -257,8 +257,9 @@ function modular_admin_spectate_gui_changed(p)
 			end
 			if global.modular_admin_spectate.follow_target[p.index] ~= nil then
 				local labeltext = "You are spectating: " .. game.players[global.modular_admin_spectate.follow_target[p.index]].name
-				sfl = sm.add {type = "label", name = "modular_admin_spectate_follow_label", caption = labeltext, single_line = false}
+				sfl = sm.add {type = "label", name = "modular_admin_spectate_follow_label", caption = labeltext}
 				sfl.style.maximal_width = 150
+				sfl.style.single_line = false
 				ssfb = sm.add {type = "button", name = "modular_admin_spectate_stop_follow_button", caption = "Stop following"}
 				ssfb.style.font_color = {r = 1, b = 0, g = 0}
 				ssfb.style.minimal_width = 150

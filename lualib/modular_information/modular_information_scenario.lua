@@ -15,8 +15,9 @@ function modular_information_scenario_create_gui(p)
 	miip = modular_information_get_information_pane(p)
 	miip.clear()
 	modular_information_set_information_pane_caption(p, "About this scenario")
-	mist = miip.add {type="label", caption = global.modular_information_scenario.text, single_line = false}
+	mist = miip.add {type="label", caption = global.modular_information_scenario.text}
 	mist.style.maximal_width = 480
+	mist.style.single_line = false
 	if p.admin then
 		miip.add {type="button", caption = "Edit this text", name = "modular_information_scenario_edit_button"}
 	end
