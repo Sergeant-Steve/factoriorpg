@@ -41,6 +41,7 @@ function modular_information_scenario_gui_clicked(event)
 			miip.clear()
 			modular_information_set_information_pane_caption(p, "Editing scenario text")
 			miset = miip.add {type="text-box", name = "modular_information_scenario_edit_textbox"}
+			miset.word_wrap = true
 			miset.text = global.modular_information_scenario.text
 			miset.style.maximal_width = 480
 			miset.style.minimal_width = 480
