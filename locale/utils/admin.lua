@@ -290,14 +290,14 @@ end
 function create_character_gui(index)
 	local player = game.players[index]
 	local character_frame = mod_gui.get_frame_flow(player).add { name = "character_panel", type = "frame", direction = "vertical", caption = "Character" }
-	local button_table = character_frame.add { name= "character_buttons", type = "table", colspan = 1}
+	local button_table = character_frame.add { name= "character_buttons", type = "table", column_count = 1}
 	button_table.add { name = "character_pickup", type = "button", caption = "Pickup" }
 	button_table.add { name = "character_reach", type = "button", caption = "Reach" }
 	button_table.add { name = "character_craft", type = "button", caption = "Crafting" }
 	button_table.add { name = "character_mine", type = "button", caption = "Mining" }
 	button_table.add { name = "character_invincible", type = "button", caption = "Invincible" }
 	button_table.add { name = "run_label", type = "label", caption = "Run speed control:" }
-	local run_table = character_frame.add { name = "character_run", type = "table", colspan = 5, caption = "Run Speed" }
+	local run_table = character_frame.add { name = "character_run", type = "table", column_count = 5, caption = "Run Speed" }
 	run_table.add { name = "run1_label", type = "label", caption = "1x" }
 	run_table.add { name = "run2_label", type = "label", caption = "2x" }
 	run_table.add { name = "run3_label", type = "label", caption = "3x" }

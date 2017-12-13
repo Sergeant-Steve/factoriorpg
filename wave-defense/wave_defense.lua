@@ -504,7 +504,7 @@ function gui_init(player)
   if gui.top_flow then 
     gui.top_flow.destroy()
   end
-  local flow = gui.add{type = "table", name = "top_flow", direction = "vertical",colspan = 1}
+  local flow = gui.add{type = "table", name = "top_flow", direction = "vertical",column_count = 1}
   flow.style.vertical_spacing = 0
   flow.style.horizontal_spacing = 0
   flow.style.visible = true
@@ -547,8 +547,8 @@ end
 function create_money_frame(flow)
   if not flow.valid then return end
   local frame = flow.add{type = "frame", name = "money_frame", caption = {"money-frame"}, direction = "vertical"}
-  local holding_table = frame.add{type = "table", colspan = 1, name = "money_frame_table"}
-  local money_table = holding_table.add{type = "table", name = "money_table", colspan = 2}
+  local holding_table = frame.add{type = "table", column_count = 1, name = "money_frame_table"}
+  local money_table = holding_table.add{type = "table", name = "money_table", column_count = 2}
   money_table.add{type = "label", name = "force_money_label", caption = {"force-money"}}
   local cash = money_table.add{type = "label", name = "force_money_count", caption = get_money()}.style
   cash.font_color = {r = 0.8, b = 0.5, g = 0.8}
@@ -574,7 +574,7 @@ function create_upgrade_gui(gui)
   team_upgrades.style.visible = true
   local scroll = team_upgrades.add{type = "scroll-pane", name = "team_upgrade_scroll"}
   scroll.style.maximal_height = 450
-  local upgrade_table = scroll.add{type = "table", name = "upgrade_table", colspan = 2}
+  local upgrade_table = scroll.add{type = "table", name = "upgrade_table", column_count = 2}
   upgrade_table.style.horizontal_spacing = 0
   upgrade_table.style.vertical_spacing = 0
   update_upgrade_listing(upgrade_table, get_upgrades(), global.team_upgrades)
@@ -591,7 +591,7 @@ function update_upgrade_listing(gui, array, upgrades)
       sprite.style.minimal_width = 75
       local flow = gui.add{type = "frame", name = name.."_flow", direction = "vertical"}
       flow.style.maximal_height = 75
-      local another_table = flow.add{type = "table", name = name.."_label_table", colspan = 1}
+      local another_table = flow.add{type = "table", name = name.."_label_table", column_count = 1}
       another_table.style.vertical_spacing = 2
       local label = another_table.add{type = "label", name = name.."_name", caption = {"", upgrade.caption, " "..upgrade.modifier}}
       label.style.font = "default-bold"

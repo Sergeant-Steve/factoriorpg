@@ -101,7 +101,7 @@ function modular_information_get_menu(p)
 		mims.style.right_padding = 0
 		mims.style.bottom_padding = 0
 		mims.style.maximal_height = 200
-		mimt = mims.add {name = "modular_information_menu_table", type = "table", colspan = 1}
+		mimt = mims.add {name = "modular_information_menu_table", type = "table", column_count = 1}
 		mimt.style.vertical_spacing = 0
 		mimt.style.top_padding = 0
 		mimt.style.left_padding = 0
@@ -168,7 +168,7 @@ function modular_information_get_flow(p)
 		return f
 	else 
 		pgc = p.gui.center
-		mif = pgc.add {type = "table", name = "modular_information_flow", colspan = 2}
+		mif = pgc.add {type = "table", name = "modular_information_flow", column_count = 2}
 		mif.style.horizontal_spacing = 0
 		mif.style.top_padding = 0
 		mif.style.left_padding = 0

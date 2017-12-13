@@ -33,7 +33,7 @@ function modular_information_rules_show_rule(p, r)
 			else 
 				modular_information_set_information_pane_caption(p, "Rules Pane")
 			end
-			mirt = miip.add{type="table", name="modular_information_rules_table", colspan=1}
+			mirt = miip.add{type="table", name="modular_information_rules_table", column_count=1}
 			mirt.style.vertical_spacing = 0
 			mirt.style.top_padding = 0
 			mirt.style.left_padding = 0
@@ -56,7 +56,7 @@ function modular_information_rules_create_gui(p)
 	miip = modular_information_get_information_pane(p)
 	miip.clear()
 	modular_information_set_information_pane_caption(p, "Rules Pane")
-	mirt = miip.add{type="table", name="modular_information_rules_table", colspan=1}
+	mirt = miip.add{type="table", name="modular_information_rules_table", column_count=1}
 	mirt.style.vertical_spacing = 0
 	mirt.style.top_padding = 0
 	mirt.style.left_padding = 0

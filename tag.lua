@@ -44,7 +44,7 @@ function tag_expand_gui(player)
 		local frame = mod_gui.get_frame_flow(player).add { type = "frame", name = "tag-panel", caption = "Choose Tag"}
 		local scroll = frame.add { type = "scroll-pane", name = "tag-panel-scroll"}
 		scroll.style.maximal_height = 250
-		local list = scroll.add { name="tag_table", type = "table", colspan = 1}
+		local list = scroll.add { name="tag_table", type = "table", column_count = 1}
 		for _, role in pairs(global.tag.tags) do
 			list.add { type = "button", caption = role.display_name, name = "tag_" .. role.display_name }
 		end

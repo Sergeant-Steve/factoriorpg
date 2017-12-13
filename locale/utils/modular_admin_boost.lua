@@ -105,7 +105,7 @@ function modular_admin_boost_gui_changed(p)
 				bib.style.font_color = global.modular_admin_boost.inactive_color 
 			end
 			bwl = mabp.add {type = "label", name = "modular_admin_boost_walking_label", caption = "Walking"}
-			bwt = mabp.add {type = "table", name = "modular_admin_boost_walking_table", colspan = 3}
+			bwt = mabp.add {type = "table", name = "modular_admin_boost_walking_table", column_count = 3}
 			bwdb = bwt.add {type = "button", name = "modular_admin_boost_walking_decrease_button", caption = "-"}
 			bwrb = bwt.add {type = "button", name = "modular_admin_boost_walking_reset_button", caption = pbs.walking}
 			bwib = bwt.add {type = "button", name = "modular_admin_boost_walking_increase_button", caption = "+"}
