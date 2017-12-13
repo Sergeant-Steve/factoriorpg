@@ -28,27 +28,28 @@ function dirtDirt()
 				if global.dirt[tile.position.x][tile.position.y] >= DIRT_THRESHOLD then
 					--game.print("Converting patch to dirt.")
 					
+					-- No longer necessary for 0.16
 					-- Check for waterfix, else prevent exploit
-					local waterfix = false
-					if game.active_mods["water-fix"] then
-						waterfix = true
-					end
-					-- for module, version in pairs(game.active_mods) do
-						-- if module == "water-fix" then
-							-- waterfix = true
-						-- end
+					-- local waterfix = false
+					-- if game.active_mods["water-fix"] then
+					-- 	waterfix = true
 					-- end
-					if not waterfix then
-					-- Check for water to prevent landfill exploit
-						for xx = -1, 2 do
-							for yy = -1, 2 do
-								local waterCheck = p.surface.get_tile(tile.position.x + xx, tile.position.y + yy)
-								if not waterCheck or not waterCheck.valid or waterCheck.collides_with("water-tile") then
-									return
-								end
-							end
-						end
-					end
+					-- -- for module, version in pairs(game.active_mods) do
+					-- 	-- if module == "water-fix" then
+					-- 		-- waterfix = true
+					-- 	-- end
+					-- -- end
+					-- if not waterfix then
+					-- -- Check for water to prevent landfill exploit
+					-- 	for xx = -1, 2 do
+					-- 		for yy = -1, 2 do
+					-- 			local waterCheck = p.surface.get_tile(tile.position.x + xx, tile.position.y + yy)
+					-- 			if not waterCheck or not waterCheck.valid or waterCheck.collides_with("water-tile") then
+					-- 				return
+					-- 			end
+					-- 		end
+					-- 	end
+					-- end
 					local dirt = {}
 					for xx = 0, 1, 1 do
 						for yy = 0, 1, 1 do
@@ -57,7 +58,7 @@ function dirtDirt()
 							end
 							local validTile = p.surface.get_tile(tile.position.x + xx, tile.position.y + yy)
 							if validTile.collides_with("ground-tile") and not validTile.hidden_tile then
-								table.insert(dirt, {name="dirt-dark", position={p.position.x+xx, p.position.y+yy}})
+								table.insert(dirt, {name="dirt-6", position={p.position.x+xx, p.position.y+yy}})
 							end
 						end
 					end
