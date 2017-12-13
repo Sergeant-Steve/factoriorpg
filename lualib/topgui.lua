@@ -64,11 +64,6 @@ end
 
 function topgui_gui_changed(p)
 	topgui_sort_table(p)
-	bf = mod_gui.get_button_flow(p)
-	if bf.topgui ~= nil then
-		bf.topgui.destroy()
-	end
-	bf.add {name = "topgui", type = "flow", direction = "horizontal"}
 	tg = topgui_get_flow(p)
 	for i, button in pairs(global.topgui.sorted[p.name]) do
 		b = tg.add {name=button.name, type="button", caption=button.caption}
@@ -76,7 +71,6 @@ function topgui_gui_changed(p)
 			b.style.font_color = button.color
 		end
 	end
-	tg.style = "slot_table_spacing_flow_style"
 end
 
 function topgui_sort_table(p)
@@ -92,7 +86,14 @@ function topgui_sort_table(p)
 end
 
 function topgui_get_flow(p)
-	return mod_gui.get_button_flow(p).topgui
+	bf = mod_gui.get_button_flow(p)
+	if bf.topgui ~= nil then
+		bf.topgui.clear()
+		tg = bf.topgui
+	else
+		tg = bf.add {name = "topgui", type = "flow", direction = "horizontal", style = "slot_table_spacing_horizontal_flow"}
+	end
+	return tg
 end
 	
 --
