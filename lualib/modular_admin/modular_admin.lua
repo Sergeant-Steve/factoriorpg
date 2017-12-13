@@ -71,13 +71,13 @@ function modular_admin_gui_changed(p)
 		if bf.modular_admin_menu_first ~= nil then
 			bf = bf.modular_admin_menu_first
 		else
-			bf = bf.add {type = "flow", name = "modular_admin_menu_first", direction = "vertical"}
+			bf = bf.add {type = "frame", name = "modular_admin_menu_first", caption = "Admin Menu", direction = "vertical"}
 		end
 		if bf.modular_admin_menu ~= nil then
 			bf.modular_admin_menu.destroy()
 		end
 		modular_admin_sort_table(p)
-		bf.add {name = "modular_admin_menu", type = "frame", direction = "vertical", caption = "Admin Menu"}
+		bf.add {name = "modular_admin_menu", type = "flow", direction = "vertical", style = "slot_table_spacing_vertical_flow"}
 		tg = modular_admin_get_menu(p)
 		for i, button in pairs(global.modular_admin.sorted[p.name]) do
 			b = tg.add {name=button.name, type="button", caption=button.caption}

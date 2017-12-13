@@ -62,12 +62,17 @@ function modular_admin_boost_gui_changed(p)
 		bf = modular_admin_get_flow(p)
 		if global.modular_admin_boost.enabled then
 			if bf.modular_admin_boost_pane ~= nil then
-				mabp = bf.modular_admin_boost_pane
+				mabpa = bf.modular_admin_boost_pane
+			else
+				mabpa = bf.add {type = "frame", name = "modular_admin_boost_pane", caption = "Character Menu", direction = "vertical"}
+			end
+			if mabpa.modular_admin_boost_flow ~= nil then
+				mabp = mabpa.modular_admin_boost_flow
 				mabp.clear()
 			else
-				mabp = bf.add {type = "frame", name = "modular_admin_boost_pane", caption = "Character Menu", direction = "vertical"}
+				mabp = mabpa.add {type = "flow", name = "modular_admin_boost_flow", direction = "vertical",  style = "slot_table_spacing_vertical_flow"}
 			end
-			mabp.style.visible = global.modular_admin_boost.visible[p.name]
+			mabpa.style.visible = global.modular_admin_boost.visible[p.name]
 			pbs = global.modular_admin_boost.bonus_state[p.name]
 			if pbs.pickup then
 				bpb = mabp.add {type = "button", name = "modular_admin_boost_pickup_button", caption = "Reset Pickup"}
@@ -140,7 +145,7 @@ function modular_admin_boost_gui_clicked(event)
 		if e.name == "modular_admin_boost_button" then
 			global.modular_admin_boost.visible[p.name] = (not global.modular_admin_boost.visible[p.name])
 			modular_admin_boost_update_menu_button(p)
-		elseif e.parent.name == "modular_admin_boost_pane" or e.parent.name == "modular_admin_boost_walking_table" then
+		elseif e.parent.name == "modular_admin_boost_pane" or e.parent.name == "modular_admin_boost_walking_table" or e.parent.name == "modular_admin_boost_flow" then
 			if e.name == "modular_admin_boost_pickup_button" then
 				if global.modular_admin_boost.bonus_state[p.name].pickup then
 					global.modular_admin_boost.bonus_state[p.name].pickup = false
