@@ -49,12 +49,15 @@ end
 function modular_tag_patreon_create_gui(event)
 	local player = game.players[event.player_index]
 	local p = player
-	b1 = modular_tag_get_frame(p).add { type = "button", caption = "Patreon", name = "modular_tag_patreon_button" }
-	b1.style.font_color = {r=0, g=0.5, b=1}
-	b1.style.minimal_width = 150
-	b2 = modular_tag_get_frame(p).add {type = "button", name = "modular_tag_patreon_unique_button", caption = "Unique"}
-	b2.style.font_color = {r=0, g=0.7, b=0}
-	b2.style.minimal_width = 150
+	mtgf = modular_tag_get_frame(p)
+	mtf = mtgf.add {type = "flow", direction = "vertical", name = "modular_tag_patreon_flow", style = "slot_table_spacing_vertical_flow"}
+	b2 = mtf.add {type = "button", name = "modular_tag_patreon_unique_button", caption = "Unique"}
+	b2.style.font_color = {r=0.1, g=0.9, b=0.1}
+	b2.style.minimal_width = 155
+	b1 = mtf.add { type = "button", caption = "Patreon", name = "modular_tag_patreon_button" }
+	b1.style.font_color = {r=0.2, g=0.7, b=1}
+	b1.style.minimal_width = 155
+	
 end
 
 

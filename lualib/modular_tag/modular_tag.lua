@@ -5,6 +5,8 @@
 global.modular_tag = global.modular_tag or {}
 global.modular_tag.visible = global.modular_tag.visible or {}
 
+require "modular_tag_patreon"
+
 -- Tag list
 global.modular_tag.tags = {
 	{ display_name = "Clear", color = {r=1,g=0,b=0} },
@@ -66,7 +68,8 @@ function modular_tag_get_frame(player)
 		tf = tag_frame
 	else
 		tf = ff.add { type = "frame", name = "modular_tag-frame", caption = "Choose Tag", direction = "vertical"}
-		tf.style.visible = global.modular_tag.visible[player.name]
+		v = global.modular_tag.visible[player.name] or false
+		tf.style.visible = v
 		tf.style.maximal_width = 180
 	end
 	return tf
@@ -116,4 +119,4 @@ Event.register(defines.events.on_gui_click, modular_tag_on_gui_click)
 Event.register(defines.events.on_player_joined_game, modular_tag_create_gui)
 
 
-require "modular_tag_patreon"
+
