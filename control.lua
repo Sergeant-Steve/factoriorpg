@@ -7,7 +7,6 @@ require "lualib/bot"	--3ra shit
 --require "announcements"	--Module to announce stuff ingame / give the players a welcome message
 --require "tag" --Module to let players set a tag behind their names to improve teamwork
 --require "popup" --Module to create and display an popup in the center of all players their screens.
---require "rules" --Module which displays a popup with the rules when a player joins, or presses the open rules button
 --require "rocket" --Module to stop people removing the rocket silo
 --require "gravemarker" --Create a map tag on player death for easier corpse finding
 require "lualib/modular_admin/modular_admin" --New admin tools -untested
