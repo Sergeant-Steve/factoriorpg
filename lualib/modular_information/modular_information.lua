@@ -87,6 +87,14 @@ function modular_information_gui_changed(p)
 		mini.style.font_color = {r=1,g=0,b=0}
 	end
 	modular_information_set_information_pane_caption(p, "Information pane")
+	mimc = modular_information_get_menu_canvas(p)
+	mimc.caption = "NOT SET"
+	mimc.clear()
+	mimc.style.visible = false
+	mimc.style.minimal_width = 160
+	mimc.style.maximal_width = 160
+	mimc.style.minimal_height = 255
+	mimc.style.maximal_height = 255
 end
 
 function modular_information_get_menu(p)
@@ -110,6 +118,17 @@ function modular_information_get_menu(p)
 	end
 	return mimt
 end
+
+function modular_information_get_menu_canvas(p)
+	bf = modular_information_get_flow(p)
+	if (bf.modular_information_menu_canvas ~= nil) then
+		mimt = bf.modular_information_menu_canvas
+	else
+		mim = bf.add {name = "modular_information_menu_canvas", type = "frame", direction = "vertical", caption = "Submodule Menu"}
+	end
+	return mim
+end
+
 function modular_information_get_information_pane(p)
 	mif = modular_information_get_flow(p)
 	if (mif.modular_information_pane ~= nil) and (mif.modular_information_pane.modular_information_pane_scroll ~= nil) then
@@ -168,7 +187,7 @@ function modular_information_get_flow(p)
 		return f
 	else 
 		pgc = p.gui.center
-		mif = pgc.add {type = "table", name = "modular_information_flow", column_count = 2}
+		mif = pgc.add {type = "table", name = "modular_information_flow", column_count = 3}
 		mif.style.horizontal_spacing = 0
 		mif.style.top_padding = 0
 		mif.style.left_padding = 0
@@ -251,5 +270,6 @@ require "modular_information_rules"
 --require "modular_information_dummy"
 --require "modular_information_team"  --NOT DONE
 require "modular_information_scenario"
+--require "modular_information_popup"
 --require "modular_information_about"--NOT DONE
 --require "modular_information_stats"--NOT DONE
