@@ -141,7 +141,7 @@ function nougat.chewy(event)
     local force = roboport.force
     local surface = roboport.surface
     local productivity = force.mining_drill_productivity_bonus
-    local cargo_multiplier = worker_robots_storage_bonus + 1
+    local cargo_multiplier = force.worker_robots_storage_bonus + 1
     local products = {}
     
     count = math.min(math.ceil(ore.amount / cargo_multiplier), count)

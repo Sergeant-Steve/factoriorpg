@@ -2,8 +2,8 @@
 -- A 3Ra Gaming creation
 -- Modified by: I_IBlackI_I for FactorioMMO
 
-global.green = { r = 0, g = 1, b = 0 }
-global.red = { r = 1, g = 0, b = 0 }
+COLOR_GREEN = { r = 0, g = 1, b = 0 }
+COLOR_RED = { r = 1, g = 0, b = 0 }
 
 -- values here are player ids from game.connected_players, which is different from game.players
 global.follow_targets = global.follow_targets or {}
@@ -62,7 +62,7 @@ function entity_mined(event)
 	ghost.last_user = game.players[event.player_index]
 end
 
-Event.register(defines.events.on_preplayer_mined_item, entity_mined)
+Event.register(defines.events.on_pre_player_mined_item, entity_mined)
 -- Handle various gui clicks, either spectate or character modification
 -- @param event gui click event
 function gui_click(event)
@@ -88,13 +88,13 @@ function gui_click(event)
 				global.player_character_stats[i].compensation_mode = false
 				global.player_character_stats[i].running_speed = 0
 				update_character(i)
-				e.style.font_color = global.red
+				e.style.font_color = COLOR_RED
 				if mod_gui.get_frame_flow(p).admin_pane.character then
 					mod_gui.get_frame_flow(p).admin_pane.character.caption = "Character"
 				end
 			else
 				global.player_character_stats[i].compensation_mode = true
-				e.style.font_color = global.green
+				e.style.font_color = COLOR_GREEN
 				if mod_gui.get_frame_flow(p).admin_pane.character then
 					mod_gui.get_frame_flow(p).admin_pane.character.caption = "Disabled"
 					if mod_gui.get_frame_flow(p).character_panel then
@@ -167,12 +167,12 @@ function gui_click(event)
 		elseif e.name == "character_pickup" then
 			if global.player_character_stats[i].item_loot_pickup then
 				global.player_character_stats[i].item_loot_pickup = false
-				event.element.style.font_color = global.red
+				event.element.style.font_color = COLOR_RED
 				p.character_item_pickup_distance_bonus = 0
 				p.character_loot_pickup_distance_bonus = 0
 			else
 				global.player_character_stats[i].item_loot_pickup = true
-				event.element.style.font_color = global.green
+				event.element.style.font_color = COLOR_GREEN
 				p.character_item_pickup_distance_bonus = 5
 				p.character_loot_pickup_distance_bonus = 5
 			end
@@ -180,14 +180,14 @@ function gui_click(event)
 		elseif e.name == "character_reach" then
 			if global.player_character_stats[i].build_itemdrop_reach_resourcereach_distance then
 				global.player_character_stats[i].build_itemdrop_reach_resourcereach_distance = false
-				event.element.style.font_color = global.red
+				event.element.style.font_color = COLOR_RED
 				p.character_build_distance_bonus = 0
 				p.character_item_drop_distance_bonus = 0
 				p.character_reach_distance_bonus = 0
 				p.character_resource_reach_distance_bonus = 0
 			else
 				global.player_character_stats[i].build_itemdrop_reach_resourcereach_distance = true
-				event.element.style.font_color = global.green
+				event.element.style.font_color = COLOR_GREEN
 				p.character_build_distance_bonus = 125
 				p.character_item_drop_distance_bonus = 125
 				p.character_reach_distance_bonus = 125
@@ -197,33 +197,33 @@ function gui_click(event)
 		elseif e.name == "character_craft" then
 			if global.player_character_stats[i].crafting_speed then
 				global.player_character_stats[i].crafting_speed = false
-				event.element.style.font_color = global.red
+				event.element.style.font_color = COLOR_RED
 				p.character_crafting_speed_modifier = 0
 			else
 				global.player_character_stats[i].crafting_speed = true
-				event.element.style.font_color = global.green
+				event.element.style.font_color = COLOR_GREEN
 				p.character_crafting_speed_modifier = 60
 			end
 			return
 		elseif e.name == "character_mine" then
 			if global.player_character_stats[i].mining_speed then
 				global.player_character_stats[i].mining_speed = false
-				event.element.style.font_color = global.red
+				event.element.style.font_color = COLOR_RED
 				p.character_mining_speed_modifier = 0
 			else
 				global.player_character_stats[i].mining_speed = true
-				event.element.style.font_color = global.green
+				event.element.style.font_color = COLOR_GREEN
 				p.character_mining_speed_modifier = 150
 			end
 			return
 		elseif e.name == "character_invincible" then
 			if global.player_character_stats[i].invincible then
 				global.player_character_stats[i].invincible = false
-				event.element.style.font_color = global.red
+				event.element.style.font_color = COLOR_RED
 				p.character.destructible = true
 			else
 				global.player_character_stats[i].invincible = true
-				event.element.style.font_color = global.green
+				event.element.style.font_color = COLOR_GREEN
 				p.character.destructible = false
 			end
 			return
@@ -344,33 +344,33 @@ function update_character_settings(index)
 	local settings = global.player_character_stats[index]
 	local button_table = char_gui.character_buttons
 	if settings.item_loot_pickup then
-		button_table.character_pickup.style.font_color = global.green
+		button_table.character_pickup.style.font_color = COLOR_GREEN
 	else
-		button_table.character_pickup.style.font_color = global.red
+		button_table.character_pickup.style.font_color = COLOR_RED
 	end
 
 	if settings.build_itemdrop_reach_resourcereach_distance then
-		button_table.character_reach.style.font_color = global.green
+		button_table.character_reach.style.font_color = COLOR_GREEN
 	else
-		button_table.character_reach.style.font_color = global.red
+		button_table.character_reach.style.font_color = COLOR_RED
 	end
 
 	if settings.crafting_speed then
-		button_table.character_craft.style.font_color = global.green
+		button_table.character_craft.style.font_color = COLOR_GREEN
 	else
-		button_table.character_craft.style.font_color = global.red
+		button_table.character_craft.style.font_color = COLOR_RED
 	end
 
 	if settings.mining_speed then
-		button_table.character_mine.style.font_color = global.green
+		button_table.character_mine.style.font_color = COLOR_GREEN
 	else
-		button_table.character_mine.style.font_color = global.red
+		button_table.character_mine.style.font_color = COLOR_RED
 	end
 
 	if settings.invincible then
-		button_table.character_invincible.style.font_color = global.green
+		button_table.character_invincible.style.font_color = COLOR_GREEN
 	else
-		button_table.character_invincible.style.font_color = global.red
+		button_table.character_invincible.style.font_color = COLOR_RED
 	end
 
 	local run_table = char_gui.character_run
@@ -591,9 +591,9 @@ function create_admin_gui(player_name)
 	if not mod_gui.get_frame_flow(player).admin_pane.admin_compensation_mode then
 		local a = admin_pane.add { name = "admin_compensation_mode", type = "button", caption = "Compensate" }
 		if global.player_character_stats[index].compensation_mode then
-			a.style.font_color = global.green
+			a.style.font_color = COLOR_GREEN
 		else
-			a.style.font_color = global.red
+			a.style.font_color = COLOR_RED
 		end
 	end
 	

@@ -29,13 +29,13 @@ end)
 commands.add_command("loaddata", "Loads rpg data", function(data)
 	--Only the server is allowed to use this command
 	if game.player then
-		return
+		--return
 	end
 	--Incoming string is of form: {name=player.name, class=exp}
 	--rpg_tmp stores value on load so we can do a diff and store only the diff.
 	--Let's convert it from type string to type table
 	--game.print(serpent.line(str))
-	data = loadstring('return ' .. data.parameter)() --Warning: This is insecure.  I don't like it one bit.
+	local data = loadstring('return ' .. data.parameter)() --Warning: This is insecure.  I don't like it one bit.
 	
 	--game.print(serpent.line(data))
 	if not data.playername then
@@ -217,7 +217,8 @@ function rpg_add_gui(event)
 	player.gui.top.rpg.add{type="flow", name="container", direction="vertical"}
 	player.gui.top.rpg.container.add{type="button", name="class", caption="Class: " .. global.rpg_exp[player.name].class}
 	player.gui.top.rpg.container.add{type="label", name="level", caption="Level 1"}
-	player.gui.top.rpg.container.add{type="progressbar", name="exp", size=200, tooltip="Kill biter bases, research tech, or launch rockets to level up."}
+	player.gui.top.rpg.container.add{type="progressbar", name="exp", size=200}
+	player.gui.top.rpg.container.tooltip="Kill biter bases, research tech, or launch rockets to level up."
 	rpg_post_rpg_gui(event) --re-add admin and tag guis
 end
 
@@ -320,7 +321,7 @@ function rpg_update_gui(player)
 	local class = global.rpg_exp[player.name].class
 	player.gui.top.rpg.container.class.caption = "Class: " .. global.rpg_exp[player.name].class
 	player.gui.top.rpg.container.exp.value = (global.rpg_exp[player.name][class] - rpg_exp_tnl(level-1)) / ( rpg_exp_tnl(level) - rpg_exp_tnl(level-1) )
-	player.gui.top.rpg.container.tooltip = math.floor(player.gui.top.rpg.container.exp.value * 10000)/100 .. "% to next level ( " .. math.floor(global.rpg_exp[player.name][class]) - rpg_exp_tnl(level-1) .. " / " .. rpg_exp_tnl(level) - rpg_exp_tnl(level-1) .. " )"
+	player.gui.top.rpg.container.exp.tooltip = math.floor(player.gui.top.rpg.container.exp.value * 10000)/100 .. "% to next level ( " .. math.floor(global.rpg_exp[player.name][class]) - rpg_exp_tnl(level-1) .. " / " .. rpg_exp_tnl(level) - rpg_exp_tnl(level-1) .. " )"
 	player.gui.top.rpg.container.level.caption = "Level " .. level
 	--game.print("Updating exp bar value to " .. player.gui.top.rpg.exp.value)
 end
@@ -871,6 +872,7 @@ function rpg_give_team_bonuses(force)
 	-- Malus is 0.5 * base bonus - 0.5
 	-- Science bonus
 	force.laboratory_speed_modifier = scientistbonus / 100 + 0.5 * force.laboratory_speed_modifier - 0.5
+	force.laboratory_productivity_bonus = scientistbonus / 1000 + force.laboratory_productivity_bonus
 	
 	--Crafting speed penalty.
 	force.manual_crafting_speed_modifier = -0.3

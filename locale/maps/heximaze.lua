@@ -3,7 +3,7 @@ local size_amounts = {0.5, 0.65, 0.7, 0.85, 1.0}
 local quantity_amounts = {1, 1.5, 2, 2.5, 3}
 local frequency_amounts = {0.3, 0.65, 1, 1.35, 1.7}
 
-require "heximazing" --A few tweaks.  Disables logistics and radars.
+--require "heximazing" --A few tweaks.  Disables logistics and radars.
 
 hexi = {}
 
@@ -26,12 +26,12 @@ function hexi.init()
     --local settings = global.maze_settings.global --Not valid for a scenario.
     global.maze_settings = {}
     
-    global.maze_settings.maze_width = 10
-    global.maze_settings.maze_height = 10
+    global.maze_settings.maze_width = 32
+    global.maze_settings.maze_height = 32
     local maze_total_cells = global.maze_settings.maze_width * global.maze_settings.maze_height
     
-    global.maze_settings.maze_tile_size = 147
-    global.maze_settings.maze_tile_border = 47
+    global.maze_settings.maze_tile_size = 512
+    global.maze_settings.maze_tile_border = 256
     
     global.maze_settings.maze_width_raw = (global.maze_settings.maze_width+1) * global.maze_settings.maze_tile_size
     global.maze_settings.maze_height_raw = (global.maze_settings.maze_height+1) * global.maze_settings.maze_tile_size
@@ -113,6 +113,8 @@ function hexi.init()
     --     else start_ores[#start_ores+1] = "" end
     -- end
     global.maze_settings.spawn_ore_names = {"iron-ore", "copper-ore", "stone", "coal"}
+
+    game.forces.player.set_spawn_position({global.maze_settings.maze_width_raw/2 - 2, global.maze_settings.maze_height_raw/2 - 2}, 1)
     
 end
 
@@ -513,7 +515,18 @@ function hexi.on_chunk_generated(event)
     end
     game.surfaces[1].set_tiles(tiles, true)
     
-    on_chunk_generated_ore(event, settings)
+    --on_chunk_generated_ore(event, settings) --Don't generate ore according to Hexicube logic.
+    --Clear out near the spawn position
+    if math.abs(event.area.left_top.x - game.forces.player.get_spawn_position(event.surface).x) < 400 then
+        for k, v in pairs(event.surface.find_entities_filtered{force="enemy", area=event.area}) do
+            v.destroy()
+        end
+    end
+    --Correct ores to reduce the natural distance gain.
+    for k,v in pairs(event.surface.find_entities_filtered{type="resource", area=event.area}) do
+        v.amount = v.amount ^ 0.8
+    end
+
 end
 
 Event.register(defines.events.on_chunk_generated, hexi.on_chunk_generated)
