@@ -5,7 +5,6 @@ require "lualib/topgui" --utility module to be able to order the buttons in the 
 require "lualib/char_mod"	--utility module to prevent multiple modules conflicting when modifying player bonus
 require "lualib/bot"	--3ra shit
 --require "announcements"	--Module to announce stuff ingame / give the players a welcome message
---require "popup" --Module to create and display an popup in the center of all players their screens.
 --require "rocket" --Module to stop people removing the rocket silo
 --require "gravemarker" --Create a map tag on player death for easier corpse finding
 require "lualib/modular_tag/modular_tag" --Module to let players set a tag behind their names to improve teamwork, also allows other modules to get (and use) its canvas.

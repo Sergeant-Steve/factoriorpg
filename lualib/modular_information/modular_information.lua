@@ -86,13 +86,13 @@ function modular_information_gui_changed(p)
 		mini = miip.add {type="label", name="modular_information_no_info", caption="No information selected, use a button on the left to select."}
 		mini.style.font_color = {r=1,g=0,b=0}
 	end
-	modular_information_set_information_pane_caption(p, "Information pane")
+	modular_information_set_information_pane_caption_color(p, "Information pane", {r=1,g=1,b=1})
 	mimc = modular_information_get_menu_canvas(p)
 	mimc.caption = "NOT SET"
 	mimc.clear()
 	mimc.style.visible = false
 	mimc.style.minimal_width = 160
-	mimc.style.maximal_width = 160
+	mimc.style.maximal_width = 185
 	mimc.style.minimal_height = 255
 	mimc.style.maximal_height = 255
 end
@@ -221,6 +221,13 @@ function modular_information_set_information_pane_caption(p, c)
 	end
 end
 
+function modular_information_set_information_pane_caption_color(p, t, c)
+	if modular_information_get_flow(p).modular_information_pane ~= nil then
+		modular_information_get_flow(p).modular_information_pane.caption = t
+		modular_information_get_flow(p).modular_information_pane.style.font_color = c
+	end
+end
+
 function modular_information_get_active_button(p)
 	return global.modular_information.active_button[p.name]
 end
@@ -267,9 +274,9 @@ Event.register(defines.events.on_gui_click, modular_information_gui_clicked)
 --	SUB-MODULES
 --
 require "modular_information_rules"
---require "modular_information_dummy"
+require "modular_information_dummy"
 --require "modular_information_team"  --NOT DONE
-require "modular_information_scenario"
+--require "modular_information_scenario"
 --require "modular_information_popup"
 --require "modular_information_about"--NOT DONE
 --require "modular_information_stats"--NOT DONE
