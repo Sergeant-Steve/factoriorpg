@@ -70,17 +70,15 @@ function dirtDirt()
 end
 
 function cleanDirt()
-	for x, _ in pairs(global.dirt) do
-		local count = 0
-		for y, __ in pairs(global.dirt[x]) do
-			global.dirt[x][y] = global.dirt[x][y] - 1
-			if global.dirt[x][y] <= 0 then
-				global.dirt[x][y] = nil
+	for x, tablex in pairs(global.dirt) do
+		for y, value in pairs(tablex) do
+			value = value - 1
+			if value <= 0 then
+				value = nil
 			end
-			count = count + 1
 		end
-		if count == 0 then
-			global.dirt[x] = nil
+		if tablex ~= nil and next(tablex) == nil then
+			tablex = nil
 		end
 	end
 end
