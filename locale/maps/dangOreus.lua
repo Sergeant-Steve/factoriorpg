@@ -92,7 +92,8 @@ function gOre(event)
 
     for x = event.area.left_top.x, event.area.left_top.x + 31 do
         for y = event.area.left_top.y, event.area.left_top.y + 31 do
-            if event.surface.get_tile(x,y).collides_with("ground-tile") then
+            local bbox = {{ x, y}, {x+0.5, y+0.5}}
+            if event.surface.get_tile(x,y).collides_with("ground-tile") and event.surface.count_entities_filtered{type="cliff", area=bbox} == 0 then
                 local amount = (x^2 + y^2)^0.75 / 8
                 if x^2 + y^2 >= STARTING_RADIUS^2 then
                     --Build the ore list.  Uranium can only appear in uranium chunks.
@@ -114,9 +115,7 @@ function gOre(event)
 
                     local type = ore_list[math.random(#ore_list)]
                     --With noise
-                    event.surface.create_entity{name=type, amount=amount, position={x+0.45+0.1*math.random(), y+0.45+0.1*math.random()}}
-                    --Without noise
-                    -- event.surface.create_entity{name=type, amount=amount, position={x+0.5, y+0.5}}
+                    event.surface.create_entity{name=type, amount=amount, position={x, y}, enable_tree_removal=false, enable_cliff_removal=false}
                 end
             end
         end
@@ -236,7 +235,7 @@ function divOresity_init()
     
 
 	for k,v in pairs(game.entity_prototypes) do
-		if v.type == "resource" and v.resource_category == "basic-solid" and not game.surfaces[1].map_gen_settings.autoplace_controls[v.name].size == "none" then
+		if v.type == "resource" and v.resource_category == "basic-solid" and not (game.surfaces[1].map_gen_settings.autoplace_controls[v.name].size == "none") then
             table.insert(global.diverse_ore_list, v.name)
             if v.mineable_properties.required_fluid == nil then
 			    table.insert(global.easy_ore_list, v.name)

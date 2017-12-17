@@ -68,7 +68,7 @@ function piety.bless(surface, position, resource, amount)
             if intensity > 0 then
                 local corrected_pos = surface.find_non_colliding_position("iron-ore", {x,y}, 5, 1)
                 if corrected_pos ~= nil then
-                    surface.create_entity{name=resource, position=corrected_pos, amount=intensity}
+                    surface.create_entity{name=resource, position=corrected_pos, amount=intensity, enable_tree_removal=false, enable_cliff_removal=false}
                 end
             end
         end
