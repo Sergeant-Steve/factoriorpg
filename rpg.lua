@@ -872,6 +872,7 @@ function rpg_give_team_bonuses(force)
 	-- Malus is 0.5 * base bonus - 0.5
 	-- Science bonus
 	force.laboratory_speed_modifier = scientistbonus / 100 + 0.5 * force.laboratory_speed_modifier - 0.5
+	force.laboratory_productivity_bonus = scientistbonus / 1000 + force.laboratory_productivity_bonus
 	
 	--Crafting speed penalty.
 	force.manual_crafting_speed_modifier = -0.3
