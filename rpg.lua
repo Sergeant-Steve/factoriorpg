@@ -307,7 +307,7 @@ function rpg_post_rpg_gui(event)
 	if CreateSpawnCtrlGui then
 		CreateSpawnCtrlGui(game.players[event.player_index])
 	end
-	admin_joined(event)
+	--admin_joined(event)
 	tag_create_gui(event)
 end
 

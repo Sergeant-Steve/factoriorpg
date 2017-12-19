@@ -8,7 +8,7 @@ require "rpg" --Award bonuses based on experience earned.
 --require "permissions" --Permission manager
 --require "trusted" --Module to add trusted players to a seperate permission group
 --require "locale/utils/patreon" --Module to give patreons spectate and a nice unique tag
-require "locale/utils/admin"	--Admin module to give the admins spectate, commands and character modifications.
+--require "locale/utils/admin"	--Admin module to give the admins spectate, commands and character modifications. NOTE: May be busted in v0.16
 require "announcements"	--Module to announce stuff ingame / give the players a welcome message
 require "tag" --Module to let players set a tag behind their names to improve teamwork
 --require "fmcd" --Module to consolidate saving data to an output file for the agent
@@ -16,6 +16,9 @@ require "tag" --Module to let players set a tag behind their names to improve te
 --require "popup" --Module to create and display an popup in the center of all players their screens.
 require "rules" --Module which displays a popup with the rules when a player joins, or presses the open rules button
 --require "rocket" --Module to stop people removing the rocket silo
+
+--Load before jvm
+require "locale/modules/divOresity" --Some ore gets scrambled and must be filtered.
 
 -- Jvm Scenario
 require("oarc_utils")
@@ -33,7 +36,6 @@ require("frontier_silo")
 require "locale/modules/gravemarker" --Mark player death locations on map for corpse runs.
 require "locale/modules/dirtpath" --For some silliness.
 --require "locale/modules/tOredumonde" --Ore spawns in directions. This must be called before divOresity. NOTE: STONE_BYPRODUCT must be false.
---require "locale/modules/divOresity" --Some ore gets scrambled and must be filtered.
 --require "locale/modules/dark harvest" --Only way to get uranium is from biter deaths.
 --require "dark harvest event" --Temp for testing.
 --require "locale/modules/bluebuild" --Bluebuild softmod
@@ -46,7 +48,7 @@ require "locale/modules/bpmirror" --Adds bpmirror command to flip BPs.
 require "locale/modules/votekick" --Allows users to kick other users.
 
 -- World Generators: Most are exclusive.
-require "locale/maps/dangOreus" --Ore is everywhere.  Cannot build on it!
+--require "locale/maps/dangOreus" --Ore is everywhere.  Cannot build on it!
 --require "locale/maps/searious" --Everything not a resource tile is turned into water.
 --require "oarc_events" --Oarc's separate spawn scenario.
 --require "locale/maps/heximaze" --A labyrinth.
@@ -109,7 +111,7 @@ end
 setmetatable(_G, {
 	__newindex = function(_, n, v)
 		log("Desync warning: attempt to write to undeclared var " .. n)
-		game.print("Desync warning!  Attempted to set var " .. n .." at ".. serpent.line(debug))
+		--game.print("Desync warning!  Attempted to set var " .. n .." at ".. serpent.line(debug))
 		global[n] = v;
 	end,
 	__index = function(_, n)
