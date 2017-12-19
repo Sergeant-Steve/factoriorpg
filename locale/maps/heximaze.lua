@@ -406,7 +406,7 @@ local function handle_maze_tile(x, y, surf, seed, settings)
     if global.maze_settings.block_crossroad and (global_maze_x ~= 0 or global_maze_y ~= 0) and local_maze_x == 0 and local_maze_y == 0 then return {name = "out-of-map", position = {orig_x, orig_y}} end
     if global.maze_settings.disable_water then
         local name = surf.get_tile(orig_x, orig_y).name
-        if name == "water" or name == "deepwater" then return {name = "grass", position = {orig_x, orig_y}} end
+        if name == "water" or name == "deepwater" then return {name = "grass-1", position = {orig_x, orig_y}} end
     end
     return nil
 end
@@ -463,7 +463,7 @@ local function handle_maze_tile_ore(x, y, surf, seed, settings)
         
         if cell_dist > 1-ore_size then
             if (global.maze_settings.ore_spawn_grass or (start_zone and global.maze_settings.ore_spawn_grass_start)) and not surf.can_place_entity{name=ore_name, position={orig_x, orig_y}} then
-                game.surfaces[1].set_tiles({{name = "grass", position = {orig_x, orig_y}}}, true)
+                game.surfaces[1].set_tiles({{name = "grass-1", position = {orig_x, orig_y}}}, true)
             end
             if surf.can_place_entity{name=ore_name, position={orig_x, orig_y}} then
                 cell_dist = 1-(1-cell_dist)/ore_size
