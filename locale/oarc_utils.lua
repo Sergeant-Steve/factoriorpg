@@ -646,7 +646,7 @@ function CreateCropCircle(surface, centerPos, chunkArea, tileRadius)
             -- Fill in all unexpected water in a circle
             if (distVar < tileRadSqr) then
                 if (surface.get_tile(i,j).collides_with("water-tile") or ENABLE_SPAWN_FORCE_GRASS) then
-                    table.insert(dirtTiles, {name = "grass", position ={i,j}})
+                    table.insert(dirtTiles, {name = "grass-1", position ={i,j}})
                 end
             end
 
@@ -677,7 +677,7 @@ function CreateCropOctagon(surface, centerPos, chunkArea, tileRadius)
             -- Fill in all unexpected water in a circle
             if (distVar < tileRadius+2) then
                 if (surface.get_tile(i,j).collides_with("water-tile") or ENABLE_SPAWN_FORCE_GRASS) then
-                    table.insert(dirtTiles, {name = "grass", position ={i,j}})
+                    table.insert(dirtTiles, {name = "grass-1", position ={i,j}})
                 end
             end
 
@@ -903,7 +903,7 @@ function CreateHoldingPen(surface, chunkArea)
             for j=chunkArea.left_top.y,chunkArea.right_bottom.y,1 do
 
                 -- Fill all area with grass only
-                table.insert(grassTiles, {name = "grass", position ={i,j}})
+                table.insert(grassTiles, {name = "grass-1", position ={i,j}})
 
                 -- Create the spawn box walls
                 if (j<15 and j>-16) then

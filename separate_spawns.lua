@@ -98,6 +98,15 @@ function GenerateSpawnChunk( event, spawnPos)
                     entity.destroy()
                 end
             end
+            -- remove cliffs in the immediate areas?
+            for key, entity in pairs(surface.find_entities_filtered({area=chunkArea, type= "cliff"})) do
+                --Destroying some cliffs can cause a chain-reaction.  Validate inputs.
+                if entity and entity.valid then
+                    if ((spawnPos.x - entity.position.x)^2 + (spawnPos.y - entity.position.y)^2 < ENFORCE_LAND_AREA_TILE_DIST^2) then
+                        entity.destroy()
+                    end
+                end
+            end
             -- Remove resources in the immediate area.
             for k, entity in pairs(surface.find_entities_filtered{area=chunkArea, type="resource"}) do
                 if ((spawnPos.x - entity.position.x)^2 + (spawnPos.y - entity.position.y)^2 < ENFORCE_LAND_AREA_TILE_DIST^2) then

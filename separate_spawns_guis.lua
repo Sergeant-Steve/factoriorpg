@@ -383,7 +383,7 @@ function DisplaySharedSpawnOptions(player)
     shGui.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
 --    shGui.style.minimal_width = SPAWN_GUI_MIN_WIDTH
 --    shGui.style.minimal_height = SPAWN_GUI_MIN_HEIGHT
-    shGui.horizontal_scroll_policy = "never"
+    --shGui.horizontal_scroll_policy = "never"
 
 
     for spawnName,sharedSpawn in pairs(global.sharedSpawns) do
@@ -467,7 +467,7 @@ function ExpandSpawnCtrlGui(player, tick)
                             name="spwn_ctrl_panel", caption=""}
         ApplyStyle(spwnCtrls, my_fixed_width_style)
         spwnCtrls.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
-        spwnCtrls.horizontal_scroll_policy = "never"
+        --spwnCtrls.horizontal_scroll_policy = "never"
 
         if ENABLE_SHARED_SPAWNS then
             if (GetUniqueSpawn(player.name) ~= nil) then
@@ -518,7 +518,7 @@ function SpawnCtrlGuiClick(event)
         ExpandSpawnCtrlGui(player, event.tick)       
     end
 
-    if (name == "accessToggle") then
+    if (name == "accessToggle") then --This no longer fires.
         if event.element.state then
             if DoesPlayerHaveCustomSpawn(player) then
                 if (global.sharedSpawns[player.name] == nil) then
@@ -548,3 +548,30 @@ function SpawnCtrlGuiClick(event)
         end
     end
 end
+
+function SpawnCtrlAccessToggle(event)
+    if not (event.element and event.element.valid) then return end
+    if event.element.name ~= "accessToggle" then return end
+    
+    local player = game.players[event.player_index]
+
+    if event.element.state then
+        if DoesPlayerHaveCustomSpawn(player) then
+            if (global.sharedSpawns[player.name] == nil) then
+                CreateNewSharedSpawn(player)
+            else
+                global.sharedSpawns[player.name].openAccess = true
+            end
+            
+            SendBroadcastMsg("New players can now join " .. player.name ..  "'s base!")
+        end
+    else
+        if (global.sharedSpawns[player.name] ~= nil) then
+            global.sharedSpawns[player.name].openAccess = false
+            SendBroadcastMsg("New players can no longer join " .. player.name ..  "'s base!")
+        end
+    end
+end
+
+--Dirty hack
+Event.register(defines.events.on_gui_checked_state_changed, SpawnCtrlAccessToggle)

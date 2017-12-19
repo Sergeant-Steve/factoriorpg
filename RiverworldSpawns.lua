@@ -55,7 +55,7 @@ local function GenerateRails(surface, chunkArea, railX, rails)
         local tiles = {};
         for y = rect.left_top.y, rect.right_bottom.y-1 do
             for x = rect.left_top.x, rect.right_bottom.x-1 do
-                table.insert(tiles, {name = "grass", position = {x,y}});
+                table.insert(tiles, {name = "grass-1", position = {x,y}});
             end
         end
         surface.set_tiles(tiles)
@@ -118,12 +118,12 @@ local function GenerateWalls(surface, wallRect, railsRect, railsRect2)
     for y=wallRect.left_top.y, wallRect.right_bottom.y-1 do
         for x = wallRect.left_top.x, wallRect.right_bottom.x-1 do
 			if scenario.config.riverworld.stoneWalls then
-                table.insert(tiles, {name = "grass",position = {x,y}})
+                table.insert(tiles, {name = "grass-1",position = {x,y}})
 			else
 		        if not ChunkContains(railsRect, {x=x,y=y}) and not ChunkContains(railsRect2, {x=x,y=y} )then
 		                table.insert(tiles, {name = "out-of-map",position = {x,y}})
 		        else
-		                table.insert(tiles, {name = "grass",position = {x,y}})
+		                table.insert(tiles, {name = "grass-1",position = {x,y}})
 		        end
 			end
         end

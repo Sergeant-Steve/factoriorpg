@@ -58,7 +58,7 @@ function frontier_silo.CreateCropCircle(surface, centerPos, chunkArea, tileRadiu
                 -- Fill in all unexpected water in a circle
                 if (distVar < tileRadSqr) then
                     if (surface.get_tile(i,j).collides_with("water-tile") or ENABLE_SPAWN_FORCE_GRASS) then
-                        table.insert(dirtTiles, {name = "grass", position ={i,j}})
+                        table.insert(dirtTiles, {name = "grass-1", position ={i,j}})
                     end
                 end
     
@@ -88,7 +88,7 @@ local function CreateRocketSilo(surface, chunkArea)
         local i = 1
         for dx = -6,6 do
             for dy = -7,6 do
-                tiles[i] = {name = "grass", position = {global.siloPosition.x+dx, global.siloPosition.y+dy}}
+                tiles[i] = {name = "grass-1", position = {global.siloPosition.x+dx, global.siloPosition.y+dy}}
                 i=i+1
             end
         end

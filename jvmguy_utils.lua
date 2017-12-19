@@ -18,7 +18,7 @@ function CreateCropOctagon(surface, centerPos, chunkArea, landRadius, treeWidth,
             -- Fill in all unexpected water in a circle
             if (distVar < landRadius) then
                 if (surface.get_tile(i,j).collides_with("water-tile") or ENABLE_SPAWN_FORCE_GRASS) then
-                    table.insert(dirtTiles, {name = "grass", position ={i,j}})
+                    table.insert(dirtTiles, {name = "grass-1", position ={i,j}})
                 end
             end
 
