@@ -257,7 +257,7 @@ local function set_tiles()
 	local tiles = {}
 	for x = -164,163 do
 		for y = 0,59 do
-			local tile = "grass"
+			local tile = "grass-1"
 			if (x <= -163 or x >= 162) and y >= 9 and y <= 59 then
 				tile = "out-of-map"
 			end
