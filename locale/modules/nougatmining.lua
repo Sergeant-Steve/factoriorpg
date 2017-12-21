@@ -10,6 +10,7 @@ nougat = {}
 nougat.LOGISTIC_RADIUS = true --Use the logistic radius, else use construction radius.
 nougat.TARGET_RATIO = 0.10 --Aim to keep this proportion of construction bots free.
 nougat.DEFAULT_RATIO = 0.5 --The ratio of choclate to chew.  Err, I mean how many bots we assign to mining.  Starts here, changes later based on bot availability.
+nougat.MAX_ITEMS = 400 --Spawning more than this gets really laggy.
 global.nougat = {roboports = {}, index=1, easy_ores={}, networks={}, optout={}} --Networks is of format {network=network, ratio=ratio}
 
 function nougat.bake()
@@ -144,7 +145,7 @@ function nougat.chewy(event)
     local cargo_multiplier = force.worker_robots_storage_bonus + 1
     local products = {}
     
-    count = math.min(math.ceil(ore.amount / cargo_multiplier), count)
+    count = math.min(math.ceil(ore.amount / cargo_multiplier), nougat.MAX_ITEMS, count)
             
     --game.print("Mining " .. ore.name .. " with " ..count .. " bots.")
     for k,v in pairs(ore.prototype.mineable_properties.products) do

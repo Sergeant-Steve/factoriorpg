@@ -294,26 +294,26 @@ function peppermint.pick(forcename)
 
     local picker = global.peppermint[forcename].picker
     
-    global.peppermint[forcename].lastkey = next(picker, global.peppermint[forcename].lastkey)
+    --global.peppermint[forcename].lastkey = next(picker, global.peppermint[forcename].lastkey)
 
-    local value = picker[global.peppermint[forcename].lastkey]
+    local value = table.remove(picker)
     if value and value.valid then
         return value
     end
 
-    if global.peppermint[forcename].lastkey ~= nil then
-        --We're not yet at the end of the table.  Maybe an ore got depleted but will get cleaned on next shuffle.
-        return
-    end
+    -- if global.peppermint[forcename].lastkey ~= nil then
+    --     --We're not yet at the end of the table.  Maybe an ore got depleted but will get cleaned on next shuffle.
+    --     return
+    -- end
 
     --Still here?
     peppermint.reset_picker(forcename)
+    picker = global.peppermint[forcename].picker
 
     --global.peppermint[forcename].lastkey = nil
     --Check if table is empty, if not retry.
-    if next(picker) ~= nil then
+    if #picker > 1 then --Checking if > 0 should be safe, but let's not.
         return peppermint.pick(forcename)
-        --game.print("" ..next(picker))
     end
 end
 
