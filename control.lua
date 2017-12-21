@@ -8,7 +8,7 @@ require "rpg" --Award bonuses based on experience earned.
 --require "permissions" --Permission manager
 --require "trusted" --Module to add trusted players to a seperate permission group
 --require "locale/utils/patreon" --Module to give patreons spectate and a nice unique tag
-require "locale/utils/admin"	--Admin module to give the admins spectate, commands and character modifications.
+--require "locale/utils/admin"	--Admin module to give the admins spectate, commands and character modifications.
 require "announcements"	--Module to announce stuff ingame / give the players a welcome message
 require "tag" --Module to let players set a tag behind their names to improve teamwork
 --require "fmcd" --Module to consolidate saving data to an output file for the agent
@@ -26,8 +26,8 @@ require "locale/modules/dirtpath" --For some silliness.
 --require "dark harvest event" --Temp for testing.
 --require "locale/modules/bluebuild" --Bluebuild softmod
 require "locale/modules/autofill" --Softmod autofill separated from Oarc
---require "locale/modules/nougatmining" --Logistic mining softmod.
-require "locale/modules/peppermintmining" --Logistic mining softmod.
+require "locale/modules/nougatmining" --Logistic mining softmod.
+--require "locale/modules/peppermintmining" --Logistic mining softmod.
 require "locale/modules/piety" --Way to consume random excess stone.
 --require "belt_limit" --Limits number of belts per player.  Mostly for UPS reasons.
 require "locale/modules/bpmirror" --Adds bpmirror command to flip BPs.
