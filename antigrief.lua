@@ -55,7 +55,7 @@ function antigrief.decon(event)
         return
     end
     if event.area.left_top.x == event.area.right_bottom.x or event.area.left_top.y == event.area.right_bottom.y then
-        log("Antigrief: Deconstruction area is of zero size.")
+        --log("Antigrief: Deconstruction area is of zero size.")
         return
     end
     local player = game.players[event.player_index]
@@ -69,7 +69,7 @@ function antigrief.decon(event)
                 count = count + 1
             end
         end
-        if count >= 50 then
+        if count >= 150 then
             antigrief.alert(player.name .. " has deconstructed ".. count .. " entities.")
             return
         end
@@ -97,24 +97,36 @@ function antigrief.da_bomb(event)
     end
 end
 
+--If new players equip an artillery remote... Throw a warning!
+function antigrief.remote(event)
+    local player = game.players[event.player_index]
+    if player.online_time > antigrief.TROLL_TIMER then
+        return
+    end
+    if player.cursor_stack.valid_for_read and player.cursor_stack.name == "artillery-targeting-remote" then
+        if antigrief.check_cooldown(event.player_index, "artillery") then
+            antigrief.alert(player.name .. " has equipped an artillery remote.")
+        end
+    end
+end
+
 --Look for players hoarding high value items.
 function antigrief.hoarder(event)
     local player = game.players[event.player_index]
     if player.online_time > antigrief.TROLL_TIMER then
         return
     end
-    if antigrief.check_cooldown(event.player_index, "hoarding") then
-        if player.get_item_count("speed-module-3") > 10 or
+    if ( player.get_item_count("speed-module-3") > 10 or
         player.get_item_count("productivity-module-3") > 10 or
-        player.get_item_count("effectivity-module-3") > 10 then
+        player.get_item_count("effectivity-module-3") > 10 ) and 
+        antigrief.check_cooldown(event.player_index, "hoarding") then
             antigrief.alert(player.name .. " is hoarding T3 modules.")
-        end
-        if player.get_item_count("uranium-235") > 10 then
-            antigrief.alert(player.name .. " is hoarding U-235.")
-        end
-        if player.get_item_count("power-armor-mk2") >= 2 then
-            antigrief.alert(player.name.. " is hoarding power armor mk2s.")
-        end
+    end
+    if player.get_item_count("uranium-235") > 10 and antigrief.check_cooldown(event.player_index, "hoarding") then
+        antigrief.alert(player.name .. " is hoarding U-235.")
+    end
+    if player.get_item_count("power-armor-mk2") >= 2 and antigrief.check_cooldown(event.player_index, "hoarding") then
+        antigrief.alert(player.name.. " is hoarding power armor mk2s.")
     end
 end
 
@@ -133,7 +145,9 @@ function antigrief.armor_drop(event)
         if armor then
             local item = player.surface.spill_item_stack(player.position, armor) --This could be used to duplicate equipment if we remove the wrong PA2.  But such a weird edge case...
             player.remove_item("power-armor-mk2")
-            item.order_deconstruction(player.force)
+            if item and item.valid then --It may have dropped on a belt
+                item.order_deconstruction(player.force)
+            end
         else --Something went wrong.  We should have found the armor.  God inventory?
             log("Antigrief: Power Armor mk2 detected but not found")
         end
@@ -175,24 +189,19 @@ end
 
 --Check if a message has been generated about this player recently.  If true, set cooldown.
 function antigrief.check_cooldown(player_index, type)
-    local cooldown = global.antigrief_cooldown[player_index]
-    if not cooldown then
-        cooldown = {}
+    local cooldowns = global.antigrief_cooldown[player_index]
+    if not cooldowns then
+        cooldowns = {}
     end
-    if (not cooldown.tick) or cooldown.tick < game.tick then
-        cooldown.tick = game.tick + antigrief.SPAM_TIMER
-        cooldown.type = type
-        global.antigrief_cooldown[player_index] = cooldown
+    --Type matches?  Check CD
+    if not cooldowns[type] then cooldowns[type] = -antigrief.SPAM_TIMER end
+    local tick = cooldowns[type]
+    if tick < game.tick then
+        cooldowns[type] = game.tick + antigrief.SPAM_TIMER
+        global.antigrief_cooldown[player_index] = cooldowns
         return true
-    else
-        if not cooldown.type == type then
-            cooldown.tick = game.tick + antigrief.SPAM_TIMER
-            cooldown.type = type
-            return true
-        else
-            return false
-        end
     end
+    return false
 end
 
 --Is this a water-well pump?
@@ -233,6 +242,7 @@ function antigrief.wanton_destruction(event)
 end
 
 Event.register(defines.events.on_player_ammo_inventory_changed, antigrief.da_bomb)
+Event.register(defines.events.on_player_cursor_stack_changed, antigrief.remote)
 Event.register(defines.events.on_player_main_inventory_changed, antigrief.hoarder)
 Event.register(defines.events.on_player_left_game, antigrief.armor_drop)
 Event.register(defines.events.on_player_mined_entity, antigrief.pump)
