@@ -74,7 +74,7 @@ function piety.bless(surface, position, resource, amount)
         end
     end
     --If any miners are present, wake them up!
-    local miners = surface.find_entities_filtered{type="mining-drill", area={{position.x-radius, position.y-radius}, position.x+radius}, position.y+radius}
+    local miners = surface.find_entities_filtered{type="mining-drill", area={{position.x-radius, position.y-radius}, {position.x+radius, position.y+radius}}}
     for k,v in pairs(miners) do
         v.active = false
         v.active = true
