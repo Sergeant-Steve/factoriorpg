@@ -72,7 +72,7 @@ function nougat.register(event)
 end
 
 function nougat.chewy(event)
-    if not (game.tick % 300 == 191) then
+    if not (game.tick % 60 == 31) then
         return
     end
     if (#global.nougat.roboports == 0) then
@@ -184,6 +184,12 @@ function nougat.chewy(event)
     end
     --Also add pollution.  Mining productivity is omitted.
     surface.pollute(position, global.nougat.pollution * count * cargo_multiplier)
+    
+    --Add to productivity stats.
+    for k,v in pairs(products) do
+        force.item_production_statistics.on_flow(v.name, v.count * count * cargo_multiplier)
+    end
+    
     --game.print("Created " .. #products .. " for pickup.")
 
     --Deplete the ore.
