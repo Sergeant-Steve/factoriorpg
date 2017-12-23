@@ -225,6 +225,11 @@ function peppermint.mine(name, minty)
     surface.pollute(position, peppermint.POLLUTION * count * cargo_multiplier)
     --game.print("Created " .. #products .. " for pickup.")
 
+    --Add to productivity stats.
+    for k,v in pairs(products) do
+        force.item_production_statistics.on_flow(v.name, v.count * count * cargo_multiplier)
+    end
+
     --Deplete the ore.
     if ore.amount > math.ceil(count * cargo_multiplier / productivity) then
         ore.amount = ore.amount - math.ceil(count * cargo_multiplier / productivity)
