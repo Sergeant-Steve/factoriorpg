@@ -11,6 +11,7 @@ nougat.LOGISTIC_RADIUS = true --Use the logistic radius, else use construction r
 nougat.TARGET_RATIO = 0.10 --Aim to keep this proportion of construction bots free.
 nougat.DEFAULT_RATIO = 0.5 --The ratio of choclate to chew.  Err, I mean how many bots we assign to mining.  Starts here, changes later based on bot availability.
 nougat.MAX_ITEMS = 400 --Spawning more than this gets really laggy.
+nougat.USE_CARGO_COUNT = false --Turning this on is ridiculously OP.
 global.nougat = {roboports = {}, index=1, easy_ores={}, networks={}, optout={}} --Networks is of format {network=network, ratio=ratio}
 
 function nougat.bake()
@@ -71,7 +72,7 @@ function nougat.register(event)
     end
 end
 
-function nougat.chewy(event)
+function nougat.chewy(event, assigned)
     if not (game.tick % 60 == 31) then
         return
     end
@@ -104,7 +105,7 @@ function nougat.chewy(event)
         return
     end
     local area = {{roboport.position.x - radius, roboport.position.y - radius}, {roboport.position.x + radius-1, roboport.position.y + radius-1}}
-    local ores = roboport.surface.find_entities_filtered{type="resource", area=area}
+    local ores = roboport.surface.find_entities_filtered{type="resource", limit=5, area=area}
     --Filter out oil...
     if #ores > 0 then
         for i = #ores, 1, -1 do
@@ -129,7 +130,8 @@ function nougat.chewy(event)
         end
         --game.print("Removing roboport.  No ore found.")
     end
-    local count = nougat.oompa_loompa(roboport.logistic_cell.logistic_network)
+    if not assigned then assigned = 0 end
+    local count = nougat.oompa_loompa(roboport.logistic_cell.logistic_network) - assigned
     if count < 30 then
         --We shouldn't bother. Need to advance index in case this is an isolated roboport.
         global.nougat.index = global.nougat.index + 1
@@ -142,7 +144,10 @@ function nougat.chewy(event)
     local force = roboport.force
     local surface = roboport.surface
     local productivity = force.mining_drill_productivity_bonus
-    local cargo_multiplier = force.worker_robots_storage_bonus + 1
+    local cargo_multiplier = 1
+    if nougat.USE_CARGO_COUNT then
+        cargo_multiplier = force.worker_robots_storage_bonus + 1
+    end
     local products = {}
     
     count = math.min(math.ceil(ore.amount / cargo_multiplier), nougat.MAX_ITEMS, count)
@@ -201,6 +206,9 @@ function nougat.chewy(event)
         if ore and ore.valid then
             ore.destroy()
         end
+        --Let's go again.
+        global.nougat.index = global.nougat.index + 1
+        return nougat.chewy(event, count+assigned)
     end
 
     --Finally let's advance the index.
