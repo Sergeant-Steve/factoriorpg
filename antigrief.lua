@@ -8,18 +8,20 @@ global.antigrief_cooldown = {}
 antigrief.TROLL_TIMER = 60 * 60 * 30 --30 minutes.  Players must be online this long to not throw some warnings.
 antigrief.SPAM_TIMER = 60 * 60 * 2 --10 minutes.  Limit inventory related messages to once per 10m.
 
---antigrief.WARN_TYPES = {"destruction", "hoarding", "mining"} --We'll just pass a string for the type.
-
---Print text to online admins and write to the log.
-function antigrief.alert(text)
-    for n, p in pairs(game.players) do
-        if p.admin then
-            p.print(text)
-        end
+--ACTIVE functions
+function antigrief.arty_remote_ban(event)
+    local player = game.players[event.player_index]
+    local area = {{event.position.x-5, event.position.y-5}, {event.position.x+20}, {event.position.y+20}}
+    local count = player.surface.count_entities_filtered{force=game.player.force, area=area}
+    if event.item.name == "artillery-targeting-remote" and count > 50 then
+        game.ban_player(player, "Artillery griefing")
+    elseif player.surface.count_entities_filtered{force=game.player.force, area=area, name="steam-engine"} > 4 then --Grenading power
+        game.ban_player(player, "Grenading power")
     end
-    log("Antigrief: " .. text)
 end
 
+
+--PASSIVE functions
 --Common tactic is to remove pump.  So if someone landfills a pump and removes it... That's a huge red flag.
 function antigrief.pump(event)
     if not event.entity and not event.entity.valid then
@@ -187,6 +189,16 @@ function antigrief.check_size_loginet_size(event)
     end
 end
 
+--Print text to online admins and write to the log.
+function antigrief.alert(text)
+    for n, p in pairs(game.players) do
+        if p.admin then
+            p.print(text)
+        end
+    end
+    log("Antigrief: " .. text)
+end
+
 --Check if a message has been generated about this player recently.  If true, set cooldown.
 function antigrief.check_cooldown(player_index, type)
     local cooldowns = global.antigrief_cooldown[player_index]
@@ -241,6 +253,7 @@ function antigrief.wanton_destruction(event)
     end
 end
 
+Event.register(defines.events.on_player_used_capsule, antigrief.arty_remote_ban)
 Event.register(defines.events.on_player_ammo_inventory_changed, antigrief.da_bomb)
 Event.register(defines.events.on_player_cursor_stack_changed, antigrief.remote)
 Event.register(defines.events.on_player_main_inventory_changed, antigrief.hoarder)
