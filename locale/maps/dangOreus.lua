@@ -144,6 +144,16 @@ function dangOre(event)
     if event.created_entity.bounding_box.left_top.x == event.created_entity.bounding_box.right_bottom.x or event.created_entity.bounding_box.left_top.y == event.created_entity.bounding_box.right_bottom.y then
         return
     end
+    if false then --Dificulty setting
+		if event.created_entity.type == "transport-belt" or
+		event.create_entity.type == "underground-belt" or
+		event.created_entity.type == "splitter" or
+		event.created_entity.type == "electric-pole" or
+		event.created_entity.type == "container" or
+		event.created_entity.type == "logistic-container" then
+			return
+		end
+	end
     local last_user = event.created_entity.last_user
     local ores = event.created_entity.surface.count_entities_filtered{type="resource", area=event.created_entity.bounding_box}
     if ores > 0 then
