@@ -2,9 +2,6 @@
 --Written by Mylon, 2017
 --MIT License
 
---Todo:
---Wake /miners up.
-
 if MODULE_LIST then
 	module_list_add("Piety")
 end
@@ -13,6 +10,7 @@ end
 piety = {}
 piety.THRESHHOLD = 20000 --How much landfill must a loginet have to trigger?
 piety.DIVISOR = 15 --Consume 1 / this landfill per event.
+piety.ORE_LIST = {"iron-ore", "copper-ore", "coal"} --This is the list of ores that landfill can spawn.  Need to replace this with an auto-generated list for mod compatability.
 
 function piety.tribute(event)
     --Check once per hour, offset by 7 minutes
@@ -32,14 +30,24 @@ function piety.tribute(event)
                             local cell = network.cells[math.random(#network.cells)]
                             if cell and cell.valid and cell.owner and cell.owner.valid then
                                 local miracle = cell.owner
-                                --55% chance of iron, 30% chance of copper, 15% chance of coal
-                                local res = "iron-ore"
-                                local rand = math.random()
-                                if rand < 0.15 then
-                                    res = "coal"
-                                elseif rand < 0.45 then
-                                    res = "copper-ore"
+
+                                --Find minimum in loginet of iron, coal, copper and grant that.
+                                local ores = {}
+                                for k,v in pairs(piety.ORE_LIST) do
+                                    ores[v] = network.get_item_count(v)
                                 end
+                                table.sort(ores)                                
+                                local res = next(ores)
+
+                                --55% chance of iron, 30% chance of copper, 15% chance of coal
+                                -- local res = "iron-ore"
+                                -- local rand = math.random()
+                                -- if rand < 0.15 then
+                                --     res = "coal"
+                                -- elseif rand < 0.45 then
+                                --     res = "copper-ore"
+                                -- end
+
                                 local amount = math.floor(network.get_item_count("landfill") / piety.DIVISOR)
                                 --Landfill costs 20 stone, so the blessing should be 20x the amount of landfill taken.
                                 piety.bless(cell.owner.surface, cell.owner.position, res, amount * 20)
