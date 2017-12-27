@@ -9,7 +9,8 @@
 --evening:          0.45
 --morning:          0.55
 --Full daylight 50% of the time, partial daylight an additional 40%.  Let's call this summer.
---Wainter is the opposite: Full night 50% of the time, full daylight 10%.
+--Winter is the opposite: Full night 50% of the time, full daylight 10%.
+--Dusk can be < 0 and morning > 1, leading to less full daylight.
 
 if MODULE_LIST then
 	module_list_add("Seasons")
@@ -17,8 +18,12 @@ end
 
 seasons = {}
 seasons.YEAR_LENGTH = 30 --Length in days
-seasons.SUMMER_STATS = { dusk=0.25, evening=0.45, morning=0.55, dawn=0.75 }
-seasons.WINTER_STATS = { dusk=0.05, evening=0.25, morning=0.75, dawn=0.95 }
+--seasons.SUMMER_STATS = { dusk=0.25, evening=0.45, morning=0.55, dawn=0.75 }
+seasons.SPRING_STATS = { dusk=0.15, evening=0.35, morning=0.65, dawn=0.85 }
+--seasons.WINTER_STATS = { dusk=0.05, evening=0.25, morning=0.75, dawn=0.95 }
+seasons.AXIAL_TILT = 0.10 -- Determines how much day length varies.  Goes from 0.01 to 0.15
+
+
 global.seasons = {day_length = 25000}
 
 function seasons.daylight_savings(event)
@@ -27,8 +32,13 @@ function seasons.daylight_savings(event)
     local time_of_year = seasons.time_of_year()
     for _, surface in pairs(game.surfaces) do
         if not surface.freeze_daytime then
-            for k, v in pairs(seasons.SUMMER_STATS) do
-                surface[k] = seasons.lerp(seasons.WINTER_STATS[k], seasons.SUMMER_STATS[k], math.sin(math.pi * time_of_year))
+            for k, v in pairs(seasons.SPRING_STATS) do
+                --surface[k] = seasons.SPRING_STATS[k] + 0.10 * math.sin(2 * math.pi * (time_of_year-0.25))
+                if seasons.SPRING_STATS[k] < 0.5 then
+                    surface[k] = seasons.SPRING_STATS[k] + 0.10 * math.sin(2 * math.pi * (time_of_year-0.25))
+                else
+                    surface[k] = seasons.SPRING_STATS[k] - 0.10 * math.sin(2 * math.pi * (time_of_year-0.25))
+                end
             end
         end
     end
