@@ -12,10 +12,10 @@ antigrief.SPAM_TIMER = 60 * 60 * 2 --10 minutes.  Limit inventory related messag
 function antigrief.arty_remote_ban(event)
     local player = game.players[event.player_index]
     local area = {{event.position.x-5, event.position.y-5}, {event.position.x+20}, {event.position.y+20}}
-    local count = player.surface.count_entities_filtered{force=game.player.force, area=area}
+    local count = player.surface.count_entities_filtered{force=player.force, area=area}
     if event.item.name == "artillery-targeting-remote" and count > 50 then
         game.ban_player(player, "Artillery griefing")
-    elseif player.surface.count_entities_filtered{force=game.player.force, area=area, name="steam-engine"} > 4 then --Grenading power
+    elseif player.surface.count_entities_filtered{force=player.force, area=area, name="steam-engine"} > 4 then --Grenading power
         game.ban_player(player, "Grenading power")
     end
 end
