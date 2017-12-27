@@ -146,7 +146,7 @@ function dangOre(event)
     end
     if false then --Dificulty setting
 		if event.created_entity.type == "transport-belt" or
-		event.create_entity.type == "underground-belt" or
+		event.created_entity.type == "underground-belt" or
 		event.created_entity.type == "splitter" or
 		event.created_entity.type == "electric-pole" or
 		event.created_entity.type == "container" or
