@@ -11,11 +11,11 @@ antigrief.SPAM_TIMER = 60 * 60 * 2 --10 minutes.  Limit inventory related messag
 --ACTIVE functions
 function antigrief.arty_remote_ban(event)
     local player = game.players[event.player_index]
-    local area = {{event.position.x-5, event.position.y-5}, {event.position.x+20}, {event.position.y+20}}
+    local area = {{event.position.x-20, event.position.y-20}, {event.position.x+20, event.position.y+20}}
     local count = player.surface.count_entities_filtered{force=player.force, area=area}
     if event.item.name == "artillery-targeting-remote" and count > 50 then
         game.ban_player(player, "Artillery griefing")
-    elseif player.surface.count_entities_filtered{force=player.force, area=area, name="steam-engine"} > 4 then --Grenading power
+    elseif player.surface.count_entities_filtered{force=player.force, area=area, name="steam-engine"} > 10 then --Grenading power
         game.ban_player(player, "Grenading power")
     end
 end
@@ -124,8 +124,8 @@ function antigrief.hoarder(event)
         antigrief.check_cooldown(event.player_index, "hoarding") then
             antigrief.alert(player.name .. " is hoarding T3 modules.")
     end
-    if player.get_item_count("uranium-235") > 10 and antigrief.check_cooldown(event.player_index, "hoarding") then
-        antigrief.alert(player.name .. " is hoarding U-235.")
+    if player.get_item_count("uranium-235") > 30 and antigrief.check_cooldown(event.player_index, "hoarding") then
+        antigrief.alert(player.name .. " is hoarding ".. player.get_item_count("uranium-235") .. " U-235.")
     end
     if player.get_item_count("power-armor-mk2") >= 2 and antigrief.check_cooldown(event.player_index, "hoarding") then
         antigrief.alert(player.name.. " is hoarding power armor mk2s.")
