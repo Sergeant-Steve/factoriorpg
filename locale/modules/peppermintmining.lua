@@ -8,7 +8,8 @@ if MODULE_LIST then
 end
 
 peppermint = { MAX_ITEMS=400, --If this goes too high, it gets laggy.
-    POLLUTION= 9 * 0.9 --See math below.
+    POLLUTION= 9 * 0.9, --See math below.
+    USE_WORKER_CARGO = false --This is too OP.
 }
 
 --Persistent data is of form { forcename = { ores={}, picker={}, lastkey } }
@@ -190,7 +191,10 @@ function peppermint.mine(name, minty)
     --Reused from Nougat Mining
     local position = ore.position --Just in case we kill the ore.
     local productivity = force.mining_drill_productivity_bonus + 1
-    local cargo_multiplier = force.worker_robots_storage_bonus + 1
+    local cargo_multiplier = 1
+    if peppermint.USE_WORKER_CARGO then
+        cargo_multiplier = force.worker_robots_storage_bonus + 1
+    end
     local products = {}
     
     count = math.min(math.ceil(ore.amount / cargo_multiplier), peppermint.MAX_ITEMS, count)
@@ -269,6 +273,8 @@ end
 
 function peppermint.remove(ore, forcename)
     local forcetable = global.peppermint[forcename]
+    if not forcetable then return end
+
     local x, y = math.floor(ore.position.x), math.floor(ore.position.y)
     local removed = false
     if forcetable.ores[x] and forcetable.ores[x][y] then
@@ -281,7 +287,7 @@ function peppermint.remove(ore, forcename)
     return removed
 end
 
-function peppermint.depleted(event)
+function peppermint.nom(event)
     if not event.entity and not event.entity.valid then return end
     local x, y = math.floor(event.entity.position.x), math.floor(event.entity.position.y)
     for name, minty in pairs(global.peppermint) do
@@ -352,5 +358,5 @@ end
 
 Event.register(defines.events.on_player_deconstructed_area, peppermint.mark)
 Event.register(defines.events.on_tick, peppermint.stretch)
-Event.register(defines.events.on_resource_depleted, peppermint.depleted)
+Event.register(defines.events.on_resource_depleted, peppermint.nom)
 --Event.register(-1, peppermint.brew)
