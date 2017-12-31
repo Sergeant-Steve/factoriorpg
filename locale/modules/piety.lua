@@ -32,12 +32,14 @@ function piety.tribute(event)
                                 local miracle = cell.owner
 
                                 --Find minimum in loginet of iron, coal, copper and grant that.
-                                local ores = {}
+                                local least = {"iron-ore", 1000000000}
                                 for k,v in pairs(piety.ORE_LIST) do
-                                    ores[v] = network.get_item_count(v)
+                                     if least[2] > network.get_item_count(v) then
+                                        least[1], least[2] = v, network.get_item_count(v)
+                                     end
                                 end
-                                table.sort(ores)                                
-                                local res = next(ores)
+                                --table.sort(ores)                                
+                                local res = least[1]
 
                                 --55% chance of iron, 30% chance of copper, 15% chance of coal
                                 -- local res = "iron-ore"
