@@ -27,19 +27,32 @@ seasons.AXIAL_TILT = 0.10 -- Determines how much day length varies.  Goes from 0
 global.seasons = {day_length = 25000}
 
 function seasons.daylight_savings(event)
-    if not (event.tick % global.seasons.day_length == 0) then return end
+    if not (event.tick % global.seasons.day_length == 0) then return end    
     global.seasons.day_length = game.surfaces[1].ticks_per_day
     local time_of_year = seasons.time_of_year()
     for _, surface in pairs(game.surfaces) do
         if not surface.freeze_daytime then
-            for k, v in pairs(seasons.SPRING_STATS) do
-                --surface[k] = seasons.SPRING_STATS[k] + 0.10 * math.sin(2 * math.pi * (time_of_year-0.25))
-                if seasons.SPRING_STATS[k] < 0.5 then
-                    surface[k] = seasons.SPRING_STATS[k] + 0.10 * math.sin(2 * math.pi * (time_of_year-0.25))
-                else
-                    surface[k] = seasons.SPRING_STATS[k] - 0.10 * math.sin(2 * math.pi * (time_of_year-0.25))
-                end
+
+            local function tilt()
+                return seasons.AXIAL_TILT * math.sin(2 * math.pi * (time_of_year-0.25))
             end
+
+            --Especially for tick 0, dawn must be set before evening to prevent case (not dawn > evening)
+            surface.dusk = seasons.SPRING_STATS.dusk + tilt()
+            surface.evening = seasons.SPRING_STATS.evening + tilt()
+            surface.dawn = seasons.SPRING_STATS.dawn - tilt()
+            surface.morning = seasons.SPRING_STATS.morning - tilt()
+
+            -- for k, v in pairs(seasons.SPRING_STATS) do
+            --     --surface[k] = seasons.SPRING_STATS[k] + 0.10 * math.sin(2 * math.pi * (time_of_year-0.25))
+                
+                
+            --     if seasons.SPRING_STATS[k] < 0.5 then
+            --         surface[k] = seasons.SPRING_STATS[k] + 0.10 * math.sin(2 * math.pi * (time_of_year-0.25))
+            --     else
+            --         surface[k] = seasons.SPRING_STATS[k] - 0.10 * math.sin(2 * math.pi * (time_of_year-0.25))
+            --     end
+            -- end
         end
     end
     --These will break if year_length changes.
