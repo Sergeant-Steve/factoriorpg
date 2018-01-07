@@ -29,12 +29,17 @@ end)
 commands.add_command("loaddata", "Loads rpg data", function(data)
 	--Only the server is allowed to use this command
 	if game.player then
-		--return
+		return
 	end
 	--Incoming string is of form: {name=player.name, class=exp}
 	--rpg_tmp stores value on load so we can do a diff and store only the diff.
 	--Let's convert it from type string to type table
 	--game.print(serpent.line(str))
+	if not data.parameter then
+		log("Loaddata error: Parameter was blank.")
+		return
+	end
+
 	local data = loadstring('return ' .. data.parameter)() --Warning: This is insecure.  I don't like it one bit.
 	
 	--game.print(serpent.line(data))
