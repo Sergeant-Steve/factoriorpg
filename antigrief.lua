@@ -4,19 +4,39 @@
 
 antigrief = {}
 global.antigrief_cooldown = {}
+global.antigrief.warned = {}
 
 antigrief.TROLL_TIMER = 60 * 60 * 30 --30 minutes.  Players must be online this long to not throw some warnings.
 antigrief.SPAM_TIMER = 60 * 60 * 2 --10 minutes.  Limit inventory related messages to once per 10m.
+
+
 
 --ACTIVE functions
 function antigrief.arty_remote_ban(event)
     local player = game.players[event.player_index]
     local area = {{event.position.x-20, event.position.y-20}, {event.position.x+20, event.position.y+20}}
     local count = player.surface.count_entities_filtered{force=player.force, area=area}
+
     if event.item.name == "artillery-targeting-remote" and count > 50 then
-        game.ban_player(player, "Artillery griefing")
-    elseif player.surface.count_entities_filtered{force=player.force, area=area, name="steam-engine"} > 10 then --Grenading power
-        game.ban_player(player, "Grenading power")
+        antigrief.banhammer(player)
+        antigrief.alert(player.name .. " is using an artillery remote maliciously.")
+    elseif string.find(event.item.name, "grenade") and player.surface.count_entities_filtered{force=player.force, area=area, name="steam-engine"} > 20 then --Grenading power
+        antigrief.banhammer(player)
+        antigrief.alert(player.name .. " is using grenading power.")
+    end
+end
+
+function antigrief.banhammer(player)
+    --If player is > level 5, then warn first.
+    --What permission group is the player in?
+    if player.permissions_group.name == "trusted" then --Kick first.
+        if not global.antigrief.warned[player.name] then
+            global.antigrief.warned[player.name] = true
+            game.kick_player(player, "griefing (automoderator)")
+            return
+        end
+    else
+        game.ban_player(player, "griefing (automoderator)")
     end
 end
 
