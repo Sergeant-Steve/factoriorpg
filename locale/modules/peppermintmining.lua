@@ -202,7 +202,7 @@ function peppermint.mine(name, minty)
     for k,v in pairs(ore.prototype.mineable_properties.products) do
         local product
         if v.probability then
-            if math.random < v.probability then
+            if math.random() < v.probability then
                 product = {name=v.name, count=math.random(v.amount_min, v.amount_max)}
             end
         elseif v.amount then
