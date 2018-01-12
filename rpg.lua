@@ -900,7 +900,7 @@ end
 
 -- Soldier reward: Bonus radius to radar scanning
 function rpg_bonus_scan(event)
-	if not event.radar then
+	if not (event.radar and event.radar.valid) then
 		log("RPG: Radar not valid.")
 		return
 	end
