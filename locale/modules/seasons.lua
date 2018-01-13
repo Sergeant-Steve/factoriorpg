@@ -17,14 +17,15 @@ if MODULE_LIST then
 end
 
 seasons = {}
-seasons.YEAR_LENGTH = 30 --Length in days
+seasons.YEAR_LENGTH = 40 --Length in days
 --seasons.SUMMER_STATS = { dusk=0.25, evening=0.45, morning=0.55, dawn=0.75 }
 seasons.SPRING_STATS = { dusk=0.15, evening=0.35, morning=0.65, dawn=0.85 }
 --seasons.WINTER_STATS = { dusk=0.05, evening=0.25, morning=0.75, dawn=0.95 }
 seasons.AXIAL_TILT = 0.10 -- Determines how much day length varies.  Goes from 0.01 to 0.15
 
-
-global.seasons = {day_length = 25000}
+--Vanilla night length is 0.3, or 17500 ticks.
+--Spring night length is 0.5, so day length of 3/5 * vanilla would would make accumulators work identical to summer during spring/fall equinox.
+global.seasons = {day_length = 15000}
 
 function seasons.daylight_savings(event)
     if not (event.tick % global.seasons.day_length == 0) then return end    
@@ -58,18 +59,18 @@ function seasons.daylight_savings(event)
     --These will break if year_length changes.
     if time_of_year < 0.02 then
         game.print("Winter is here.")
-    elseif time_of_year > 0.23 and time_of_year < 0.24 then --Day 7
+    elseif time_of_year > 0.24 and time_of_year < 0.26 then --Day 10
         game.print("Spring is here.")
     elseif time_of_year == 0.5 then --day 15
         game.print("Summer is here.")
-    elseif time_of_year > 0.72 and time_of_year < 0.74 then --Day 22
+    elseif time_of_year > 0.74 and time_of_year < 0.76 then --Day 30
         game.print("Autumn is here.")
     end
 end
 
-function seasons.lerp(start, finish, scalar)
-    return start + (finish-start) * scalar
-end
+-- function seasons.lerp(start, finish, scalar)
+--     return start + (finish-start) * scalar
+-- end
 
 function seasons.time_of_year()
     return (game.tick % (global.seasons.day_length * seasons.YEAR_LENGTH)) / global.seasons.day_length / seasons.YEAR_LENGTH
@@ -93,4 +94,9 @@ commands.add_command("date", "What year and season is it currently?", function()
     game.player.print(str)
 end)
 
+function seasons.day_length()
+    game.surfaces[1].ticks_per_day = 15000
+end
+
 Event.register(defines.events.on_tick, seasons.daylight_savings)
+Event.register(-1, seasons.day_length)
