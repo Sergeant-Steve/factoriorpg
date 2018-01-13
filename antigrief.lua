@@ -4,7 +4,7 @@
 
 antigrief = {}
 global.antigrief_cooldown = {}
-global.antigrief.warned = {}
+global.antigrief = {warned = {}}
 
 antigrief.TROLL_TIMER = 60 * 60 * 30 --30 minutes.  Players must be online this long to not throw some warnings.
 antigrief.SPAM_TIMER = 60 * 60 * 2 --10 minutes.  Limit inventory related messages to once per 10m.
@@ -16,13 +16,17 @@ function antigrief.arty_remote_ban(event)
     local player = game.players[event.player_index]
     local area = {{event.position.x-20, event.position.y-20}, {event.position.x+20, event.position.y+20}}
     local count = player.surface.count_entities_filtered{force=player.force, area=area}
+    local ghosts = player.surface.count_entities_filtered{name="entity-ghost", force=player.force, area=area}
+
+    --Ghosts don't count!  They can't be damaged.
+    count = count - ghosts
 
     if event.item.name == "artillery-targeting-remote" and count > 50 then
         antigrief.banhammer(player)
-        antigrief.alert(player.name .. " is using an artillery remote maliciously.")
+        antigrief.alert(player.name .. " is using an artillery remote maliciously.", player.character)
     elseif string.find(event.item.name, "grenade") and player.surface.count_entities_filtered{force=player.force, area=area, name="steam-engine"} > 20 then --Grenading power
         antigrief.banhammer(player)
-        antigrief.alert(player.name .. " is using grenading power.")
+        antigrief.alert(player.name .. " is using grenading power.", player.character)
     end
 end
 
@@ -50,7 +54,7 @@ function antigrief.pump(event)
     --Only check for entities in a specific list.
     if antigrief.is_well_pump(event.entity) then
         local player = game.players[event.player_index]
-        antigrief.alert(player.name .. " has mined a well-water pump.")
+        antigrief.alert(player.name .. " has mined a well-water pump.", event.entity)
     end
 end
 
@@ -65,7 +69,7 @@ function antigrief.ghosting(event)
         --Look for units mined 200 tiles away.
         if math.abs(event.entity.position.x - player.position.x) + math.abs(event.entity.position.y - player.position.y) > 200 then
             if antigrief.check_cooldown(event.player_index, "ghosting") then
-                antigrief.alert(player.name .. " is removing blueprint ghosts.")
+                antigrief.alert(player.name .. " is removing blueprint ghosts.", event.entity)
             end
         end
     end
@@ -92,7 +96,7 @@ function antigrief.decon(event)
             end
         end
         if count >= 150 then
-            antigrief.alert(player.name .. " has deconstructed ".. count .. " entities.")
+            antigrief.alert(player.name .. " has deconstructed ".. count .. " entities.", player.character)
             return
         end
     end
@@ -100,7 +104,7 @@ function antigrief.decon(event)
     local ents = player.surface.find_entities_filtered{area=event.area, force=player.force, name="offshore-pump"}
     for k, v in pairs(ents) do
         if v.to_be_deconstructed(player.force) and antigrief.is_well_pump(v) then
-            antigrief.alert(player.name .. " has marked a well-water pump for deconstruction")
+            antigrief.alert(player.name .. " has marked a well-water pump for deconstruction", v)
             return
         end
     end
@@ -114,7 +118,7 @@ function antigrief.da_bomb(event)
     end
     if player.get_item_count("atomic-bomb") > 0 then
         if antigrief.check_cooldown(event.player_index, "atomic") then
-            antigrief.alert(player.name .. " has equipped an Atomic Bomb.")
+            antigrief.alert(player.name .. " has equipped an Atomic Bomb.", player.character)
         end
     end
 end
@@ -127,7 +131,7 @@ function antigrief.remote(event)
     end
     if player.cursor_stack.valid_for_read and player.cursor_stack.name == "artillery-targeting-remote" then
         if antigrief.check_cooldown(event.player_index, "artillery") then
-            antigrief.alert(player.name .. " has equipped an artillery remote.")
+            antigrief.alert(player.name .. " has equipped an artillery remote.", player.character)
         end
     end
 end
@@ -142,13 +146,13 @@ function antigrief.hoarder(event)
         player.get_item_count("productivity-module-3") > 10 or
         player.get_item_count("effectivity-module-3") > 10 ) and 
         antigrief.check_cooldown(event.player_index, "hoarding") then
-            antigrief.alert(player.name .. " is hoarding T3 modules.")
+            antigrief.alert(player.name .. " is hoarding T3 modules.", player.character)
     end
     if player.get_item_count("uranium-235") > 30 and antigrief.check_cooldown(event.player_index, "hoarding") then
-        antigrief.alert(player.name .. " is hoarding ".. player.get_item_count("uranium-235") .. " U-235.")
+        antigrief.alert(player.name .. " is hoarding ".. player.get_item_count("uranium-235") .. " U-235.", player.character)
     end
     if player.get_item_count("power-armor-mk2") >= 2 and antigrief.check_cooldown(event.player_index, "hoarding") then
-        antigrief.alert(player.name.. " is hoarding power armor mk2s.")
+        antigrief.alert(player.name.. " is hoarding power armor mk2s.", player.character)
     end
 end
 
@@ -205,15 +209,18 @@ function antigrief.check_size_loginet_size(event)
     end
 
     if math.abs(maxx-minx) > 2000 or math.abs(maxy-miny) then
-        antigrief.alert(event.entity.last_user.name .. "has placed a roboport in a large network.")
+        antigrief.alert(event.entity.last_user.name .. "has placed a roboport in a large network.", event.entity)
     end
 end
 
 --Print text to online admins and write to the log.
-function antigrief.alert(text)
+function antigrief.alert(text, cause)
     for n, p in pairs(game.players) do
         if p.admin then
             p.print(text)
+            if cause then
+                p.add_custom_alert(cause, {type="virtual", name="signal-A"}, text, true)
+            end
         end
     end
     log("Antigrief: " .. text)
@@ -221,10 +228,10 @@ end
 
 --Check if a message has been generated about this player recently.  If true, set cooldown.
 function antigrief.check_cooldown(player_index, type)
-    local cooldowns = global.antigrief_cooldown[player_index]
-    if not cooldowns then
-        cooldowns = {}
+    if not global.antigrief_cooldown[player_index] then
+        global.antigrief_cooldown[player_index] = {}
     end
+    local cooldowns = global.antigrief_cooldown[player_index]
     --Type matches?  Check CD
     if not cooldowns[type] then cooldowns[type] = -antigrief.SPAM_TIMER end
     local tick = cooldowns[type]
@@ -260,15 +267,15 @@ function antigrief.wanton_destruction(event)
     if event.cause.force == event.entity.force then
         --Friendly fire detected!
         if antigrief.is_well_pump(event.entity) then
-            antigrief.alert(event.cause.player.name .. " destroyed a well-water pump")
+            antigrief.alert(event.cause.player.name .. " destroyed a well-water pump", event.entity)
             return
         end
         if event.entity.type == "player" and event.entity.player then
-            antigrief.alert(event.cause.player.name .. " killed " .. event.entity.player.name )
+            antigrief.alert(event.cause.player.name .. " killed " .. event.entity.player.name, event.entity)
             return
         end
         if antigrief.check_cooldown(event.cause.player.index, "destruction") then
-            antigrief.alert(event.cause.player.name .. " is destroying friendly entites.")
+            antigrief.alert(event.cause.player.name .. " is destroying friendly entites.", event.entity)
         end       
     end
 end
