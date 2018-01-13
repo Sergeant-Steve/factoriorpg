@@ -55,7 +55,7 @@ function harvest_prettifier()
 	for k, v in pairs(game.surfaces) do
 		if global.harvest_spawn and global.harvest_spawn[k] then
 			for n, p in pairs(global.harvest_spawn[k]) do
-				harvest_reap({event = {entity = {surface=v} }}, p.amount)
+				harvest_reap({event = {entity = {surface=v, position=p.position} }}, p.amount)
 				--v.spill_item_stack(p.position, {name="uranium-ore", count=p.amount}, true)
 			end
 			global.harvest_spawn[k] = {}
