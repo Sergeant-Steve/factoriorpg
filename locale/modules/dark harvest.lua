@@ -6,7 +6,7 @@ if MODULE_LIST then
 	module_list_add("Dark Harvest")
 end
 
-HARVEST_MULTIPLIER = 0.4
+HARVEST_MULTIPLIER = 0.3
 
 --Destroy any uranium, in case someone didn't change map gen settings
 function harvest_despawn(event)
@@ -39,15 +39,24 @@ function harvest_drop(event)
 end
 
 function harvest_reap(event, amount)
-	amount = math.max(1, math.ceil(amount * HARVEST_MULTIPLIER))
-	event.entity.surface.spill_item_stack(event.entity.position, {name="uranium-ore", count=amount}, true)
+	local count = math.floor(amount * HARVEST_MULTIPLIER)
+	if math.random() < ((amount * HARVEST_MULTIPLIER) % 1) then
+		count = count + 1
+	end
+	if amount > 0 then
+		event.entity.surface.spill_item_stack(event.entity.position, {name="uranium-ore", count=count}, true)
+		--We'll assume force = player
+		local force = game.forces.player
+		force.item_production_statistics.on_flow("uranium-ore", amount)
+	end
 end
 
 function harvest_prettifier()
 	for k, v in pairs(game.surfaces) do
 		if global.harvest_spawn and global.harvest_spawn[k] then
 			for n, p in pairs(global.harvest_spawn[k]) do
-				v.spill_item_stack(p.position, {name="uranium-ore", count=p.amount}, true)
+				harvest_reap({event = {entity = {surface=v} }}, p.amount)
+				--v.spill_item_stack(p.position, {name="uranium-ore", count=p.amount}, true)
 			end
 			global.harvest_spawn[k] = {}
 		end
