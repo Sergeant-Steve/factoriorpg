@@ -43,32 +43,34 @@ commands.add_command("votekick", "Usage: /votekick <player>", function(params)
         --Must have VOTEKICK_COUNT votes or 2 votes if 3 players online.  Do not want to allow a single user to votekick on a 2 player server.
         if #global.votekick[name] >= votekick.VOTEKICK_COUNT or (#global.votekick[name] == 2 and 3 == #game.connected_players)  then
             game.print(name .. " has been kicked by player vote.")
+            votekick.kick(name)
         end
     else
         game.player.print("You have already voted to kick " .. params.parameter .. ".")
     end
 end)
 
-function votekick.init()
-    local settings = {width = 10, height = 10, seed=86}
-    game.create_surface("jail", settings)
-    local group = game.permissions.create_group("jailed")
-    --Disable features that might be abusable.
-    group.set_allows_action(defines.input_action.change_programmable_speaker_parameters, false)
-    group.set_allows_action(defines.input_action.edit_custom_tag, false)
-    group.set_allows_action(defines.input_action.delete_custom_tag, false)
-    group.set_allows_action(defines.input_action.open_train_gui, false)
-    group.set_allows_action(defines.input_action.set_train_stopped, false)
-    group.set_allows_action(defines.input_action.change_train_stop_station, false)
-    group.set_allows_action(defines.input_action.write_to_console, false)
+-- function votekick.init()
+--     local settings = {width = 10, height = 10, seed=86}
+--     game.create_surface("jail", settings)
+--     local group = game.permissions.create_group("jailed")
+--     --Disable features that might be abusable.
+--     group.set_allows_action(defines.input_action.change_programmable_speaker_parameters, false)
+--     group.set_allows_action(defines.input_action.edit_custom_tag, false)
+--     group.set_allows_action(defines.input_action.delete_custom_tag, false)
+--     group.set_allows_action(defines.input_action.open_train_gui, false)
+--     group.set_allows_action(defines.input_action.set_train_stopped, false)
+--     group.set_allows_action(defines.input_action.change_train_stop_station, false)
+--     group.set_allows_action(defines.input_action.write_to_console, false)
 
-end
+-- end
 
 function votekick.kick(name)
     local player = game.players[name]
     if not (player and player.valid) then return end
-    player.teleport({0,0}, "jail")
-    player.permission_group = game.permissions.get_group("jailed")
+    -- player.teleport({0,0}, "jail")
+    -- player.permission_group = game.permissions.get_group("jailed")
+    game.ban_player(player, "Votekicked")
 end
 
-Event.register(-1, votekick.init)
+--Event.register(-1, votekick.init)
