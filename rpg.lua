@@ -549,7 +549,7 @@ function rpg_tech_researched(event)
 end
 
 function rpg_satellite_launched(event)
-	local bonus = 20000
+	local bonus = 40000
 	if game.difficulty_settings.recipe_difficulty == 1 then
 		bonus = 2 * bonus
 	end
