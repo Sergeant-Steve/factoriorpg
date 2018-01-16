@@ -1,5 +1,5 @@
 --Grief detection
---Written by Mylon
+--Written by Mylon, 2017-2018
 --MIT License
 
 antigrief = {}
