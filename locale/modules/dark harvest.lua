@@ -35,6 +35,7 @@ function harvest.drop(event)
 			if not global.harvest_spawn[event.entity.surface.name] then
 				global.harvest_spawn[event.entity.surface.name] = {}
 			end
+			table.insert(global.harvest_spawn[event.entity.surface.name], {position=event.entity.position, amount=harvest.yield(200)})
 		end
 	end
 end
