@@ -29,12 +29,17 @@ end)
 commands.add_command("loaddata", "Loads rpg data", function(data)
 	--Only the server is allowed to use this command
 	if game.player then
-		--return
+		return
 	end
 	--Incoming string is of form: {name=player.name, class=exp}
 	--rpg_tmp stores value on load so we can do a diff and store only the diff.
 	--Let's convert it from type string to type table
 	--game.print(serpent.line(str))
+	if not data.parameter then
+		log("Loaddata error: Parameter was blank.")
+		return
+	end
+
 	local data = loadstring('return ' .. data.parameter)() --Warning: This is insecure.  I don't like it one bit.
 	
 	--game.print(serpent.line(data))
@@ -250,7 +255,7 @@ function rpg_class_picker(player)
 			player.gui.center.picker.add{type="flow", name="container", direction="vertical"}
 			player.gui.center.picker.container.add{type="button", name="Soldier", caption="Soldier", tooltip="Enhance the combat abilities of your team, larger radar radius"}
 			player.gui.center.picker.container.add{type="button", name="Builder", caption="Builder", tooltip="Extra reach, team turret damage, additional quickbars (at 20 and 50)"}
-			player.gui.center.picker.container.add{type="button", name="Scientist", caption="Scientist", tooltip="Boost combat robots, science speed, team health, team movement speed, worker robot speed/battery"}
+			player.gui.center.picker.container.add{type="button", name="Scientist", caption="Scientist", tooltip="Boost combat robots, laboratory speed and productivity, team health, team movement speed, worker robot speed/battery"}
 			player.gui.center.picker.container.add{type="button", name="Miner", caption="Miner", tooltip="Increase explosive damage and mining productivity of your team"}
 			player.gui.center.picker.container.add{type="button", name="Beastmaster", caption="Beastmaster", tooltip="Gain biter pets on nest kills. Reduces evolution scaling.(BETA)"}
 			player.gui.center.picker.container.add{type="button", name="None", caption="None", tooltip="No bonuses are given to team."}
@@ -307,7 +312,7 @@ function rpg_post_rpg_gui(event)
 	if CreateSpawnCtrlGui then
 		CreateSpawnCtrlGui(game.players[event.player_index])
 	end
-	--admin_joined(event)
+--	admin_joined(event)
 	tag_create_gui(event)
 end
 
@@ -544,7 +549,7 @@ function rpg_tech_researched(event)
 end
 
 function rpg_satellite_launched(event)
-	local bonus = 20000
+	local bonus = 40000
 	if game.difficulty_settings.recipe_difficulty == 1 then
 		bonus = 2 * bonus
 	end
@@ -895,7 +900,7 @@ end
 
 -- Soldier reward: Bonus radius to radar scanning
 function rpg_bonus_scan(event)
-	if not event.radar then
+	if not (event.radar and event.radar.valid) then
 		log("RPG: Radar not valid.")
 		return
 	end

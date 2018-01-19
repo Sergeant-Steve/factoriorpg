@@ -144,6 +144,16 @@ function dangOre(event)
     if event.created_entity.bounding_box.left_top.x == event.created_entity.bounding_box.right_bottom.x or event.created_entity.bounding_box.left_top.y == event.created_entity.bounding_box.right_bottom.y then
         return
     end
+    if false then --Dificulty setting
+		if event.created_entity.type == "transport-belt" or
+		event.created_entity.type == "underground-belt" or
+		event.created_entity.type == "splitter" or
+		event.created_entity.type == "electric-pole" or
+		event.created_entity.type == "container" or
+		event.created_entity.type == "logistic-container" then
+			return
+		end
+	end
     local last_user = event.created_entity.last_user
     local ores = event.created_entity.surface.count_entities_filtered{type="resource", area=event.created_entity.bounding_box}
     if ores > 0 then
@@ -207,8 +217,8 @@ function flOre_is_lava(event)
         end
         if math.abs(p.position.x) > EASY_ORE_RADIUS or math.abs(p.position.y) > EASY_ORE_RADIUS then
             --Check for nearby ore.
-            local count = p.surface.count_entities_filtered{type="resource", area={{p.position.x-0.5, p.position.y-0.5}, {p.position.x+0.5, p.position.y+0.5}}}
-            if count > 0 then
+            local count = p.surface.count_entities_filtered{type="resource", area={{p.position.x-10, p.position.y-10}, {p.position.x+10, p.position.y+10}}}
+            if count > 350 then
                 if p.vehicle then
                     p.surface.create_entity{name="acid-projectile-purple", target=p.vehicle, position=p.vehicle.position, speed=10}
                     p.vehicle.health = p.vehicle.health - 50
@@ -255,9 +265,13 @@ function divOresity_init()
             end
         end
         if vanilla_ores then
+            --1:1:1:1 creates way too much copper, stone.  Coal at least can be liquefied.
+            --This changes it to a 3:2:2:1 ratio
             --table.insert(global.diverse_ore_list, "iron-ore")
-            --table.insert(global.easy_ore_list, "iron-ore")
             table.insert(global.easy_ore_list, "iron-ore")
+            table.insert(global.easy_ore_list, "iron-ore")
+            table.insert(global.easy_ore_list, "copper-ore")
+            table.insert(global.easy_ore_list, "coal")
         end
     end
 

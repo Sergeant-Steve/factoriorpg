@@ -35,6 +35,8 @@ require("frontier_silo")
 --Modules
 require "locale/modules/gravemarker" --Mark player death locations on map for corpse runs.
 require "locale/modules/dirtpath" --For some silliness.
+require "locale/modules/seasons" --Let's mess with solar.
+require "locale/modules/dark harvest" --Only way to get uranium is from biter deaths.
 --require "locale/modules/tOredumonde" --Ore spawns in directions. This must be called before divOresity. NOTE: STONE_BYPRODUCT must be false.
 --require "locale/modules/dark harvest" --Only way to get uranium is from biter deaths.
 --require "dark harvest event" --Temp for testing.
@@ -46,8 +48,12 @@ require "locale/modules/piety" --Way to consume random excess stone.
 --require "belt_limit" --Limits number of belts per player.  Mostly for UPS reasons.
 require "locale/modules/bpmirror" --Adds bpmirror command to flip BPs.
 require "locale/modules/votekick" --Allows users to kick other users.
+--require "locale/modules/infinity" --Infinite ore.  Almost.  Don't recommend with peppermint/Nougat
+require "modules/enhancedbiters" --Adds extra behavior to biters to make them extra nasty.
+require "modules/playerlist" --List of online players
 
 -- World Generators: Most are exclusive.
+--require "locale/maps/TTSFN" --This Tank Stops for Nobody!
 --require "locale/maps/dangOreus" --Ore is everywhere.  Cannot build on it!
 --require "locale/maps/searious" --Everything not a resource tile is turned into water.
 --require "oarc_events" --Oarc's separate spawn scenario.

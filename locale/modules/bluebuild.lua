@@ -124,13 +124,14 @@ function bluebuild(builder)
 	local areaList = builder.surface.find_entities_filtered{area = searchArea, type = "entity-ghost", force=builder.force }
 	local tileList = builder.surface.find_entities_filtered{area = searchArea, type = "tile-ghost", force=builder.force }
 	-- Merge the lists
-	for key, value in pairs(tileList) do
-		if not areaList then
-			areaList = {}
-		end
-		table.insert(areaList, value)
-	end
+	-- for key, value in pairs(tileList) do
+	-- 	if not areaList then
+	-- 		areaList = {}
+	-- 	end
+	-- 	table.insert(areaList, value)
+	-- end
 	-- game.print("Found " .. #areaList .. " ghosts in area.")
+	::liststart::
 	for index, ghost in pairs(areaList) do
 		-- if ghost == nil or not ghost.valid then
 		-- 	table.remove(areaList, index)
