@@ -200,22 +200,29 @@ function peppermint.mine(name, minty)
     count = math.min(math.ceil(ore.amount / cargo_multiplier), peppermint.MAX_ITEMS, count)
 
     for k,v in pairs(ore.prototype.mineable_properties.products) do
-        local product
-        if v.probability then
-            if math.random() < v.probability then
-                product = {name=v.name, count=math.random(v.amount_min, v.amount_max)}
+		local product
+        if v.type == "item" then --If fluid, not sure what to do here.    
+            if v.amount then
+                product = {name=v.name, count=v.amount}
+            elseif v.probability then
+                if math.random() < v.probability then
+                    if v.amount_min ~= v.amount_max then
+                        product = {name=v.name, count=math.random(v.amount_min, v.amount_max)}
+                    else
+                        product = {name=v.name, count=v.amount_max}
+                    end
+                end
+            else --Shouldn't have to use this.
+                product = {name=v.name, count=1}
             end
-        elseif v.amount then
-            product = {name=v.name, count=v.amount}
-        else
-            product = {name=v.name, count=1}
         end
-        --Stack ore according to force.worker_robots_storage_bonus
+		if product then
+			product.count = product.count * cargo_multiplier
 
-        product.count = product.count * cargo_multiplier
-
-        table.insert(products, {name=product.name, count=product.count})
-    end 
+			table.insert(products, {name=product.name, count=product.count})
+        end 
+    end
+    
     for i = 1, count do
         for k, v in pairs(products) do
             local oreitem = surface.create_entity{name="item-on-ground", stack=v, position=position}
