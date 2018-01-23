@@ -893,7 +893,7 @@ function rpg_give_team_bonuses(force)
 	game.map_settings.enemy_evolution.time_factor = global.base_evolution_time * beastmasterbonus
 	
 	--Fix for frontier silo:
-	if FRONTIER_ROCKET_SILO_MODE then
+	if frontier_silo then
 		force.recipes["rocket-silo"].enabled = false
 	end
 end
