@@ -30,7 +30,7 @@ require("separate_spawns_guis")
 spawnGenerator = require("RiverworldSpawns")
 wipespawn = require("jvm-wipespawn")
 require("jvmguy_main") --This includes starting items.
-require("frontier_silo")
+--require("frontier_silo")
 
 --Modules
 require "locale/modules/gravemarker" --Mark player death locations on map for corpse runs.

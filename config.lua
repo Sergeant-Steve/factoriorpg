@@ -276,7 +276,7 @@ scenario.config.riverworld = {
     -- this mostly inherits the separateSpawns config, but has a few minor differences
     enabled = true,
 	stoneWalls = false,		-- if true, makes a stone wall. if false, generate a void.
-    firstSpawnPoint = 16,
+    firstSpawnPoint = 4,
     -- moat=0,         -- horizontal offset relative to center of spawn
     -- moatWidth=8,    
     spacing = 416,  -- because of "no good reasons" this should be a multiple of 32 (chunk width)
