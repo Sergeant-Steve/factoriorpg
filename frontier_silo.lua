@@ -4,6 +4,10 @@
 --require("config")
 --require("oarc_utils")
 
+if MODULE_LIST then
+	module_list_add("Frontier Silo")
+end
+
 frontier_silo = {}
 
 function frontier_silo.init()
@@ -13,9 +17,7 @@ function frontier_silo.init()
     else
         global.siloPosition = SILO_POSITION
     end
-    if FRONTIER_ROCKET_SILO_MODE then
-        game.forces[MAIN_FORCE].chart(game.surfaces[GAME_SURFACE_NAME], {{global.siloPosition.x-(CHUNK_SIZE*4), global.siloPosition.y-(CHUNK_SIZE*4)}, {global.siloPosition.x+(CHUNK_SIZE*4), global.siloPosition.y+(CHUNK_SIZE*4)}})
-    end
+    game.forces[MAIN_FORCE].chart(game.surfaces[GAME_SURFACE_NAME], {{global.siloPosition.x-(CHUNK_SIZE*4), global.siloPosition.y-(CHUNK_SIZE*4)}, {global.siloPosition.x+(CHUNK_SIZE*4), global.siloPosition.y+(CHUNK_SIZE*4)}})
 end
 
 -- This creates a random silo position, stored to global.siloPosition
