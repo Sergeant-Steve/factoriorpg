@@ -30,7 +30,7 @@ end
 function modular_information_popup_add(b, t)
 	popup = {button = b, text = t}
 	table.insert(global.modular_information_popup.popups, popup)
-	for i, x in pairs(game.connected_players) do
+	for i, x in ipairs(game.connected_players) do
 		modular_information_popup_show(x)
 	end
 end
@@ -57,11 +57,39 @@ function modular_information_popup_update_menu(p)
 	mimcf.style.left_padding = 0
 	mimcf.style.right_padding = 0
 	mimcf.style.bottom_padding = 0
+	if p.admin then
+		mimcb = mimcf.add {type="button", name = "modular_information_popup_create", caption = "New"}
+		mimcb.style.font_color = {r=0, g=0.5, b=0}
+		mimcb.style.minimal_width = 140
+		mimcb.style.maximal_width = 140
+	end
 	for i = #global.modular_information_popup.popups, 1, -1 do
 		p = global.modular_information_popup.popups[i]
 		mimcb = mimcf.add {type="button", name = "modular_information_popup_button_" .. i, caption = p.button}
 		mimcb.style.minimal_width = 140
 		mimcb.style.maximal_width = 140
+	end
+end
+
+function modular_information_popup_show_creator(p) 
+	if p.admin then
+		miip = modular_information_get_information_pane(p)
+		modular_information_set_information_pane_caption_color(p, "Popup Creator", {r=0.8,b=0,g=0})
+		miip.clear()
+		mipntl = miip.add {type="label", name = "modular_information_popup_new_title_label" ,caption = "Popup title"}
+		mipnt = miip.add {type="text-box", name = "modular_information_popup_new_title"}
+		mipnt.style.minimal_width = 105
+		mipnt.style.maximal_width = 105
+		mipnml = miip.add {type="label", name = "modular_information_popup_new_message_label" ,caption = "Popup message"}
+		mipnm = miip.add {type="text-box", name="modular_information_popup_new_message"}
+		mipnm.style.minimal_width = 400
+		mipnm.style.maximal_width = 400
+		mipnm.style.minimal_height = 50
+		mipnc = miip.add {type="button", name = "modular_information_popup_new_create", caption = "Create"}
+		mipnc.style.font_color = {r=0, g=0.5, b=0}
+		mipnc.style.minimal_width = 140
+		mipnc.style.maximal_width = 140
+
 	end
 end
 	
@@ -81,6 +109,11 @@ function modular_information_popup_gui_clicked(event)
 		elseif e.name:find("modular_information_popup_button_") ~= nil then
 			i = tonumber(e.name:sub(34))
 			modular_information_popup_update_popup(p, i)
+		elseif e.name == "modular_information_popup_create" then
+			modular_information_popup_show_creator(p)
+		elseif e.name == "modular_information_popup_new_create" then
+			miip = modular_information_get_information_pane(p)
+			modular_information_popup_add(miip.modular_information_popup_new_title.text, miip.modular_information_popup_new_message.text)
 		end
 	end
 end
