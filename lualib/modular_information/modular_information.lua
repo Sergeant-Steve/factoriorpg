@@ -86,7 +86,15 @@ function modular_information_gui_changed(p)
 		mini = miip.add {type="label", name="modular_information_no_info", caption="No information selected, use a button on the left to select."}
 		mini.style.font_color = {r=1,g=0,b=0}
 	end
-	modular_information_set_information_pane_caption(p, "Information pane")
+	modular_information_set_information_pane_caption_color(p, "Information pane", {r=1,g=1,b=1})
+	mimc = modular_information_get_menu_canvas(p)
+	mimc.caption = "NOT SET"
+	mimc.clear()
+	mimc.style.visible = false
+	mimc.style.minimal_width = 160
+	mimc.style.maximal_width = 185
+	mimc.style.minimal_height = 255
+	mimc.style.maximal_height = 255
 end
 
 function modular_information_get_menu(p)
@@ -110,6 +118,17 @@ function modular_information_get_menu(p)
 	end
 	return mimt
 end
+
+function modular_information_get_menu_canvas(p)
+	bf = modular_information_get_flow(p)
+	if (bf.modular_information_menu_canvas ~= nil) then
+		mimt = bf.modular_information_menu_canvas
+	else
+		mim = bf.add {name = "modular_information_menu_canvas", type = "frame", direction = "vertical", caption = "Submodule Menu"}
+	end
+	return mim
+end
+
 function modular_information_get_information_pane(p)
 	mif = modular_information_get_flow(p)
 	if (mif.modular_information_pane ~= nil) and (mif.modular_information_pane.modular_information_pane_scroll ~= nil) then
@@ -168,7 +187,7 @@ function modular_information_get_flow(p)
 		return f
 	else 
 		pgc = p.gui.center
-		mif = pgc.add {type = "table", name = "modular_information_flow", column_count = 2}
+		mif = pgc.add {type = "table", name = "modular_information_flow", column_count = 3}
 		mif.style.horizontal_spacing = 0
 		mif.style.top_padding = 0
 		mif.style.left_padding = 0
@@ -199,6 +218,13 @@ end
 function modular_information_set_information_pane_caption(p, c)
 	if modular_information_get_flow(p).modular_information_pane ~= nil then
 		modular_information_get_flow(p).modular_information_pane.caption = c
+	end
+end
+
+function modular_information_set_information_pane_caption_color(p, t, c)
+	if modular_information_get_flow(p).modular_information_pane ~= nil then
+		modular_information_get_flow(p).modular_information_pane.caption = t
+		modular_information_get_flow(p).modular_information_pane.style.font_color = c
 	end
 end
 
@@ -251,5 +277,6 @@ require "modular_information_rules"
 --require "modular_information_dummy"
 --require "modular_information_team"  --NOT DONE
 require "modular_information_scenario"
+require "modular_information_popup"
 --require "modular_information_about"--NOT DONE
 --require "modular_information_stats"--NOT DONE

@@ -128,7 +128,7 @@ end
 
 Event.register(defines.events.on_entity_died, rocket_on_destruction)
 Event.register(defines.events.on_robot_pre_mined, rocket_on_destruction)
-Event.register(defines.events.on_preplayer_mined_item, rocket_on_destruction)
+Event.register(defines.events.on_pre_player_mined_item, rocket_on_destruction)
 Event.register(defines.events.on_built_entity, rocket_on_creation)
 Event.register(defines.events.on_robot_built_entity, rocket_on_creation)
 Event.register(defines.events.on_rocket_launched, rocket_launched)

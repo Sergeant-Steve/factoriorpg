@@ -68,9 +68,11 @@ function modular_information_rules_create_gui(p)
 	for k, r in pairs(global.modular_information_rules.list) do
 		b = mirt.add{type="button", caption= i .. ". " .. r.short, name = "modular_information_rules_button_" .. k}
 		b.style.top_padding = 0
-		b.style.left_padding = 0
+		b.style.left_padding = 5
 		b.style.right_padding = 0
 		b.style.bottom_padding = 0
+		b.style.minimal_width = 470
+		b.style.align = "left"
 		i = i + 1
 	end
 end
