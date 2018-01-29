@@ -45,15 +45,17 @@ function modular_admin_ghosts_entity_mined(event)
 	or entity.name == "tile-ghost"
     or entity.name == 'item-request-proxy'
 	then return end
-	local ghost = "a"
-	if (game and game.active_mods.base:sub(1,4) == '0.14' and (entity.type == 'underground-belt' or entity.type == 'electric-pole')) or entity.type == "pipe-to-ground" then
+	local ghost = nil
+	if entity.type == "pipe-to-ground" then
 		ghost = entity.surface.create_entity
 		{name="entity-ghost",	force=game.forces.Admins, inner_name="programmable-speaker", position=entity.position, direction = entity.direction}
 	else
 		ghost = entity.surface.create_entity
 		{name="entity-ghost",	force=game.forces.Admins, inner_name=entity.name, position=entity.position, direction = entity.direction}
 	end
-	ghost.last_user = game.players[event.player_index]
+	if ghost ~= nil then
+		ghost.last_user = game.players[event.player_index]
+	end
 end
 
 function modular_admin_ghosts_entity_deconstructed(event)
@@ -69,15 +71,17 @@ function modular_admin_ghosts_entity_deconstructed(event)
 	or entity.name == "tile-ghost"
     or entity.name == 'item-request-proxy'
 	then return end
-	local ghost = "a"
-	if (game and game.active_mods.base:sub(1,4) == '0.14' and (entity.type == 'underground-belt' or entity.type == 'electric-pole')) or entity.type == "pipe-to-ground" then
+	local ghost = nil
+	if entity.type == "pipe-to-ground" then
 		ghost = entity.surface.create_entity
 		{name="entity-ghost",	force=game.forces.Admins, inner_name="programmable-speaker", position=entity.position, direction = entity.direction}
 	else
 		ghost = entity.surface.create_entity
 		{name="entity-ghost",	force=game.forces.Admins, inner_name=entity.name, position=entity.position, direction = entity.direction}
 	end
-	ghost.last_user = entity.last_user
+	if ghost ~= nil then
+		ghost.last_user = entity.last_user
+	end
 end
 
 function modular_admin_ghosts_enable()
