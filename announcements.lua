@@ -5,16 +5,16 @@ global.announcements = global.announcements or {}
 global.announcements.announcement_delay = 600
 -- List of announcements that are printed periodically, going through the list.
 global.announcements.announcements = {
-	"Someone was really f-ing lazy and forgot to change this. Shame on them.",
---		"Check out our patreon: http://patreon.com/factoriommo",
---		"Need an admin? Ask @hands or @crew in #moderation-request."
+--		"Someone was really f-ing lazy and forgot to change this. Shame on them.",
+		"Check out our patreon: http://patreon.com/factoriommo",
+		"Need an admin? Type @hands in chat!"
 }
 
 -- List of introductory messages that players are shown upon joining (in order).
 global.announcements.intros = {
-	"Someone was really f-ing lazy and forgot to change this. Shame on them.",
-	"",
-	""
+--	"Someone was really f-ing lazy and forgot to change this. Shame on them.",
+	"Need an admin? Type @hands in chat!",
+	"Check out our patreon: http://patreon.com/factoriommo"
 }
 -- Go through the announcements, based on the delay set in config
 -- @param event on_tick event
