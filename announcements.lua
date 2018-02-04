@@ -7,14 +7,14 @@ global.announcements.announcement_delay = 60 * 60 * 20
 global.announcements.announcements = {
 --	"Someone was really f-ing lazy and forgot to change this. Shame on them.",
 	"Thank you for playing FactorioRPG!",
-	"Join us on the Factorio RPG discord! https://discord.gg/pqsGhaH",
+	"Join us on the Factorio RPG discord! http://chromaticrabbit.com/factoriorpg",
 	"Enjoying FactorioRPG? Support the programmer on Patreon: https://www.patreon.com/mylon",
 	
 }
 
 -- List of introductory messages that players are shown upon joining (in order).
 global.announcements.intros = {
-	"Welcome to Factorio RPG!  Earn exp by launching rockets, researching technology, or killing biter nests and worms.  The first rocket is worth the most.",
+	"Welcome to Factorio RPG!  Earn exp by launching rockets, researching technology, or killing biter nests.  The first rocket is worth the most.",
 	"Levels provide small bonuses like movement speed, bonus inventory slots, bonus health, and more.",
 }
 -- Go through the announcements, based on the delay set in config
