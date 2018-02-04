@@ -1,4 +1,4 @@
-DIRT_THRESHOLD = 6
+DIRT_THRESHOLD = 4
 
 if MODULE_LIST then
 	module_list_add("Dirt Path")
@@ -9,13 +9,15 @@ function dirtDirt()
 		global.dirt = {}
 		--game.print("Initalizing Dirt Path.")
 	end
-	for __, p in pairs(game.connected_players) do
+	--for __, p in pairs(game.connected_players) do
+		local p = game.players[event.player_index]
+	
 		-- Trains aren't cars!  This breaks it.  Dunno why they're handled differently.
 		--if p.walking_state.walking or (p.driving and p.vehicle.speed ~= 0) then
 		-- Special conditional check for Factorissimo
 		if ( (p.surface == game.surfaces[1] or not game.active_mods["factorrisimo"]) and (p.walking_state.walking or (p.vehicle and p.vehicle.type == "car" and p.vehicle.speed ~= 0)) ) then
 			local tile = p.surface.get_tile(p.position)
-			if not (tile.hidden_tile or string.find(tile.name, "dirt") or string.find(tile.name, "sand")) then				
+			if not (tile.hidden_tile or string.find(tile.name, "dirt") or string.find(tile.name, "sand") or string.find(tile.name, "concrete")) then				
 				if not global.dirt[tile.position.x] then
 					global.dirt[tile.position.x] = {}
 				end
@@ -53,9 +55,9 @@ function dirtDirt()
 					local dirt = {}
 					for xx = 0, 1, 1 do
 						for yy = 0, 1, 1 do
-							if global.dirt[tile.position.x + xx] and global.dirt[tile.position.x + xx][tile.position.y + yy] then
-								global.dirt[tile.position.x + xx][tile.position.y + yy] = nil
-							end
+							-- if global.dirt[tile.position.x + xx] and global.dirt[tile.position.x + xx][tile.position.y + yy] then
+							-- 	--global.dirt[tile.position.x + xx][tile.position.y + yy] = nil
+							-- end
 							local validTile = p.surface.get_tile(tile.position.x + xx, tile.position.y + yy)
 							if validTile.collides_with("ground-tile") and not validTile.hidden_tile then
 								table.insert(dirt, {name="dirt-6", position={p.position.x+xx, p.position.y+yy}})
@@ -66,7 +68,7 @@ function dirtDirt()
 				end
 			end
 		end
-	end
+	--end
 end
 
 function cleanDirt()
@@ -84,13 +86,13 @@ function cleanDirt()
 end
 
 function dirt_handler(event)
-	if event.tick % 30 == 0 then
-		dirtDirt()
-	end
+	-- if event.tick % 30 == 0 then
+	-- 	dirtDirt()
+	-- end
 	if (event.tick+500) % (60 * 60 * 30) == 0 then
 		cleanDirt()
 	end
 end
 
-
+Event.register(defines.events.on_player_changed_position, dirtDirt)
 Event.register(defines.events.on_tick, dirt_handler)
