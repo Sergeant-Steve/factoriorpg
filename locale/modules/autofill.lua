@@ -13,7 +13,7 @@ function Autofill(event)
         return --Something happened to it!
     end
 
-    if (eventEntity.name == "gun-turret") then
+    if (eventEntity.type == "ammo-turret") then
         AutofillTurret(player, eventEntity)
     end
 

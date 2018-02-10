@@ -55,7 +55,11 @@ commands.add_command("loaddata", "Loads rpg data", function(data)
 		log("Player ''" .. data.playername .. "'' is not playing.")		
 		return
 	end
-	player.print("RPG data loaded.")
+	
+	if not global.rpg_exp[player.name] then
+		log("Error!  Player Created Event skipped!")
+		return
+	end
 
 	for k,v in pairs(rpg.classes) do
 		if data[v] then
@@ -88,6 +92,7 @@ commands.add_command("loaddata", "Loads rpg data", function(data)
 	rpg_give_bonuses(player)
 	rpg_give_team_bonuses(player.force)
 
+	player.print("RPG data loaded.")
 	log("Loaded RPG data for " .. player.name)
 end)
 
@@ -283,6 +288,10 @@ function rpg_class_click(event)
 		rpg_class_picker(player)
 		return
 	end
+	if event.element.name == "team_bonuses" then
+		player.opened = defines.gui_type.bonus
+		return
+	end
 	if event.element.name == "class" then
 		rpg_character_sheet(player)
 		return
@@ -339,6 +348,7 @@ function rpg_character_sheet(player)
 			player.gui.center.sheet.container.add{type="flow", name="control", direction="horizontal"}
 			player.gui.center.sheet.container.add{type="flow", name="stats", direction="horizontal"}
 			player.gui.center.sheet.container.control.add{type="button", name="class_picker", caption="Change Class"}
+			player.gui.center.sheet.container.control.add{type="button", name="team_bonuses", caption="Team Bonuses"}
 			player.gui.center.sheet.container.control.add{type="button", name="close_character", caption="x"}
 			
 			local column_one = player.gui.center.sheet.container.stats.add{type="flow", name="column_one", direction="vertical"} --Label
@@ -352,8 +362,8 @@ function rpg_character_sheet(player)
 			
 			--Start info
 			column_one.add{type="label", caption="Health:"}
-			column_two.add{type="label", caption=player.character.prototype.max_health+player.character_health_bonus + player.force.character_health_bonus}
-			column_three.add{type="label", caption=player.character_health_bonus}
+			column_two.add{type="label", caption=math.floor(player.character.prototype.max_health+player.character_health_bonus + player.force.character_health_bonus)}
+			column_three.add{type="label", caption=math.floor(player.character_health_bonus)}
 			
 			column_one.add{type="label", caption="Running Speed:"}
 			column_two.add{type="label",  caption="+" .. math.floor(((1+player.character_running_speed_modifier)*(1+player.force.character_running_speed_modifier)-1) * 100) .. "%" }

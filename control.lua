@@ -37,11 +37,11 @@ require("jvmguy_main") --This includes starting items.
 require "locale/modules/gravemarker" --Mark player death locations on map for corpse runs.
 require "locale/modules/dirtpath" --For some silliness.
 require "locale/modules/seasons" --Let's mess with solar.
-require "locale/modules/dark harvest" --Only way to get uranium is from biter deaths.
+--require "locale/modules/dark harvest" --Only way to get uranium is from biter deaths.
 --require "locale/modules/tOredumonde" --Ore spawns in directions. This must be called before divOresity. NOTE: STONE_BYPRODUCT must be false.
 --require "locale/modules/dark harvest" --Only way to get uranium is from biter deaths.
 --require "dark harvest event" --Temp for testing.
---require "locale/modules/bluebuild" --Bluebuild softmod
+require "modules/bluebuild" --Bluebuild softmod
 require "locale/modules/autofill" --Softmod autofill separated from Oarc
 --require "locale/modules/nougatmining" --Logistic mining softmod.
 require "locale/modules/peppermintmining" --Logistic mining softmod.
