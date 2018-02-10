@@ -1,10 +1,29 @@
-DIRT_THRESHOLD = 4
+DIRT_THRESHOLD = 6
 
 if MODULE_LIST then
 	module_list_add("Dirt Path")
 end
 
-function dirtDirt()
+--This is all subjective.
+DIRT= {
+	["grass-1"]="grass-2",
+	["grass-2"]="grass-3",
+	["grass-3"]="grass-4",
+	["grass-4"]="dirt-7",
+	["dirt-7"]="dirt-5",
+	["dirt-5"]="dirt-3",
+	["dirt-3"]="dirt-2",
+	["dirt-2"]="dirt-1",
+	["dirt-1"]="red-desert-3",
+	["red-desert-3"]="sand-3",
+
+	["dirt-4"]="dirt-6",
+	["dirt-6"]="dirt-7",
+
+	["red-desert-0"]="red-desert-1"
+}
+
+function dirtDirt(event)
 	if not global.dirt then
 		global.dirt = {}
 		--game.print("Initalizing Dirt Path.")
@@ -15,19 +34,12 @@ function dirtDirt()
 		-- Trains aren't cars!  This breaks it.  Dunno why they're handled differently.
 		--if p.walking_state.walking or (p.driving and p.vehicle.speed ~= 0) then
 		-- Special conditional check for Factorissimo
-		if ( (p.surface == game.surfaces[1] or not game.active_mods["factorrisimo"]) and (p.walking_state.walking or (p.vehicle and p.vehicle.type == "car" and p.vehicle.speed ~= 0)) ) then
+		if p.walking_state.walking or (p.vehicle and p.vehicle.type == "car" and p.vehicle.speed ~= 0)) then
 			local tile = p.surface.get_tile(p.position)
-			if not (tile.hidden_tile or string.find(tile.name, "dirt") or string.find(tile.name, "sand") or string.find(tile.name, "concrete")) then				
-				if not global.dirt[tile.position.x] then
-					global.dirt[tile.position.x] = {}
-				end
-				if global.dirt[tile.position.x][tile.position.y] then
-					global.dirt[tile.position.x][tile.position.y] = global.dirt[tile.position.x][tile.position.y] + 1
-				else	
-					global.dirt[tile.position.x][tile.position.y] = 1
-				end
+			if not (tile.hidden_tile or string.find(tile.name, "concrete")) then
+				
 				--game.print("Dirt value now at: ".. global.dirt[tile.position.x][tile.position.y])
-				if global.dirt[tile.position.x][tile.position.y] >= DIRT_THRESHOLD then
+				--if global.dirt[tile.position.x][tile.position.y] >= DIRT_THRESHOLD then
 					--game.print("Converting patch to dirt.")
 					
 					-- No longer necessary for 0.16
@@ -54,21 +66,42 @@ function dirtDirt()
 					-- end
 					local dirt = {}
 					for xx = 0, 1, 1 do
-						for yy = 0, 1, 1 do
-							-- if global.dirt[tile.position.x + xx] and global.dirt[tile.position.x + xx][tile.position.y + yy] then
-							-- 	--global.dirt[tile.position.x + xx][tile.position.y + yy] = nil
-							-- end
-							local validTile = p.surface.get_tile(tile.position.x + xx, tile.position.y + yy)
-							if validTile.collides_with("ground-tile") and not validTile.hidden_tile then
-								table.insert(dirt, {name="dirt-6", position={p.position.x+xx, p.position.y+yy}})
+					 	for yy = 0, 1, 1 do
+							if not (math.abs(xx) == math.abs(yy)) or xx == 0 then
+
+								if dirtAdd(tile.position.x + xx, tile.position.y + yy) then
+
+									local validTile = p.surface.get_tile(tile.position.x + xx, tile.position.y + yy)
+									if validTile.collides_with("ground-tile") and not validTile.hidden_tile and not string.find(validTile.name, "sand") then
+										local newtile = DIRT[validTile.name] or "dirt-6"
+										table.insert(dirt, {name=newtile, position={tile.position.x+xx, tile.position.y+yy}})
+									end
+								end
 							end
 						end
 					end
-					p.surface.set_tiles(dirt)
-				end
+					if #dirt > 0 then
+						p.surface.set_tiles(dirt)
+					end
+				--end
 			end
 		end
 	--end
+end
+
+function dirtAdd(x, y)
+	if not global.dirt[x] then
+		global.dirt[x] = {}
+	end
+	if global.dirt[x][y] then
+		global.dirt[x][y] = global.dirt[x][y] + 1
+	else	
+		global.dirt[x][y] = 1
+	end
+	if global.dirt[x][y] >= DIRT_THRESHOLD then
+		global.dirt[x][y] = 0
+		return true
+	end
 end
 
 function cleanDirt()
