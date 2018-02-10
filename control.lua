@@ -1,6 +1,7 @@
 --Heavy lifting stuff here.
 require "mod-gui"
 require "locale/utils/event" --This is so all of the modules play nice with each other.
+require "locale/utils/bot" --For Discord integration
 require "antigrief" --Look for suspicious behavior and report it to admins/log it.
 require "locale/modules/module_list" --Creates and displays a list of active modules on login.
 require "rpg_permissions" --Limit certain actions to players level 5 or greater

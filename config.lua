@@ -10,13 +10,13 @@ scenario.config.mapsettings = scenario.config.mapsettings or {}
 -- Messages
 --------------------------------------------------------------------------------
 scenario.config.joinedMessages = {
-    "Welcome to the FactorioRPG server hosted by FMMO.",
-    "In the current game mode, a satellite must be launched from the rocket silo in the center to win!",
---    "Mods Enabled: Separate Spawns, RSO, Long-Reach, Autofill",
-    "",
---    "Look in the car at your spawn for fast start items.",
---    "The car is also your personal transport to and from the silo.",
-    "Discord chat: https://discord.gg/pqsGhaH",
+--     "Welcome to the FactorioRPG server hosted by FMMO.",
+--     --"In the current game mode, a satellite must be launched from the rocket silo in the center to win!",
+-- --    "Mods Enabled: Separate Spawns, RSO, Long-Reach, Autofill",
+--     "",
+-- --    "Look in the car at your spawn for fast start items.",
+-- --    "The car is also your personal transport to and from the silo.",
+--     "Discord chat: https://discord.gg/pqsGhaH",
 }
 
 WELCOME_MSG_TITLE = "Welcome to FactorioRPG"
@@ -150,8 +150,8 @@ scenario.config.teleporter = {
     }
 }
 
-SPAWN_MSG1 = "Current Spawn Mode: HARDCORE WILDERNESS"
-SPAWN_MSG2 = "In this mode, there is no default spawn. Everyone starts in the wild!"
+SPAWN_MSG1 = "Current Spawn Mode: Whatever"
+SPAWN_MSG2 = ""
 SPAWN_MSG3 = "Resources are spread out far apart but are quite rich."
 
 --------------------------------------------------------------------------------
@@ -161,7 +161,7 @@ SPAWN_MSG3 = "Resources are spread out far apart but are quite rich."
 --------------------------------------------------------------------------------
 
 -- Frontier style rocket silo mode
-FRONTIER_ROCKET_SILO_MODE = true
+FRONTIER_ROCKET_SILO_MODE = false
 
 -- put players on a special surface until they've chosen
 ENABLE_SPAWN_SURFACE = true
@@ -327,7 +327,7 @@ MAIN_FORCE = "main_force"
 GAME_SURFACE_NAME = "game_surface"
 
 -- Enable if people can spawn at the main base
-ENABLE_DEFAULT_SPAWN = false
+ENABLE_DEFAULT_SPAWN = true
 
 -- Enable if people can allow others to join their base
 ENABLE_SHARED_SPAWNS = true
