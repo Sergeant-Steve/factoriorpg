@@ -259,11 +259,11 @@ scenario.config.separateSpawns = {
         -- { shape="rect", name="steel-chest", x=-4,   y=-8,  height=2, width=2, contents = { {name = "coal", count=2400 } }  },
         -- { shape="rect", name="steel-chest", x=-4,   y=-4,  height=1, width=1, contents = { {name = "stone", count=2400 } },  },
     
-        { shape="rect", type="coal",         x=0,  y=-41, height=14, width=24,  amount=2000,  },
-        { shape="rect", type="stone",        x=0,  y=-24, height=14, width=24,  amount=1000,  },
+        { shape="rect", type="coal",         x=0,  y=-41, height=14, width=24,  amount=1000,  },
+        { shape="rect", type="stone",        x=0,  y=-24, height=14, width=24,  amount=500,  },
         --{ shape="rect", type="uranium-ore",  x=27, y=-24, height=14, width=12,  amount=1800,  },
-        { shape="rect", type="copper-ore",   x=0,  y=-7,  height=21, width=36,  amount=1500,  },
-        { shape="rect", type="iron-ore",     x=0,  y =17, height=21, width=36,  amount=2000,  },
+        { shape="rect", type="copper-ore",   x=0,  y=-7,  height=21, width=36,  amount=250,  },
+        { shape="rect", type="iron-ore",     x=0,  y =17, height=21, width=36,  amount=500,  },
         
         { shape="rect", type="crude-oil", x=42, y=-6, height=1, amount=300000,  },
         { shape="rect", type="crude-oil", x=42, y= 0, height=1, amount=300000,  },
