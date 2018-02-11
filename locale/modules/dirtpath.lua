@@ -34,7 +34,7 @@ function dirtDirt(event)
 		-- Trains aren't cars!  This breaks it.  Dunno why they're handled differently.
 		--if p.walking_state.walking or (p.driving and p.vehicle.speed ~= 0) then
 		-- Special conditional check for Factorissimo
-		if p.walking_state.walking or (p.vehicle and p.vehicle.type == "car" and p.vehicle.speed ~= 0)) then
+		if p.walking_state.walking or (p.vehicle and p.vehicle.type == "car" and p.vehicle.speed ~= 0) then
 			local tile = p.surface.get_tile(p.position)
 			if not (tile.hidden_tile or string.find(tile.name, "concrete")) then
 				
