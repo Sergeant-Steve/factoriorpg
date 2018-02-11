@@ -882,7 +882,8 @@ function rpg_give_team_bonuses(force)
 	force.worker_robots_battery_modifier = scientistbonus / 50
 	
 	--This one can't decrease, or players logging out would cause stuff to drop!
-	force.character_inventory_slots_bonus = math.max(inventory_bonus, math.floor(builderbonus / 20))
+	--Disabling this because I can't make it stop dropping stuff.
+	--force.character_inventory_slots_bonus = math.max(inventory_bonus, math.floor(builderbonus / 20))
 	
 	-- Malus is 0.5 * base bonus - 0.5
 	-- Science bonus
