@@ -197,7 +197,7 @@ function peppermint.mine(name, minty)
     end
     local products = {}
     
-    count = math.min(math.ceil(ore.amount / cargo_multiplier), peppermint.MAX_ITEMS, count)
+    count = math.min(math.ceil(ore.amount / cargo_multiplier * productivity), peppermint.MAX_ITEMS, count)
 
     for k,v in pairs(ore.prototype.mineable_properties.products) do
 		local product
