@@ -1,4 +1,4 @@
-DIRT_THRESHOLD = 6
+DIRT_THRESHOLD = 8
 
 if MODULE_LIST then
 	module_list_add("Dirt Path")
@@ -6,10 +6,12 @@ end
 
 --This is all subjective.
 DIRT= {
-	["grass-1"]="grass-2",
+	["grass-1"]="grass-3",
 	["grass-2"]="grass-3",
 	["grass-3"]="grass-4",
-	["grass-4"]="dirt-7",
+	["grass-4"]="dirt-4",
+	["dirt-4"]="dirt-6",
+	["dirt-6"]="dirt-7",
 	["dirt-7"]="dirt-5",
 	["dirt-5"]="dirt-3",
 	["dirt-3"]="dirt-2",
@@ -17,10 +19,9 @@ DIRT= {
 	["dirt-1"]="red-desert-3",
 	["red-desert-3"]="sand-3",
 
-	["dirt-4"]="dirt-6",
-	["dirt-6"]="dirt-7",
-
-	["red-desert-0"]="red-desert-1"
+	["red-desert-0"]="red-desert-1",
+	["red-desert-1"]="red-desert-2",
+	["red-desert-2"]="red-desert-3"
 }
 
 function dirtDirt(event)
