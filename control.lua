@@ -1,7 +1,7 @@
 --Heavy lifting stuff here.
 require "mod-gui"
-require "locale/utils/event" --This is so all of the modules play nice with each other.
-require "locale/utils/bot" --Discord integration
+require "utils/event" --This is so all of the modules play nice with each other.
+require "utils/bot" --Discord integration
 require "antigrief" --Look for suspicious behavior and report it to admins/log it.
 require "locale/modules/module_list" --Creates and displays a list of active modules on login.
 require "rpg_permissions" --Limit certain actions to players level 5 or greater
@@ -39,11 +39,12 @@ require "modules/enhancedbiters" --Adds extra behavior to biters to make them ex
 require "modules/playerlist" --List of online players
 
 -- World Generators: Most are exclusive.
---require "locale/maps/TTSFN" --This Tank Stops for Nobody!
---require "locale/maps/dangOreus" --Ore is everywhere.  Cannot build on it!
---require "locale/maps/searious" --Everything not a resource tile is turned into water.
+require "maps/prospector" --Radars generate ore
+--require "maps/TTSFN" --This Tank Stops for Nobody!
+--require "maps/dangOreus" --Ore is everywhere.  Cannot build on it!
+--require "maps/searious" --Everything not a resource tile is turned into water.
 --require "oarc_events" --Oarc's separate spawn scenario.
---require "locale/maps/heximaze" --A labyrinth.
+--require "maps/heximaze" --A labyrinth.
 --require "void" --Worldgenerator which randomly generates holes in the world
 --require "nuclear" --worldgenerator for nuclear scenario
 --NOT UPDATED require "grid" --Worldgenerator which devides the world into a grid.
