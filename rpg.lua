@@ -9,16 +9,17 @@
 --Idea: Only mine ore if a valid requester is in the network.
 --To do that, need to do iterate over logistic_network.requester_points and then iterate over each of those to find a filter that matches an ore.
 
-rpg = {}
-
 require "rpg_beastmaster" --New class gets its own file for class-related events.
 --require "rpg_builder" --Very unfinished.  Adds a limited number of higher level turrets for builders.
 --require "rpgdata" --Savedata.  This is externally generated.
-
+	
+rpg = {}
 rpg.classes = {"Engineer", "Miner", "Builder", "Soldier", "Scientist", "Beastmaster"}
 
---Savedata is of form: player_name = {bank = exp, class1 = exp, class2 = exp, etc}
+--This event gets called often.  Event is of form: {force=force}
+on_reset_technology_effects = script.generate_event_name()
 
+--Savedata is of form: player_name = {bank = exp, class1 = exp, class2 = exp, etc}
 --Remote commands
 commands.add_command("heartbeat", "Regular heartbeat to let the game know that the character data server is online.", function()
 	for i = 1, 3 do
@@ -719,6 +720,7 @@ function rpg_give_bonuses(player)
 		end
 		if global.rpg_exp[player.name].class == "Builder" then
 			player.character_reach_distance_bonus = math.floor(bonuslevel/3)
+			player.character_resource_reach_distance_bonus = math.floor(bonuslevel/8)
 			player.character_build_distance_bonus = math.floor(bonuslevel/3)
 			player.character_inventory_slots_bonus = math.floor(bonuslevel/3)
 			if global.rpg_tmp[player.name].level >= 50 then
@@ -729,6 +731,7 @@ function rpg_give_bonuses(player)
 		else
 			player.character_reach_distance_bonus = math.floor(bonuslevel/6)
 			player.character_build_distance_bonus = math.floor(bonuslevel/6)
+			player.character_resource_reach_distance_bonus = math.floor(bonuslevel/12)
 			player.character_inventory_slots_bonus = math.floor(bonuslevel/6)
 			player.quickbar_count_bonus = 0
 		end
@@ -841,20 +844,21 @@ function rpg_give_team_bonuses(force)
 	--Beastmaster
 	
 	--I do need that block after all to find the list of ammo types and gun types
-	local ammotypes = {}
-	local turrettypes = {}
-	for k,v in pairs(force.technologies) do
-		--if v.researched then
-			for n, p in pairs(v.effects) do
-				if p.type=="ammo-damage" then
-					ammotypes[p.ammo_category]=true
-				end
-				if p.type=="turret-attack" then
-					turrettypes[p.turret_id]=true
-				end
-			end
-		--end
-	end
+	-- Obsoleted by game.ammo_category_prototypes
+	-- local ammotypes = {}
+	-- local turrettypes = {}
+	-- for k,v in pairs(force.technologies) do
+	-- 	--if v.researched then
+	-- 		for n, p in pairs(v.effects) do
+	-- 			if p.type=="ammo-damage" then
+	-- 				ammotypes[p.ammo_category]=true
+	-- 			end
+	-- 			if p.type=="turret-attack" then
+	-- 				turrettypes[p.turret_id]=true
+	-- 			end
+	-- 		end
+	-- 	--end
+	-- end
 
 	-- Malus for ammo is base * 0.8 - 0.2
 	for k, v in pairs(ammotypes) do
@@ -903,6 +907,9 @@ function rpg_give_team_bonuses(force)
 	game.map_settings.enemy_evolution.pollution_factor = global.base_evolution_pollution * beastmasterbonus
 	game.map_settings.enemy_evolution.time_factor = global.base_evolution_time * beastmasterbonus
 	
+	--So I can notify other modules when this happens:
+	script.raise_event(on_reset_technology_effects, {force=force})
+
 	--Fix for frontier silo:
 	if frontier_silo then
 		force.recipes["rocket-silo"].enabled = false
@@ -926,12 +933,30 @@ function rpg_bonus_scan(event)
 		end
 	end
 	local bonus = 32 * (soldierbonus ^ 0.3) --This is the literal size of the area we're scanning.
-
-	local position = { x=event.chunk_position.x * 32 + 16, y=event.chunk_position.y * 32 + 16 }
+	
+	local bbox = {{}, {}}
+	if event.radar.position.x < event.chunk.position.x * 32 then
+		bbox[1][1] = event.chunk.position.x * 32
+		bbox[2][1] = event.chunk.position.x * 32 + bonus
+	else
+		bbox[1][1] = event.chunk.position.x * 32 - bonus + 32
+		bbox[2][1] = event.chunk.position.x * 32
+	end
+	if event.radar.position.y < event.chunk.position.y * 32 then
+		bbox[1][2] = event.chunk.position.y * 32
+		bbox[2][2] = event.chunk.position.y * 32 + bonus
+	else
+		bbox[1][2] = event.chunk.position.y * 32 - bonus + 32
+		bbox[2][2] = event.chunk.position.y * 32
+	end
+	
+	--local position = { x=event.chunk_position.x * 32 + 16, y=event.chunk_position.y * 32 + 16 }
 
 	-- Extend scan in the same direction as the radar.
 	--Default case, bottom-right quadrant
-	local bbox = {{position.x-bonus/2, position.y-bonus/2}, {position.x+bonus/2, position.y+bonus/2}}
+	--local bbox = {{position.x-bonus/2, position.y-bonus/2}, {position.x+bonus/2, position.y+bonus/2}}
+
+	--local bbox = {{event.chunk.position.x * 32, event.chunk.position.y * 32}, {event.chunk.position.x * 32 + bonus}
 		
 	event.radar.force.chart(event.radar.surface, bbox)
 end
