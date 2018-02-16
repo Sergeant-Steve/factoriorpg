@@ -14,7 +14,7 @@ function splitters(event)
 	if not global.zombies then
 		global.zombies = {}
 	end
-	if event.entity.force ~= "enemy" then
+	if event.entity.force.name ~= "enemy" then
 		return
 	end
 	
@@ -33,14 +33,10 @@ function splitters(event)
 			event.entity.surface.create_entity{name="small-worm-turret", position=pos}
 		end
 	end
-	if event.entity.name == "acid-projectile-purple" then
-		local pos = getRandom(global.spawnPoints)
-		event.entity.surface.create_entity{name="small-biter", position=event.entity.position}
-	end
-	if event.entity.name == "medium-biter" and math.random(1,2) == 2 then
+	if event.entity.name == "medium-biter" and math.random() < 0.5 then
 		table.insert(global.zombies, {tick=game.tick, position=event.entity.position, surface=event.entity.surface})
 	end
-	if event.entity.name == "behemoth-spitter" and math.random (1,10) == 10 then
+	if event.entity.name == "behemoth-spitter" and math.random() < 0.2 then
 		if event.cause and event.cause.valid then
 			local capsule = event.entity.surface.create_entity{name="acid-projectile-purple", position=event.entity.position, speed=0.5, target=event.cause}
 			table.insert(global.capsules, {entity = capsule, target=event.cause, type="medium-biter", count=2})
@@ -65,10 +61,11 @@ function delayed_spawn()
 	for i = #global.capsules, 1, -1 do
 		local capsule = global.capsules[i]
 		if not (capsule.entity and capsule.entity.valid) then --Projectile found its mark.
+			game.print("Popping Capsule")
 			for n = 1, capsule.count do
 				local spawnPoint = capsule.target.surface.find_non_colliding_position("small-biter", capsule.target.position, 10, 2)
 				if spawnPoint then
-					capsule.target.surface.create_entity{name=capsule.type, position=pos}
+					capsule.target.surface.create_entity{name=capsule.type, position=spawnPoint}
 				end
 			end
 			table.remove(global.capsules, i)
@@ -76,5 +73,19 @@ function delayed_spawn()
 	end
 end
 
+function tech_nerf(event)
+	local force = event.force
+	local factor = 1 - 5184000 / (5184000 + game.tick) --Decrease by 50% per day.
+	local turret_types = {"gun-turret", "laser-turret", "flamethrower-turret", "artillery-turret"}
+	for k,v in pairs(turret_types) do
+		force.set_ammo_damage_modifier(v.name, force.get_ammo_damage_modifier(v.name) * factor)
+	end
+end
+
+
+--Currently we rely upon the RPG module to call this often.
+if on_reset_technology_effects then
+	Event.register(on_reset_technology_effects, tech_nerf)
+end
 Event.register(defines.events.on_entity_died, splitters)
 Event.register(defines.events.on_tick, delayed_spawn)
