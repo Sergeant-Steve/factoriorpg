@@ -24,11 +24,9 @@ DIRT= {
 	["red-desert-2"]="red-desert-3"
 }
 
+global.dirt = {}
+
 function dirtDirt(event)
-	if not global.dirt then
-		global.dirt = {}
-		--game.print("Initalizing Dirt Path.")
-	end
 	--for __, p in pairs(game.connected_players) do
 		local p = game.players[event.player_index]
 	
@@ -106,15 +104,19 @@ function dirtAdd(x, y)
 end
 
 function cleanDirt()
+	if not global.dirt then
+		log("Dirt Path not initialized!")
+		return
+	end
 	for x, tablex in pairs(global.dirt) do
-		for y, value in pairs(tablex) do
-			value = value - 1
-			if value <= 0 then
-				value = nil
+		for y in pairs(tablex) do
+			tablex[y] = tablex[y] - 1
+			if tablex[y] <= 0 then
+				tablex[y] = nil
 			end
 		end
 		if tablex ~= nil and next(tablex) == nil then
-			tablex = nil
+			global.dirt[x] = nil
 		end
 	end
 end
