@@ -122,7 +122,7 @@ end
 function modular_information_get_menu_canvas(p)
 	bf = modular_information_get_flow(p)
 	if (bf.modular_information_menu_canvas ~= nil) then
-		mimt = bf.modular_information_menu_canvas
+		mim = bf.modular_information_menu_canvas
 	else
 		mim = bf.add {name = "modular_information_menu_canvas", type = "frame", direction = "vertical", caption = "Submodule Menu"}
 	end
