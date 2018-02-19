@@ -4,30 +4,19 @@ require "utils/event" --This is so all of the modules play nice with each other.
 -- require "utils/topgui" --Allows reordering guis.  Warning: Pollutes the global table.  Not desync safe.
 require "utils/bot" --Discord integration
 require "utils/antigrief" --Look for suspicious behavior and report it to admins/log it.
-<<<<<<< HEAD
-=======
 --require "utils/modular_admin/modular_admin" --FMMO admin tools 
 --require "utils/modular_information/modular_information" --Info windows from FMMO
->>>>>>> refs/remotes/origin/oarc-scenario
 require "modules/module_list" --Creates and displays a list of active modules on login.
 require "rpg_permissions" --Limit certain actions to players level 5 or greater
 require "rpg" --Award bonuses based on experience earned.
 --require "permissions" --Permission manager
 --require "trusted" --Module to add trusted players to a seperate permission group
 --require "locale/utils/patreon" --Module to give patreons spectate and a nice unique tag
-<<<<<<< HEAD
---require "locale/utils/admin"	--Admin module to give the admins spectate, commands and character modifications. NOTE: May be busted in v0.16
-=======
->>>>>>> refs/remotes/origin/oarc-scenario
 require "announcements"	--Module to announce stuff ingame / give the players a welcome message
 require "modules/tag" --Module to let players set a tag behind their names to improve teamwork
 --require "fmcd" --Module to consolidate saving data to an output file for the agent
 --require "stats" --Module to generate stats and print them to the filesystem
 --require "popup" --Module to create and display an popup in the center of all players their screens.
-<<<<<<< HEAD
---require "rules" --Module which displays a popup with the rules when a player joins, or presses the open rules button
-=======
->>>>>>> refs/remotes/origin/oarc-scenario
 --require "rocket" --Module to stop people removing the rocket silo
 
 --Load before jvm
@@ -51,11 +40,7 @@ require "modules/dirtpath" --For some silliness.
 require "modules/seasons" --Let's mess with solar.
 --require "modules/dark harvest" --Only way to get uranium is from biter deaths.
 --require "modules/tOredumonde" --Ore spawns in directions. This must be called before divOresity. NOTE: STONE_BYPRODUCT must be false.
-<<<<<<< HEAD
---require "modules/dark harvest" --Only way to get uranium is from biter deaths.
-=======
 require "modules/divOresity" --Some ore gets scrambled and must be filtered.
->>>>>>> refs/remotes/origin/oarc-scenario
 --require "dark harvest event" --Temp for testing.
 require "modules/bluebuild" --Bluebuild softmod
 require "modules/autofill" --Softmod autofill separated from Oarc
