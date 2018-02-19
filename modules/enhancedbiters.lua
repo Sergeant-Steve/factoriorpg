@@ -23,13 +23,13 @@ function splitters(event)
 	end
 	if event.entity.name == "big-worm-turret" and math.random() < 0.25 then
 		for i=0, 5, 1 do
-			local pos = game.surfaces[1].find_non_colliding_position("medium-biter", event.entity.position, 10, 3)
+			local pos = event.entity.surface.find_non_colliding_position("medium-biter", event.entity.position, 10, 3)
 			event.entity.surface.create_entity{name="medium-worm-turret", position=pos}
 		end
 	end
 	if event.entity.name == "medium-worm-turret" and math.random(1,2) == 2 then
 		for i=0, 5, 1 do
-			local pos = game.surfaces[1].find_non_colliding_position("medium-biter", event.entity.position, 10, 2)
+			local pos = event.entity.surface.find_non_colliding_position("medium-biter", event.entity.position, 10, 2)
 			event.entity.surface.create_entity{name="small-worm-turret", position=pos}
 		end
 	end
