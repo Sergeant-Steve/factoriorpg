@@ -188,6 +188,12 @@ function peppermint.mine(name, minty)
     
     local count = math.floor(network.available_construction_robots / 2)
 
+    --Modify force construction limit since this mod can easily spam more than enough requests!
+    --This is on a per tick basis, and we check every 60 ticks.
+    if force.max_successful_attemps_per_tick_per_construction_queue * 60 < count then
+        force.max_successful_attemps_per_tick_per_construction_queue = math.floor(count / 60)
+    end
+
     --Reused from Nougat Mining
     local position = ore.position --Just in case we kill the ore.
     local productivity = force.mining_drill_productivity_bonus + 1
@@ -266,12 +272,10 @@ end
 --Primary table indexed by coords.
 function peppermint.add(ore, forcename)
     local minty = global.peppermint[forcename]
-    local x, y = math.floor(ore.position.x), math.floor(ore.position.y)
-    if not minty.ores[x] then
-        minty.ores[x] = {}
-    end
-    if not minty.ores[x][y] then
-        minty.ores[x][y] = ore
+    --local x, y = math.floor(ore.position.x), math.floor(ore.position.y)
+    local key = math.floor(ore.position.x) .. "," .. math.floor(ore.position.y)
+    if not minty.ores[key] then
+        minty.ores[key] = ore
         return true
     else
         return false
@@ -282,25 +286,20 @@ function peppermint.remove(ore, forcename)
     local forcetable = global.peppermint[forcename]
     if not forcetable then return end
 
-    local x, y = math.floor(ore.position.x), math.floor(ore.position.y)
+    --local x, y = math.floor(ore.position.x), math.floor(ore.position.y)
+    local key = math.floor(ore.position.x) .. "," .. math.floor(ore.position.y)
     local removed = false
-    if forcetable.ores[x] and forcetable.ores[x][y] then
-        forcetable.ores[x][y] = nil
+    if forcetable.ores[key] then
+        forcetable.ores[key] = nil
         removed = true
-    end
-    if forcetable.ores[x] and nil == next(forcetable.ores[x]) then
-        forcetable.ores[x] = nil
     end
     return removed
 end
 
 function peppermint.nom(event)
     if not event.entity and not event.entity.valid then return end
-    local x, y = math.floor(event.entity.position.x), math.floor(event.entity.position.y)
     for name, minty in pairs(global.peppermint) do
-        if minty.ores[x] and minty.ores[x][y] then
-            peppermint.remove(event.entity, name)
-        end
+        peppermint.remove(event.entity, name)
     end
 end
 
