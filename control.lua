@@ -1,7 +1,7 @@
 --Heavy lifting stuff here.
 require "mod-gui" --Don't even know what this does.
 require "utils/event" --This is so all of the modules play nice with each other.
---require "utils/topgui" --Allows reordering guis.  Warning: Pollutes the global table.  Not desync safe.
+-- require "utils/topgui" --Allows reordering guis.  Warning: Pollutes the global table.  Not desync safe.
 require "utils/bot" --Discord integration
 require "utils/antigrief" --Look for suspicious behavior and report it to admins/log it.
 --require "utils/modular_admin/modular_admin" --FMMO admin tools 

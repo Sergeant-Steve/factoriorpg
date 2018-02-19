@@ -10,7 +10,7 @@ end
 function tag_create_gui(event)
 	local player = game.players[event.player_index]
 	if not mod_gui.get_button_flow(player)["tag-button"] then
-		mod_gui.get_button_flow(player).add { name = "tag-button", type = "button", caption = "Tag" }
+		mod_gui.get_button_flow(player).add { name = "tag-button", type = "sprite-button", sprite = "item/blueprint-book", tooltip = "Set a tag" }
 	end
 end
 
@@ -81,5 +81,9 @@ commands.add_command("tag", "Set a custom tag.", function(tag)
 	end
 end)
 
+if rpg then
+	Event.register(rpg.on_rpg_gui_created, tag_create_gui)
+else
+	Event.register(defines.events.on_player_joined_game, tag_create_gui)
+end
 Event.register(defines.events.on_gui_click, tag_on_gui_click)
---Event.register(defines.events.on_player_joined_game, tag_create_gui) --This is called manually.
