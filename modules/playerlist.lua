@@ -34,7 +34,7 @@ local function on_player_joined_game(event)
 	--if not global.fish_market_fish_spent[event.player_index] then global.fish_market_fish_spent[event.player_index] = 0 end
 
 	if player.gui.top.player_list_button == nil then
-		local button = player.gui.top.add({ type = "sprite-button", name = "player_list_button", sprite = "item/heavy-armor" })
+		local button = player.gui.top.add({ type = "sprite-button", name = "player_list_button", sprite = "item/heavy-armor", tooltip="Online players" })
 		-- button.style.minimal_height = 38
 		-- button.style.minimal_width = 38
 		-- button.style.top_padding = 2
