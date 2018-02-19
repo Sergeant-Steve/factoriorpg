@@ -85,8 +85,8 @@ function tech_nerf(event)
 end
 
 --Currently we rely upon the RPG module to call this often.
-if on_reset_technology_effects then
-	Event.register(on_reset_technology_effects, tech_nerf)
+if rpg then
+	Event.register(rpg.on_reset_technology_effects, tech_nerf)
 end
 Event.register(defines.events.on_entity_died, splitters)
 Event.register(defines.events.on_tick, delayed_spawn)

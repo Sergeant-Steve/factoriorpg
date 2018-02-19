@@ -93,12 +93,12 @@ function modular_admin_gui_toggle_visibility(p)
 	global.modular_admin.visible[p.name] = global.modular_admin.visible[p.name] or false
 	if global.modular_admin.visible[p.name] then
 		global.modular_admin.visible[p.name] = false
-		topgui_change_button_caption(p.name, "modular_admin_toggle_button", "Open Admin Menu")
-		topgui_change_button_color(p.name, "modular_admin_toggle_button", {r=0, g=1, b=0})
+		--topgui_change_button_caption(p.name, "modular_admin_toggle_button", "Open Admin Menu")
+		--topgui_change_button_color(p.name, "modular_admin_toggle_button", {r=0, g=1, b=0})
 	else
 		global.modular_admin.visible[p.name] = true
-		topgui_change_button_caption(p.name, "modular_admin_toggle_button", "Close Admin Menu")
-		topgui_change_button_color(p.name, "modular_admin_toggle_button", {r=1, g=0, b=0})
+		--topgui_change_button_caption(p.name, "modular_admin_toggle_button", "Close Admin Menu")
+		--topgui_change_button_color(p.name, "modular_admin_toggle_button", {r=1, g=0, b=0})
 	end
 	tg = modular_admin_get_flow(p)
 	tg.style.visible = global.modular_admin.visible[p.name]
@@ -179,11 +179,14 @@ Event.register(defines.events.on_player_joined_game, function(event)
 		global.modular_admin.raw[p.name] = global.modular_admin.raw[p.name] or {}
 		global.modular_admin.visible[p.name] = global.modular_admin.visible[p.name] or false
 		modular_admin_gui_changed(p)
-		if global.modular_admin.visible[p.name] then
-			topgui_add_button(p.name, {name = "modular_admin_toggle_button", caption = "Close Admin Menu", color = {r=1, g=0, b=0}})
-		else
-			topgui_add_button(p.name, {name = "modular_admin_toggle_button", caption = "Open Admin Menu", color = {r=0, g=1, b=0}})
-		end
+		topgui_add_sprite_button(p.name, {name = "modular_admin_toggle_button", sprite="item/discharge-defense-remote"})
+		-- if global.modular_admin.visible[p.name] then
+		-- 	--topgui_add_button(p.name, {name = "modular_admin_toggle_button", caption = "Close Admin Menu", color = {r=1, g=0, b=0}})
+		-- 	topgui_add_sprite_button(p.name, {name = "modular_admin_toggle_button", sprite="item/discharge-defense-remote"})
+		-- 	topgui_add_button(p.name, {name = "modular_admin_toggle_button", caption = "Close Admin Menu", color = {r=1, g=0, b=0}})
+		-- else
+		-- 	--topgui_add_button(p.name, {name = "modular_admin_toggle_button", caption = "Open Admin Menu", color = {r=0, g=1, b=0}})
+		-- end
 	end
 end)
 

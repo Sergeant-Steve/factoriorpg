@@ -42,6 +42,27 @@ function topgui_add_button(player_name, button)
 	end
 end
 
+function topgui_add_sprite_button(player_name, button)
+	if button.name ~= nil then
+		nb = {}
+		if button.sprite ~= nil then
+			nb.sprite = button.sprite
+		end
+		if button.order ~= nil then
+			nb.order = button.order
+		else
+			nb.order = 10
+		end
+		if button.color ~= nil then
+			nb.color = button.color
+		else
+			nb.color = {r = 1, g = 1, b = 1}
+		end
+		global.topgui.raw[player_name][button.name] = nb
+		topgui_gui_changed(game.players[player_name])
+	end
+end
+
 function topgui_remove_button(player_name, button_name)
 	global.topgui.raw[player_name][button_name] = nil
 	topgui_get_flow(game.players[player_name])[button_name].destroy()
