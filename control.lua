@@ -11,3 +11,5 @@ require "lualib/modular_tag/modular_tag" --Module to let players set a tag behin
 require "lualib/modular_admin/modular_admin" --New admin tools -untested
 require "lualib/modular_information/modular_information" --New player information system -untested
 require "equipment"
+
+require "debug"
