@@ -861,24 +861,28 @@ function rpg_give_team_bonuses(force)
 	-- end
 
 	-- Malus for ammo is base * 0.8 - 0.2
-	for k, v in pairs(ammotypes) do
+	for k, v in pairs(game.ammo_category_prototypes) do
 		if string.find(k, "turret") then
 			force.set_ammo_damage_modifier(k, builderbonus / 100 + force.get_ammo_damage_modifier(k) * 0.85 - 0.15)
-		elseif string.find(k, "robot") then
+		elseif string.find(k, "robot") or string.find(k, "capsule") or string.find(k, "laser")  then
 			force.set_ammo_damage_modifier(k, scientistbonus / 100 + force.get_ammo_damage_modifier(k) * 0.8 - 0.2)
-		elseif string.find(k, "grenade") or string.find(k, "rocket") then
+		elseif string.find(k, "grenade") or string.find(k, "rocket") or string.find(k, "arti") then
 			force.set_ammo_damage_modifier(k, minerbonus / 100 + force.get_ammo_damage_modifier(k) * 0.8 - 0.2)
 		else --Bullets, shells, flamethrower
 			force.set_ammo_damage_modifier(k, soldierbonus / 100 + force.get_ammo_damage_modifier(k) * 0.8 - 0.2)
 		end
 	end
+
+	-- Gun-turrets are handled separately
+	force.set_turret_attack_modifier("gun-turret", force.get_turret_attack_modifier("gun-turret") * 0.85 - 0.15 + builderbonus / 100)
+	
 	
 	--Just for you, Tux0n0
 	force.set_ammo_damage_modifier("railgun", soldierbonus / 50)
 
-	for k,v in pairs(turrettypes) do
-		force.set_turret_attack_modifier(k, builderbonus / 100 + force.get_turret_attack_modifier(k) * 0.8 - 0.2)
-	end
+	-- for k,v in pairs(turrettypes) do
+	-- 	force.set_turret_attack_modifier(k, builderbonus / 100 + force.get_turret_attack_modifier(k) * 0.8 - 0.2)
+	-- end
 	
 	force.character_health_bonus = scientistbonus / 3 --Base health is 250, so this is scaled up similarly
 	force.character_running_speed_modifier = scientistbonus / 400
@@ -935,19 +939,19 @@ function rpg_bonus_scan(event)
 	local bonus = 32 * (soldierbonus ^ 0.3) --This is the literal size of the area we're scanning.
 	
 	local bbox = {{}, {}}
-	if event.radar.position.x < event.chunk.position.x * 32 then
-		bbox[1][1] = event.chunk.position.x * 32
-		bbox[2][1] = event.chunk.position.x * 32 + bonus
+	if event.radar.position.x < event.chunk_position.x * 32 then
+		bbox[1][1] = event.chunk_position.x * 32
+		bbox[2][1] = event.chunk_position.x * 32 + bonus
 	else
-		bbox[1][1] = event.chunk.position.x * 32 - bonus + 32
-		bbox[2][1] = event.chunk.position.x * 32
+		bbox[1][1] = event.chunk_position.x * 32 - bonus + 32
+		bbox[2][1] = event.chunk_position.x * 32
 	end
-	if event.radar.position.y < event.chunk.position.y * 32 then
-		bbox[1][2] = event.chunk.position.y * 32
-		bbox[2][2] = event.chunk.position.y * 32 + bonus
+	if event.radar.position.y < event.chunk_position.y * 32 then
+		bbox[1][2] = event.chunk_position.y * 32
+		bbox[2][2] = event.chunk_position.y * 32 + bonus
 	else
-		bbox[1][2] = event.chunk.position.y * 32 - bonus + 32
-		bbox[2][2] = event.chunk.position.y * 32
+		bbox[1][2] = event.chunk_position.y * 32 - bonus + 32
+		bbox[2][2] = event.chunk_position.y * 32
 	end
 	
 	--local position = { x=event.chunk_position.x * 32 + 16, y=event.chunk_position.y * 32 + 16 }
@@ -956,7 +960,7 @@ function rpg_bonus_scan(event)
 	--Default case, bottom-right quadrant
 	--local bbox = {{position.x-bonus/2, position.y-bonus/2}, {position.x+bonus/2, position.y+bonus/2}}
 
-	--local bbox = {{event.chunk.position.x * 32, event.chunk.position.y * 32}, {event.chunk.position.x * 32 + bonus}
+	--local bbox = {{event.chunk_position.x * 32, event.chunk_position.y * 32}, {event.chunk_position.x * 32 + bonus}
 		
 	event.radar.force.chart(event.radar.surface, bbox)
 end
