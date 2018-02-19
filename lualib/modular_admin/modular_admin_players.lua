@@ -94,13 +94,13 @@ end
 
 
 function modular_admin_players_gui_changed(p)
-	bf = modular_admin_get_flow(p)
+	local bf = modular_admin_get_flow(p)
 	if bf.modular_admin_players_pane ~= nil then
 		bf.modular_admin_players_pane.destroy()
 	end
 	if global.modular_admin_players.enabled and global.modular_admin_players.visable[p.name] and p.admin then
-		mapp = bf.add {name = "modular_admin_players_pane", type = "frame", caption = "Player manager", direction = "vertical"}
-		mapts = mapp.add {name = "modular_admin_players_table_search", type = "table", column_count = 3}
+		local mapp = bf.add {name = "modular_admin_players_pane", type = "frame", caption = "Player manager", direction = "vertical"}
+		local mapts = mapp.add {name = "modular_admin_players_table_search", type = "table", column_count = 3}
 		mapts.add {name = "modular_admin_players_search_label", type = "label", caption = "Name: "}
 		mapts.add {name = "modular_admin_players_search", type = "textfield"}
 		mapts.add {name = "modular_admin_players_search_refresh", type = "button", caption = "refresh list"}
@@ -110,21 +110,21 @@ end
 
 function modular_admin_players_update_player_list(p)
 	if modular_admin_get_flow(p).modular_admin_players_pane ~= nil then
-		mapp = modular_admin_get_flow(p).modular_admin_players_pane
+		local mapp = modular_admin_get_flow(p).modular_admin_players_pane
 		if mapp.modular_admin_players_scrolllist ~= nil then
 			mapp.modular_admin_players_scrolllist.destroy()
 		end
 		if mapp.modular_admin_players_table_header ~= nil then
 			mapp.modular_admin_players_table_header.destroy()
 		end
-		mapth = mapp.add {name = "modular_admin_players_table_header", type = "table", column_count = 4}
+		local mapth = mapp.add {name = "modular_admin_players_table_header", type = "table", column_count = 4}
 		mapth.add {name = "modular_admin_players_label_player_name", type = "label", caption = "Player name"}
 		mapth.add {name = "modular_admin_players_label_online_time", type = "label", caption = "Online time"}
 		mapth.add {name = "modular_admin_players_label_follow", type = "label", caption = "Follow"}
 		mapth.add {name = "modular_admin_players_label_teleport", type = "label", caption = "Teleport"}
-		mapps = mapp.add {name = "modular_admin_players_scrolllist", type = "scroll-pane", vertical_scroll_policy = "auto", horizontal_scroll_policy = "never"}
+		local mapps = mapp.add {name = "modular_admin_players_scrolllist", type = "scroll-pane", vertical_scroll_policy = "auto", horizontal_scroll_policy = "never"}
 		mapps.style.maximal_height = 300
-		mapt = mapps.add {name = "modular_admin_players_table", type = "table", column_count = 4}
+		local mapt = mapps.add {name = "modular_admin_players_table", type = "table", column_count = 4}
 		mapt.style.horizontal_spacing = 8
 		for k, player in pairs(game.connected_players) do
 			if player.index ~= p.index then
@@ -172,7 +172,7 @@ Event.register(-1, function(event)
 	end)
 	
 Event.register(defines.events.on_player_joined_game, function(event)
-	p = game.players[event.player_index]
+	local p = game.players[event.player_index]
 	if p.admin then
 		if global.modular_admin_players.enabled then
 			if global.modular_admin_players.visable[p.name] then

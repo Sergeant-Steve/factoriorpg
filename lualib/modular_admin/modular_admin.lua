@@ -24,7 +24,7 @@ global.modular_admin.modules = global.modular_admin.modules or {}
 function modular_admin_add_button(player_name, button)
 	global.modular_admin.raw[player_name] = global.modular_admin.raw[player_name] or {}
 	if button.name ~= nil then
-		nb = {}
+		local nb = {}
 		if button.caption ~= nil then
 			nb.caption = button.caption
 		else
@@ -67,7 +67,7 @@ end
 
 function modular_admin_gui_changed(p)
 	if p.admin then
-		bf = modular_admin_get_flow(p)
+		local bf = modular_admin_get_flow(p)
 		if bf.modular_admin_menu_first ~= nil then
 			bf = bf.modular_admin_menu_first
 		else
@@ -78,9 +78,9 @@ function modular_admin_gui_changed(p)
 		end
 		modular_admin_sort_table(p)
 		bf.add {name = "modular_admin_menu", type = "flow", direction = "vertical", style = "slot_table_spacing_vertical_flow"}
-		tg = modular_admin_get_menu(p)
+		local tg = modular_admin_get_menu(p)
 		for i, button in pairs(global.modular_admin.sorted[p.name]) do
-			b = tg.add {name=button.name, type="button", caption=button.caption}
+			local b = tg.add {name=button.name, type="button", caption=button.caption}
 			if button.color ~= nil then
 				b.style.font_color = button.color
 			end
@@ -100,7 +100,7 @@ function modular_admin_gui_toggle_visibility(p)
 		topgui_change_button_caption(p.name, "modular_admin_toggle_button", "Close Admin Menu")
 		topgui_change_button_color(p.name, "modular_admin_toggle_button", {r=1, g=0, b=0})
 	end
-	tg = modular_admin_get_flow(p)
+	local tg = modular_admin_get_flow(p)
 	tg.style.visible = global.modular_admin.visible[p.name]
 end
 
@@ -108,7 +108,7 @@ end
 function modular_admin_sort_table(p)
 	global.modular_admin.sorted[p.name] = {}
 	for i, b in pairs(global.modular_admin.raw[p.name]) do
-		newtable = {name = i, caption = b.caption, order = b.order, color = b.color}
+		local newtable = {name = i, caption = b.caption, order = b.order, color = b.color}
 		table.insert(global.modular_admin.sorted[p.name], newtable)
 	end
 	table.sort(global.modular_admin.sorted[p.name], function(t1, t2)
@@ -118,19 +118,19 @@ function modular_admin_sort_table(p)
 end
 
 function modular_admin_get_flow(p)
-	f = mod_gui.get_frame_flow(p).modular_admin_flow
+	local f = mod_gui.get_frame_flow(p).modular_admin_flow
 	if f ~= nil then
 		return f
 	else 
-		mgff = mod_gui.get_frame_flow(p)
-		maf = mgff.add {type = "flow", name = "modular_admin_flow", direction = "horizontal"}
+		local mgff = mod_gui.get_frame_flow(p)
+		local maf = mgff.add {type = "flow", name = "modular_admin_flow", direction = "horizontal"}
 		maf.style.visible = global.modular_admin.visible[p.name]
 		return maf
 	end
 end
 
 function modular_admin_get_menu(p)
-	tg = modular_admin_get_flow(p).modular_admin_menu_first.modular_admin_menu
+	local tg = modular_admin_get_flow(p).modular_admin_menu_first.modular_admin_menu
 	if tg ~= nil then
 		return tg
 	end
@@ -174,7 +174,7 @@ end
 --
 
 Event.register(defines.events.on_player_joined_game, function(event)
-	p = game.players[event.player_index]
+	local p = game.players[event.player_index]
 	if p.admin then
 		global.modular_admin.raw[p.name] = global.modular_admin.raw[p.name] or {}
 		global.modular_admin.visible[p.name] = global.modular_admin.visible[p.name] or false

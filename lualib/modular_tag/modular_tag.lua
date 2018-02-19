@@ -49,10 +49,10 @@ function modular_tag_toggle_gui_visibility(player)
 end
 
 function modular_tag_update_gui(player)
-	tfl = modular_tag_get_flow(player)
+	local tfl = modular_tag_get_flow(player)
 	tfl.clear()
 	for _, role in pairs(global.modular_tag.tags) do
-		b = tfl.add { type = "button", caption = role.display_name, name = "modular_tag_" .. role.display_name }
+		local b = tfl.add { type = "button", caption = role.display_name, name = "modular_tag_" .. role.display_name }
 		if (role.color ~= nil) then
 			b.style.font_color = role.color
 			b.style.hovered_font_color = {r=0.8,g=0.8,b=0.8}
@@ -62,13 +62,13 @@ function modular_tag_update_gui(player)
 end
 
 function modular_tag_get_frame(player)
-	ff = mod_gui.get_frame_flow(player)
-	tag_frame = ff["modular_tag-frame"]
+	local ff = mod_gui.get_frame_flow(player)
+	local tag_frame = ff["modular_tag-frame"]
 	if(tag_frame ~= nil) then
-		tf = tag_frame
+		local tf = tag_frame
 	else
 		tf = ff.add { type = "frame", name = "modular_tag-frame", caption = "Choose Tag", direction = "vertical"}
-		v = global.modular_tag.visible[player.name] or false
+		local v = global.modular_tag.visible[player.name] or false
 		tf.style.visible = v
 		tf.style.maximal_width = 180
 	end
@@ -76,19 +76,19 @@ function modular_tag_get_frame(player)
 end
 
 function modular_tag_get_flow(player)
-	tf = modular_tag_get_frame(player)
+	local tf = modular_tag_get_frame(player)
 	tag_scroll = tf["modular_tag-panel-scroll"]
 	if(tag_scroll ~= nil) then
-		ts = tag_scroll
+		local ts = tag_scroll
 	else
-		ts = tf.add { type = "scroll-pane", name = "modular_tag-panel-scroll"}
+		local ts = tf.add { type = "scroll-pane", name = "modular_tag-panel-scroll"}
 		ts.style.maximal_height = 250
 	end	
-	tag_flow = ts["modular_tag-panel-scroll-flow"]
+	local tag_flow = ts["modular_tag-panel-scroll-flow"]
 	if(tag_flow ~= nil) then
-		tfl = tag_flow
+		local tfl = tag_flow
 	else
-		tfl = ts.add { type = "flow", direction = "vertical", name = "modular_tag-panel-scroll-flow", style = "slot_table_spacing_vertical_flow"}
+		local tfl = ts.add { type = "flow", direction = "vertical", name = "modular_tag-panel-scroll-flow", style = "slot_table_spacing_vertical_flow"}
 	end
 	return tfl
 end

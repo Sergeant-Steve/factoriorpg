@@ -21,7 +21,7 @@ global.topgui.style = mod_gui.button_style
 
 function topgui_add_button(player_name, button)
 	if button.name ~= nil then
-		nb = {}
+		local nb = {}
 		if button.caption ~= nil then
 			nb.caption = button.caption
 		else
@@ -64,7 +64,7 @@ end
 
 function topgui_gui_changed(p)
 	topgui_sort_table(p)
-	tg = topgui_get_flow(p)
+	local tg = topgui_get_flow(p)
 	tg.clear()
 	for i, button in pairs(global.topgui.sorted[p.name]) do
 		b = tg.add {name=button.name, type="button", caption=button.caption}
@@ -87,11 +87,11 @@ function topgui_sort_table(p)
 end
 
 function topgui_get_flow(p)
-	bf = mod_gui.get_button_flow(p)
+	local bf = mod_gui.get_button_flow(p)
 	if bf.topgui ~= nil then
-		tg = bf.topgui
+		local tg = bf.topgui
 	else
-		tg = bf.add {name = "topgui", type = "flow", direction = "horizontal", style = "slot_table_spacing_horizontal_flow"}
+		local tg = bf.add {name = "topgui", type = "flow", direction = "horizontal", style = "slot_table_spacing_horizontal_flow"}
 	end
 	return tg
 end
@@ -101,7 +101,7 @@ end
 --
 
 Event.register(defines.events.on_player_joined_game, function(event)
-	p = game.players[event.player_index]
+	local p = game.players[event.player_index]
 	global.topgui.raw[p.name] = global.topgui.raw[p.name] or {}
 	topgui_gui_changed(p)
 end)

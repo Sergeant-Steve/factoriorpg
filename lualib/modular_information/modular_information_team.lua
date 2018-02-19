@@ -11,7 +11,7 @@ global.modular_information_team = global.modular_information_team or {}
 --	FUNCTIONS
 --
 function modular_information_team_create_gui(p)
-	miip = modular_information_get_information_pane(p)
+	local miip = modular_information_get_information_pane(p)
 	miip.clear()
 	
 end
@@ -38,7 +38,7 @@ end
 --
 
 Event.register(defines.events.on_player_joined_game, function(event)
-	p = game.players[event.player_index]
+	local p = game.players[event.player_index]
 	modular_information_add_button(p.name, {name="modular_information_team", order = 1, caption = "Rules"})
 	modular_information_set_active_button(p, "modular_information_team")
 	modular_information_gui_show(p)
