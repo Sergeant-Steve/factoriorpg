@@ -99,8 +99,9 @@ end
 
 function modular_information_get_menu(p)
 	local bf = modular_information_get_flow(p)
+	local mimt
 	if (bf.modular_information_menu ~= nil) and  (bf.modular_information_menu.modular_information_menu_scroll ~= nil) and (bf.modular_information_menu.modular_information_menu_scroll.modular_information_menu_table ~= nil) then
-		local mimt = bf.modular_information_menu.modular_information_menu_scroll.modular_information_menu_table
+		mimt = bf.modular_information_menu.modular_information_menu_scroll.modular_information_menu_table
 	else
 		local mim = bf.add {name = "modular_information_menu", type = "frame", direction = "vertical", caption = "Information Menu"}
 		local mims = mim.add {name = "modular_information_menu_scroll", type = "scroll-pane"}
@@ -109,7 +110,7 @@ function modular_information_get_menu(p)
 		mims.style.right_padding = 0
 		mims.style.bottom_padding = 0
 		mims.style.maximal_height = 200
-		local mimt = mims.add {name = "modular_information_menu_table", type = "table", column_count = 1}
+		mimt = mims.add {name = "modular_information_menu_table", type = "table", column_count = 1}
 		mimt.style.vertical_spacing = 0
 		mimt.style.top_padding = 0
 		mimt.style.left_padding = 0
@@ -121,21 +122,23 @@ end
 
 function modular_information_get_menu_canvas(p)
 	local bf = modular_information_get_flow(p)
+	local mim
 	if (bf.modular_information_menu_canvas ~= nil) then
-		local mim = bf.modular_information_menu_canvas
+		mim = bf.modular_information_menu_canvas
 	else
-		local mim = bf.add {name = "modular_information_menu_canvas", type = "frame", direction = "vertical", caption = "Submodule Menu"}
+		mim = bf.add {name = "modular_information_menu_canvas", type = "frame", direction = "vertical", caption = "Submodule Menu"}
 	end
 	return mim
 end
 
 function modular_information_get_information_pane(p)
 	local mif = modular_information_get_flow(p)
+	local mips
 	if (mif.modular_information_pane ~= nil) and (mif.modular_information_pane.modular_information_pane_scroll ~= nil) then
-		local mips = mif.modular_information_pane.modular_information_pane_scroll
+		mips = mif.modular_information_pane.modular_information_pane_scroll
 	else 
 		local mip = mif.add {name = "modular_information_pane", type = "frame", direction = "vertical", caption = "Information pane"}
-		local mips = mip.add {name = "modular_information_pane_scroll", type = "scroll-pane"}
+		mips = mip.add {name = "modular_information_pane_scroll", type = "scroll-pane"}
 		mips.style.maximal_height = 200
 		mips.style.minimal_height = 200
 		mips.style.minimal_width = 500

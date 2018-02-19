@@ -230,11 +230,12 @@ function modular_admin_spectate_gui_changed(p)
 	if p.admin then
 		local bf = modular_admin_get_flow(p)
 		if global.modular_admin_spectate.enabled then
+			local st
 			if bf.modular_admin_spectate_pane ~= nil then
-				local st = bf.modular_admin_spectate_pane
+				st = bf.modular_admin_spectate_pane
 				st.clear()
 			else
-				local st = bf.add {type = "frame", name = "modular_admin_spectate_pane", caption = "Specate Menu", direction = "vertical"}
+				st = bf.add {type = "frame", name = "modular_admin_spectate_pane", caption = "Specate Menu", direction = "vertical"}
 			end
 			st.style.visible = global.modular_admin_spectate.visible[p.name]
 			local sm = st

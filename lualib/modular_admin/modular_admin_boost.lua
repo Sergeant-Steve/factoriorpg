@@ -61,52 +61,59 @@ function modular_admin_boost_gui_changed(p)
 	if p.admin then
 		local bf = modular_admin_get_flow(p)
 		if global.modular_admin_boost.enabled then
+			local mabpa
 			if bf.modular_admin_boost_pane ~= nil then
-				local mabpa = bf.modular_admin_boost_pane
+				mabpa = bf.modular_admin_boost_pane
 			else
-				local mabpa = bf.add {type = "frame", name = "modular_admin_boost_pane", caption = "Character Menu", direction = "vertical"}
+				mabpa = bf.add {type = "frame", name = "modular_admin_boost_pane", caption = "Character Menu", direction = "vertical"}
 			end
+			local mabp
 			if mabpa.modular_admin_boost_flow ~= nil then
-				local mabp = mabpa.modular_admin_boost_flow
+				mabp = mabpa.modular_admin_boost_flow
 				mabp.clear()
 			else
-				local mabp = mabpa.add {type = "flow", name = "modular_admin_boost_flow", direction = "vertical",  style = "slot_table_spacing_vertical_flow"}
+				mabp = mabpa.add {type = "flow", name = "modular_admin_boost_flow", direction = "vertical",  style = "slot_table_spacing_vertical_flow"}
 			end
 			mabpa.style.visible = global.modular_admin_boost.visible[p.name]
 			local pbs = global.modular_admin_boost.bonus_state[p.name]
+			local bpb
 			if pbs.pickup then
-				local bpb = mabp.add {type = "button", name = "modular_admin_boost_pickup_button", caption = "Reset Pickup"}
+				bpb = mabp.add {type = "button", name = "modular_admin_boost_pickup_button", caption = "Reset Pickup"}
 				bpb.style.font_color = global.modular_admin_boost.active_color
 			else
-				local bpb = mabp.add {type = "button", name = "modular_admin_boost_pickup_button", caption = "Boost Pickup"}
+				bpb = mabp.add {type = "button", name = "modular_admin_boost_pickup_button", caption = "Boost Pickup"}
 				bpb.style.font_color = global.modular_admin_boost.inactive_color 
 			end
+			local bmb
 			if pbs.mining then
-				local bmb = mabp.add {type = "button", name = "modular_admin_boost_mining_button", caption = "Reset Mining"}
+				bmb = mabp.add {type = "button", name = "modular_admin_boost_mining_button", caption = "Reset Mining"}
 				bmb.style.font_color = global.modular_admin_boost.active_color
 			else
-				local bmb = mabp.add {type = "button", name = "modular_admin_boost_mining_button", caption = "Boost Mining"}
+				bmb = mabp.add {type = "button", name = "modular_admin_boost_mining_button", caption = "Boost Mining"}
 				bmb.style.font_color = global.modular_admin_boost.inactive_color 
 			end
+			local bcb
 			if pbs.crafting then
-				local bcb = mabp.add {type = "button", name = "modular_admin_boost_crafting_button", caption = "Reset Crafting"}
+				bcb = mabp.add {type = "button", name = "modular_admin_boost_crafting_button", caption = "Reset Crafting"}
 				bcb.style.font_color = global.modular_admin_boost.active_color
 			else
-				local bcb = mabp.add {type = "button", name = "modular_admin_boost_crafting_button", caption = "Boost Crafting"}
+				bcb = mabp.add {type = "button", name = "modular_admin_boost_crafting_button", caption = "Boost Crafting"}
 				bcb.style.font_color = global.modular_admin_boost.inactive_color 
 			end
+			local brb
 			if pbs.reach then
-				local brb = mabp.add {type = "button", name = "modular_admin_boost_reach_button", caption = "Reset Reach"}
+				brb = mabp.add {type = "button", name = "modular_admin_boost_reach_button", caption = "Reset Reach"}
 				brb.style.font_color = global.modular_admin_boost.active_color
 			else
-				local brb = mabp.add {type = "button", name = "modular_admin_boost_reach_button", caption = "Boost Reach"}
+				brb = mabp.add {type = "button", name = "modular_admin_boost_reach_button", caption = "Boost Reach"}
 				brb.style.font_color = global.modular_admin_boost.inactive_color 
 			end
+			local bib
 			if pbs.invincible then
-				local bib = mabp.add {type = "button", name = "modular_admin_boost_invincible_button", caption = "Disable Invincible"}
+				bib = mabp.add {type = "button", name = "modular_admin_boost_invincible_button", caption = "Disable Invincible"}
 				bib.style.font_color = global.modular_admin_boost.active_color
 			else
-				local bib = mabp.add {type = "button", name = "modular_admin_boost_invincible_button", caption = "Enable Invincible"}
+				bib = mabp.add {type = "button", name = "modular_admin_boost_invincible_button", caption = "Enable Invincible"}
 				bib.style.font_color = global.modular_admin_boost.inactive_color 
 			end
 			local bwl = mabp.add {type = "label", name = "modular_admin_boost_walking_label", caption = "Walking"}

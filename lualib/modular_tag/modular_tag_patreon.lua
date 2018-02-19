@@ -50,10 +50,11 @@ function modular_tag_patreon_create_gui(event)
 	local player = game.players[event.player_index]
 	local p = player
 	local mtgf = modular_tag_get_frame(p)
+	local mtf
 	if mtgf.modular_tag_patreon_flow ~= nil and mtgf.modular_tag_patreon_flow.valid then
-		local mtf = mtgf.mtgf.modular_tag_patreon_flow
+		mtf = mtgf.mtgf.modular_tag_patreon_flow
 	else
-		local mtf = mtgf.add {type = "flow", direction = "vertical", name = "modular_tag_patreon_flow", style = "slot_table_spacing_vertical_flow"}
+		mtf = mtgf.add {type = "flow", direction = "vertical", name = "modular_tag_patreon_flow", style = "slot_table_spacing_vertical_flow"}
 	end
 	if mtf.modular_tag_patreon_unique_button ~= nil and mtf.modular_tag_unique_button.valid then
 	

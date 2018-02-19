@@ -64,8 +64,9 @@ end
 function modular_tag_get_frame(player)
 	local ff = mod_gui.get_frame_flow(player)
 	local tag_frame = ff["modular_tag-frame"]
+	local tf
 	if(tag_frame ~= nil) then
-		local tf = tag_frame
+		tf = tag_frame
 	else
 		tf = ff.add { type = "frame", name = "modular_tag-frame", caption = "Choose Tag", direction = "vertical"}
 		local v = global.modular_tag.visible[player.name] or false
@@ -77,18 +78,20 @@ end
 
 function modular_tag_get_flow(player)
 	local tf = modular_tag_get_frame(player)
-	tag_scroll = tf["modular_tag-panel-scroll"]
+	local tag_scroll = tf["modular_tag-panel-scroll"]
+	local ts
 	if(tag_scroll ~= nil) then
-		local ts = tag_scroll
+		ts = tag_scroll
 	else
-		local ts = tf.add { type = "scroll-pane", name = "modular_tag-panel-scroll"}
+		ts = tf.add { type = "scroll-pane", name = "modular_tag-panel-scroll"}
 		ts.style.maximal_height = 250
 	end	
 	local tag_flow = ts["modular_tag-panel-scroll-flow"]
+	local tfl
 	if(tag_flow ~= nil) then
-		local tfl = tag_flow
+		tfl = tag_flow
 	else
-		local tfl = ts.add { type = "flow", direction = "vertical", name = "modular_tag-panel-scroll-flow", style = "slot_table_spacing_vertical_flow"}
+		tfl = ts.add { type = "flow", direction = "vertical", name = "modular_tag-panel-scroll-flow", style = "slot_table_spacing_vertical_flow"}
 	end
 	return tfl
 end
