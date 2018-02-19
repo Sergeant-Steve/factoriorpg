@@ -17,7 +17,10 @@ rpg = {}
 rpg.classes = {"Engineer", "Miner", "Builder", "Soldier", "Scientist", "Beastmaster"}
 
 --This event gets called often.  Event is of form: {force=force}
-on_reset_technology_effects = script.generate_event_name()
+rpg.on_reset_technology_effects = script.generate_event_name()
+
+--Other gui-related 
+rpg.on_rpg_gui_created = script.generate_event_name()
 
 --Savedata is of form: player_name = {bank = exp, class1 = exp, class2 = exp, etc}
 --Remote commands
@@ -230,7 +233,9 @@ function rpg_add_gui(event)
 	player.gui.top.rpg.container.add{type="label", name="level", caption="Level 1"}
 	player.gui.top.rpg.container.add{type="progressbar", name="exp", size=200}
 	player.gui.top.rpg.container.tooltip="Kill biter bases, research tech, or launch rockets to level up."
-	rpg_post_rpg_gui(event) --re-add admin and tag guis
+
+	script.raise_event(rpg.on_rpg_gui_created, event) --Make other guis wait until this is drawn first.
+	--rpg_post_rpg_gui(event) --re-add admin and tag guis
 end
 
 --Create class pick / change gui
@@ -912,7 +917,7 @@ function rpg_give_team_bonuses(force)
 	game.map_settings.enemy_evolution.time_factor = global.base_evolution_time * beastmasterbonus
 	
 	--So I can notify other modules when this happens:
-	script.raise_event(on_reset_technology_effects, {force=force})
+	script.raise_event(rpg.on_reset_technology_effects, {force=force})
 
 	--Fix for frontier silo:
 	if frontier_silo then

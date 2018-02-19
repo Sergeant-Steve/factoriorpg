@@ -1,45 +1,46 @@
 --Heavy lifting stuff here.
-require "mod-gui"
+require "mod-gui" --Don't even know what this does.
 require "utils/event" --This is so all of the modules play nice with each other.
+--require "utils/topgui" --Allows reordering guis.  Warning: Pollutes the global table.  Not desync safe.
 require "utils/bot" --Discord integration
-require "antigrief" --Look for suspicious behavior and report it to admins/log it.
-require "locale/modules/module_list" --Creates and displays a list of active modules on login.
+require "utils/antigrief" --Look for suspicious behavior and report it to admins/log it.
+--require "utils/modular_admin/modular_admin" --FMMO admin tools 
+--require "utils/modular_information/modular_information" --Info windows from FMMO
+require "modules/module_list" --Creates and displays a list of active modules on login.
 require "rpg_permissions" --Limit certain actions to players level 5 or greater
 require "rpg" --Award bonuses based on experience earned.
 --require "permissions" --Permission manager
 --require "trusted" --Module to add trusted players to a seperate permission group
 --require "locale/utils/patreon" --Module to give patreons spectate and a nice unique tag
---require "locale/utils/admin"	--Admin module to give the admins spectate, commands and character modifications.
 require "announcements"	--Module to announce stuff ingame / give the players a welcome message
 require "tag" --Module to let players set a tag behind their names to improve teamwork
 --require "fmcd" --Module to consolidate saving data to an output file for the agent
 --require "stats" --Module to generate stats and print them to the filesystem
 --require "popup" --Module to create and display an popup in the center of all players their screens.
-require "rules" --Module which displays a popup with the rules when a player joins, or presses the open rules button
 --require "rocket" --Module to stop people removing the rocket silo
 
 --Modules
-require "locale/modules/gravemarker" --Mark player death locations on map for corpse runs.
-require "locale/modules/dirtpath" --For some silliness.
-require "locale/modules/seasons" --Let's mess with solar.
---require "locale/modules/dark harvest" --Only way to get uranium is from biter deaths.
---require "locale/modules/tOredumonde" --Ore spawns in directions. This must be called before divOresity. NOTE: STONE_BYPRODUCT must be false.
-require "locale/modules/divOresity" --Some ore gets scrambled and must be filtered.
+require "modules/gravemarker" --Mark player death locations on map for corpse runs.
+require "modules/dirtpath" --For some silliness.
+require "modules/seasons" --Let's mess with solar.
+--require "modules/dark harvest" --Only way to get uranium is from biter deaths.
+--require "modules/tOredumonde" --Ore spawns in directions. This must be called before divOresity. NOTE: STONE_BYPRODUCT must be false.
+require "modules/divOresity" --Some ore gets scrambled and must be filtered.
 --require "dark harvest event" --Temp for testing.
 require "modules/bluebuild" --Bluebuild softmod
-require "locale/modules/autofill" --Softmod autofill separated from Oarc
---require "locale/modules/nougatmining" --Logistic mining softmod.
-require "locale/modules/peppermintmining" --Logistic mining softmod.
-require "locale/modules/piety" --Way to consume random excess stone.
+require "modules/autofill" --Softmod autofill separated from Oarc
+--require "modules/nougatmining" --Logistic mining softmod.
+require "modules/peppermintmining" --Logistic mining softmod.
+require "modules/piety" --Way to consume random excess stone.
 --require "belt_limit" --Limits number of belts per player.  Mostly for UPS reasons.
-require "locale/modules/bpmirror" --Adds bpmirror command to flip BPs.
-require "locale/modules/votekick" --Allows users to kick other users.
---require "locale/modules/infinity" --Infinite ore.  Almost.  Don't recommend with peppermint/Nougat
+require "modules/bpmirror" --Adds bpmirror command to flip BPs.
+require "modules/votekick" --Allows users to kick other users.
+--require "modules/infinity" --Infinite ore.  Almost.  Don't recommend with peppermint/Nougat
 require "modules/enhancedbiters" --Adds extra behavior to biters to make them extra nasty.
 require "modules/playerlist" --List of online players
 
 -- World Generators: Most are exclusive.
-require "maps/prospector" --Radars generate ore
+--require "maps/prospector" --Radars generate ore
 --require "maps/TTSFN" --This Tank Stops for Nobody!
 --require "maps/dangOreus" --Ore is everywhere.  Cannot build on it!
 --require "maps/searious" --Everything not a resource tile is turned into water.
