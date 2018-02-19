@@ -41,6 +41,7 @@ function modular_information_rules_show_rule(p, r)
 			mirt.style.bottom_padding = 0
 			local short  = mirt.add{type="label", name="modular_information_rules_short_label", caption = rule.short}
 			short.style.single_line = false
+			local long
 			if rule.long ~= nil then
 				long = mirt.add{type="label", name="modular_information_rules_long_label", caption = rule.long}
 				long.style.single_line = false
@@ -66,7 +67,7 @@ function modular_information_rules_create_gui(p)
 	mirt.style.bottom_padding = 0
 	local i = 1
 	for k, r in pairs(global.modular_information_rules.list) do
-		b = mirt.add{type="button", caption= i .. ". " .. r.short, name = "modular_information_rules_button_" .. k}
+		local b = mirt.add{type="button", caption= i .. ". " .. r.short, name = "modular_information_rules_button_" .. k}
 		b.style.top_padding = 0
 		b.style.left_padding = 5
 		b.style.right_padding = 0

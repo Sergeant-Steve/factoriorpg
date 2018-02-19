@@ -30,7 +30,7 @@ global.modular_information.style = mod_gui.button_style
 function modular_information_add_button(player_name, button)
 	global.modular_information.raw[player_name] = global.modular_information.raw[player_name] or {}
 	if button.name ~= nil then
-		nb = {}
+		local nb = {}
 		if button.caption ~= nil then
 			nb.caption = button.caption
 		else

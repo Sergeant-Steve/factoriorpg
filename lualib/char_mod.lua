@@ -254,6 +254,6 @@ end
 --
 
 Event.register(defines.events.on_player_joined_game, function(event)
-	p = game.players[event.player_index]
+	local p = game.players[event.player_index]
 	char_mod_apply_all_bonus(p)
 end)

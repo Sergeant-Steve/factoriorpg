@@ -77,7 +77,7 @@ end
 function topgui_sort_table(p)
 	global.topgui.sorted[p.name] = {}
 	for i, b in pairs(global.topgui.raw[p.name]) do
-		newtable = {name = i, caption = b.caption, order = b.order, color = b.color}
+		local newtable = {name = i, caption = b.caption, order = b.order, color = b.color}
 		table.insert(global.topgui.sorted[p.name], newtable)
 	end
 	table.sort(global.topgui.sorted[p.name], function(t1, t2)
