@@ -13,7 +13,7 @@ require "rpg" --Award bonuses based on experience earned.
 --require "trusted" --Module to add trusted players to a seperate permission group
 --require "locale/utils/patreon" --Module to give patreons spectate and a nice unique tag
 require "announcements"	--Module to announce stuff ingame / give the players a welcome message
-require "tag" --Module to let players set a tag behind their names to improve teamwork
+require "modules/tag" --Module to let players set a tag behind their names to improve teamwork
 --require "fmcd" --Module to consolidate saving data to an output file for the agent
 --require "stats" --Module to generate stats and print them to the filesystem
 --require "popup" --Module to create and display an popup in the center of all players their screens.
