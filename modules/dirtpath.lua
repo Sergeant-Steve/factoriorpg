@@ -1,4 +1,4 @@
-DIRT_THRESHOLD = 6
+DIRT_THRESHOLD = 8
 
 if MODULE_LIST then
 	module_list_add("Dirt Path")
@@ -6,10 +6,12 @@ end
 
 --This is all subjective.
 DIRT= {
-	["grass-1"]="grass-2",
+	["grass-1"]="grass-3",
 	["grass-2"]="grass-3",
 	["grass-3"]="grass-4",
-	["grass-4"]="dirt-7",
+	["grass-4"]="dirt-4",
+	["dirt-4"]="dirt-6",
+	["dirt-6"]="dirt-7",
 	["dirt-7"]="dirt-5",
 	["dirt-5"]="dirt-3",
 	["dirt-3"]="dirt-2",
@@ -17,24 +19,21 @@ DIRT= {
 	["dirt-1"]="red-desert-3",
 	["red-desert-3"]="sand-3",
 
-	["dirt-4"]="dirt-6",
-	["dirt-6"]="dirt-7",
-
-	["red-desert-0"]="red-desert-1"
+	["red-desert-0"]="red-desert-1",
+	["red-desert-1"]="red-desert-2",
+	["red-desert-2"]="red-desert-3"
 }
 
+global.dirt = {}
+
 function dirtDirt(event)
-	if not global.dirt then
-		global.dirt = {}
-		--game.print("Initalizing Dirt Path.")
-	end
 	--for __, p in pairs(game.connected_players) do
 		local p = game.players[event.player_index]
 	
 		-- Trains aren't cars!  This breaks it.  Dunno why they're handled differently.
 		--if p.walking_state.walking or (p.driving and p.vehicle.speed ~= 0) then
 		-- Special conditional check for Factorissimo
-		if p.walking_state.walking or (p.vehicle and p.vehicle.type == "car" and p.vehicle.speed ~= 0)) then
+		if p.walking_state.walking or (p.vehicle and p.vehicle.type == "car" and p.vehicle.speed ~= 0) then
 			local tile = p.surface.get_tile(p.position)
 			if not (tile.hidden_tile or string.find(tile.name, "concrete")) then
 				
@@ -105,15 +104,19 @@ function dirtAdd(x, y)
 end
 
 function cleanDirt()
+	if not global.dirt then
+		log("Dirt Path not initialized!")
+		return
+	end
 	for x, tablex in pairs(global.dirt) do
-		for y, value in pairs(tablex) do
-			value = value - 1
-			if value <= 0 then
-				value = nil
+		for y in pairs(tablex) do
+			tablex[y] = tablex[y] - 1
+			if tablex[y] <= 0 then
+				tablex[y] = nil
 			end
 		end
 		if tablex ~= nil and next(tablex) == nil then
-			tablex = nil
+			global.dirt[x] = nil
 		end
 	end
 end
