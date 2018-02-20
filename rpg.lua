@@ -224,15 +224,16 @@ end
 --Add/rebuild class/level gui
 function rpg_add_gui(event)
 	local player = game.players[event.player_index]
-	if player.gui.top.rpg then
-		player.gui.top.clear()
+	local flow = mod_gui.get_frame_flow(player)
+	if flow.rpg then
+		flow.rpg.destroy()
 	end
-	player.gui.top.add{type="frame", name="rpg"}
-	player.gui.top.rpg.add{type="flow", name="container", direction="vertical"}
-	player.gui.top.rpg.container.add{type="button", name="class", caption="Class: " .. global.rpg_exp[player.name].class}
-	player.gui.top.rpg.container.add{type="label", name="level", caption="Level 1"}
-	player.gui.top.rpg.container.add{type="progressbar", name="exp", size=200}
-	player.gui.top.rpg.container.tooltip="Kill biter bases, research tech, or launch rockets to level up."
+	flow.add{type="frame", name="rpg"}
+	flow.rpg.add{type="flow", name="container", direction="vertical"}
+	flow.rpg.container.add{type="button", name="class", caption="Class: " .. global.rpg_exp[player.name].class, tooltip="Open character panel"}
+	flow.rpg.container.add{type="label", name="level", caption="Level 1"}
+	flow.rpg.container.add{type="progressbar", name="exp", size=200}
+	flow.rpg.container.tooltip="Kill biter bases, research tech, or launch rockets to level up."
 
 	script.raise_event(rpg.on_rpg_gui_created, event) --Make other guis wait until this is drawn first.
 	--rpg_post_rpg_gui(event) --re-add admin and tag guis
@@ -333,17 +334,18 @@ end
 
 --Update gui
 function rpg_update_gui(player)
-	if not player.gui.top.rpg then
+	local flow = mod_gui.get_frame_flow(player)
+	if not flow.rpg then
 		rpg_add_gui({player_index=player.index})
 	end
 	local level = global.rpg_tmp[player.name].level
 	--Update progress bar.
 	local class = global.rpg_exp[player.name].class
-	player.gui.top.rpg.container.class.caption = "Class: " .. global.rpg_exp[player.name].class
-	player.gui.top.rpg.container.exp.value = (global.rpg_exp[player.name][class] - rpg_exp_tnl(level-1)) / ( rpg_exp_tnl(level) - rpg_exp_tnl(level-1) )
-	player.gui.top.rpg.container.exp.tooltip = math.floor(player.gui.top.rpg.container.exp.value * 10000)/100 .. "% to next level ( " .. math.floor(global.rpg_exp[player.name][class]) - rpg_exp_tnl(level-1) .. " / " .. rpg_exp_tnl(level) - rpg_exp_tnl(level-1) .. " )"
-	player.gui.top.rpg.container.level.caption = "Level " .. level
-	--game.print("Updating exp bar value to " .. player.gui.top.rpg.exp.value)
+	flow.rpg.container.class.caption = "Class: " .. global.rpg_exp[player.name].class
+	flow.rpg.container.exp.value = (global.rpg_exp[player.name][class] - rpg_exp_tnl(level-1)) / ( rpg_exp_tnl(level) - rpg_exp_tnl(level-1) )
+	flow.rpg.container.exp.tooltip = math.floor(flow.rpg.container.exp.value * 10000)/100 .. "% to next level ( " .. math.floor(global.rpg_exp[player.name][class]) - rpg_exp_tnl(level-1) .. " / " .. rpg_exp_tnl(level) - rpg_exp_tnl(level-1) .. " )"
+	flow.rpg.container.level.caption = "Level " .. level
+	--game.print("Updating exp bar value to " .. flow.rpg.exp.value)
 end
 
 function rpg_character_sheet(player)
