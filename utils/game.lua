@@ -22,4 +22,11 @@ function Game.print_all(msg, condition)
     return num
 end
 
+function Game.fail_if_missing(var, msg)
+    if not var then
+        error(msg or "Missing value", 3)
+    end
+    return false
+end
+
 return Game
