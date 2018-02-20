@@ -339,18 +339,13 @@ function peppermint.reset_picker(forcename)
     global.peppermint[forcename].picker = {}
     local picker = global.peppermint[forcename].picker
 
-    for x, tablex in pairs(global.peppermint[forcename].ores) do
-        for y, ore in pairs(tablex) do
-            if ore and ore.valid then
-                table.insert(picker, ore)
-                --game.print("Shuffled table")
-            else
-                --Ore was depleted or otherwise destroyed.
-                tablex[y] = nil
-                if next(tablex) == nil then
-                    global.peppermint[forcename].ores[x] = nil
-                end
-            end
+    for key, ore in pairs(global.peppermint[forcename].ores) do
+        if ore and ore.valid then
+            table.insert(picker, ore)
+            --game.print("Shuffled table")
+        else
+            --Ore was depleted or otherwise destroyed.
+            global.peppermint[forcename].ores[key] = nil
         end
     end
     --Now shuffle the table.
