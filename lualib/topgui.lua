@@ -44,11 +44,17 @@ function topgui_add_button(player_name, button)
 				nb.color = {r = 1, g = 1, b = 1}
 			end
 		elseif nb.type == 'sprite-button' then
+			if button.tooltip ~= nil then
+				nb.tooltip = button.tooltip
+			else
+				nb.tooltip = ""
+			end
 			if button.sprite ~= nil then
 				nb.sprite = button.sprite
 			else
 				nb.type = "button"
 				nb.caption = "NO SPRITE"
+				nb.tooltip = nil
 			end
 		end
 		global.topgui.raw[player_name][button.name] = nb
@@ -94,7 +100,7 @@ function topgui_gui_changed(p)
 	for i, button in pairs(global.topgui.sorted[p.name]) do
 		local b
 		if(button.type == "sprite-button"){
-			b = tg.add {name=button.name, type="sprite-button", sprite=button.sprite}
+			b = tg.add {name=button.name, type="sprite-button", sprite=button.sprite, tooltip=button.tooltip}
 		} else {
 			b = tg.add {name=button.name, type="button", caption=button.caption}
 		}
@@ -109,7 +115,7 @@ function topgui_sort_table(p)
 	for i, b in pairs(global.topgui.raw[p.name]) do
 		local newtable
 		if(button.type == "sprite-button"){
-			newtable = {name = i, order = b.order, type = b.type, sprite = b.sprite}
+			newtable = {name = i, order = b.order, type = b.type, sprite = b.sprite, tooltip = b.tooltip}
 		} else {
 			newtable = {name = i, caption = b.caption, order = b.order, color = b.color, type = b.type}
 		}
@@ -154,7 +160,11 @@ end)
 -- 			add a button, all possible values
 
 -- new_button1 = {name = newbutton1, caption = "I has caption!", order=1337, color={r = 1, g = 0, b = 1}}
--- topgui_add_button(game.player.name, {name = "newbutton1", caption = "I has caption!", order=1337, color={r = 1, g = 0, b = 1}})
+-- topgui_add_button(game.player.name, new_button1)
+
+-- 			add a sprite-button
+
+-- new_sprite_button = {name = newbutton1, sprite = "item/rocket-silo", order=1337, tooltip="Opens a menu"}
 
 -- 			remove a button
 
@@ -162,8 +172,13 @@ end)
 
 --			change button values
 
--- topgui_change_button_caption(p.name, "new_button1", "Hello world!")
 -- topgui_change_button_order(p.name, "new_button1", 1)
+-- Only buttons
+-- topgui_change_button_caption(p.name, "new_button1", "Hello world!")
 -- topgui_change_button_color(p.name, "new_button1", {r=0, g=1, b=0})
+-- Only sprite-buttons
+-- topgui_change_button_sprite(p.name, "new_button1", "item/rocket-silo")
+-- topgui_change_button_tooltip(p.name, "new_button1", "Opens a menu!")
+
 
 
