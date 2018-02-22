@@ -13,14 +13,3 @@ require "lualib/modular_information/modular_information" --New player informatio
 require "equipment"
 
 require "debug"
-
-function test_gui(event)
-	local player = game.players[event.player_index]
-	game.print("Hello WOrld!")
-	local new_button1 = {name = newbutton1, caption = "I has caption!", order=1337, color={r = 1, g = 0, b = 1}}
-	topgui_add_button(player.name, new_button1)
-	local new_sprite_button = {name = newbutton1, sprite = "item/rocket-silo", order=1, tooltip="Opens a menu"}
-	topgui_add_button(player.name, new_sprite_button)
-end
-
-Event.register(defines.events.on_player_joined_game, test_gui)
