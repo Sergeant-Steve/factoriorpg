@@ -7,7 +7,7 @@ global.antigrief_cooldown = {}
 global.antigrief = {warned = {}}
 
 antigrief.TROLL_TIMER = 60 * 60 * 30 --30 minutes.  Players must be online this long to not throw some warnings.
-antigrief.SPAM_TIMER = 60 * 60 * 2 --10 minutes.  Limit inventory related messages to once per 10m.
+antigrief.SPAM_TIMER = 60 * 60 * 2 --2 minutes.  Limit inventory related messages to once per 10m.
 
 
 
