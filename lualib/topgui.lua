@@ -99,11 +99,11 @@ function topgui_gui_changed(p)
 	tg.clear()
 	for i, button in pairs(global.topgui.sorted[p.name]) do
 		local b
-		if(button.type == "sprite-button"){
+		if button.type == "sprite-button" then
 			b = tg.add {name=button.name, type="sprite-button", sprite=button.sprite, tooltip=button.tooltip}
-		} else {
+		else 
 			b = tg.add {name=button.name, type="button", caption=button.caption}
-		}
+		end
 		if button.color ~= nil then
 			b.style.font_color = button.color
 		end
@@ -114,11 +114,11 @@ function topgui_sort_table(p)
 	global.topgui.sorted[p.name] = {}
 	for i, b in pairs(global.topgui.raw[p.name]) do
 		local newtable
-		if(button.type == "sprite-button"){
+		if b.type == "sprite-button" then
 			newtable = {name = i, order = b.order, type = b.type, sprite = b.sprite, tooltip = b.tooltip}
-		} else {
+		else 
 			newtable = {name = i, caption = b.caption, order = b.order, color = b.color, type = b.type}
-		}
+		end
 		table.insert(global.topgui.sorted[p.name], newtable)
 	end
 	table.sort(global.topgui.sorted[p.name], function(t1, t2)
@@ -154,17 +154,18 @@ end)
 
 -- 			add a button, only name is required.
 
--- new_button = {name = newbutton}
+-- new_button = {name = "newbutton"}
 -- topgui_add_button(p.name, new_button)
 
 -- 			add a button, all possible values
 
--- new_button1 = {name = newbutton1, caption = "I has caption!", order=1337, color={r = 1, g = 0, b = 1}}
+-- new_button1 = {name = "newbutton1", caption = "I has caption!", order=1337, color={r = 1, g = 0, b = 1}}
 -- topgui_add_button(game.player.name, new_button1)
 
 -- 			add a sprite-button
 
--- new_sprite_button = {name = newbutton1, sprite = "item/rocket-silo", order=1337, tooltip="Opens a menu"}
+-- new_sprite_button = {type="sprite-button", name = "newbutton1", sprite = "item/rocket-silo", order=1337, tooltip="Opens a menu"}
+-- topgui_add_button(game.player.name, new_sprite_button)
 
 -- 			remove a button
 
