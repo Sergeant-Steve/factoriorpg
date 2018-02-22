@@ -22,20 +22,34 @@ global.topgui.style = mod_gui.button_style
 function topgui_add_button(player_name, button)
 	if button.name ~= nil then
 		local nb = {}
-		if button.caption ~= nil then
-			nb.caption = button.caption
-		else
-			nb.caption = "NO CAPTION"
-		end
 		if button.order ~= nil then
 			nb.order = button.order
 		else
 			nb.order = 10
 		end
-		if button.color ~= nil then
-			nb.color = button.color
+		if button.type ~= nil then
+			nb.type = button.type
 		else
-			nb.color = {r = 1, g = 1, b = 1}
+			nb.type = "button"
+		end
+		if nb.type == 'button' then
+			if button.caption ~= nil then
+				nb.caption = button.caption
+			else
+				nb.caption = "NO CAPTION"
+			end
+			if button.color ~= nil then
+				nb.color = button.color
+			else
+				nb.color = {r = 1, g = 1, b = 1}
+			end
+		elseif nb.type == 'sprite-button' then
+			if button.sprite ~= nil then
+				nb.sprite = button.sprite
+			else
+				nb.type = "button"
+				nb.caption = "NO SPRITE"
+			end
 		end
 		global.topgui.raw[player_name][button.name] = nb
 		topgui_gui_changed(game.players[player_name])
@@ -48,13 +62,17 @@ function topgui_remove_button(player_name, button_name)
 end
 
 function topgui_change_button_caption(player_name, button_name, caption)
-	global.topgui.raw[player_name][button_name].caption = caption
-	topgui_get_flow(game.players[player_name])[button_name].caption = caption
+	if global.topgui.raw[player_name][button_name].type == 'button' then
+		global.topgui.raw[player_name][button_name].caption = caption
+		topgui_get_flow(game.players[player_name])[button_name].caption = caption
+	end
 end
 
 function topgui_change_button_color(player_name, button_name, color)
-	global.topgui.raw[player_name][button_name].color = color
-	topgui_get_flow(game.players[player_name])[button_name].style.font_color = color
+	if global.topgui.raw[player_name][button_name].type == 'button' then
+		global.topgui.raw[player_name][button_name].color = color
+		topgui_get_flow(game.players[player_name])[button_name].style.font_color = color
+	end
 end
 
 function topgui_change_button_order(player_name, button_name, order)
@@ -62,12 +80,24 @@ function topgui_change_button_order(player_name, button_name, order)
 	topgui_gui_changed(game.players[player_name])
 end
 
+function topgui_change_button_sprite(player_name, button_name, sprite)
+	if global.topgui.raw[player_name][button_name].type == 'sprite-button' then
+		global.topgui.raw[player_name][button_name].sprite = sprite
+		topgui_get_flow(game.players[player_name])[button_name].sprite = sprite
+	end
+end
+
 function topgui_gui_changed(p)
 	topgui_sort_table(p)
 	local tg = topgui_get_flow(p)
 	tg.clear()
 	for i, button in pairs(global.topgui.sorted[p.name]) do
-		local b = tg.add {name=button.name, type="button", caption=button.caption}
+		local b
+		if(button.type == "sprite-button"){
+			b = tg.add {name=button.name, type="sprite-button", sprite=button.sprite}
+		} else {
+			b = tg.add {name=button.name, type="button", caption=button.caption}
+		}
 		if button.color ~= nil then
 			b.style.font_color = button.color
 		end
@@ -77,7 +107,12 @@ end
 function topgui_sort_table(p)
 	global.topgui.sorted[p.name] = {}
 	for i, b in pairs(global.topgui.raw[p.name]) do
-		local newtable = {name = i, caption = b.caption, order = b.order, color = b.color}
+		local newtable
+		if(button.type == "sprite-button"){
+			newtable = {name = i, order = b.order, type = b.type, sprite = b.sprite}
+		} else {
+			newtable = {name = i, caption = b.caption, order = b.order, color = b.color, type = b.type}
+		}
 		table.insert(global.topgui.sorted[p.name], newtable)
 	end
 	table.sort(global.topgui.sorted[p.name], function(t1, t2)
