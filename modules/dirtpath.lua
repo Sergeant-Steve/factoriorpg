@@ -89,16 +89,14 @@ function dirtDirt(event)
 end
 
 function dirtAdd(x, y)
-	if not global.dirt[x] then
-		global.dirt[x] = {}
-	end
-	if global.dirt[x][y] then
-		global.dirt[x][y] = global.dirt[x][y] + 1
+	local key = x .. "," .. y
+	if global.dirt[key] then
+		global.dirt[key] = global.dirt[key] + 1
 	else	
-		global.dirt[x][y] = 1
+		global.dirt[key] = 1
 	end
-	if global.dirt[x][y] >= DIRT_THRESHOLD then
-		global.dirt[x][y] = 0
+	if global.dirt[key] >= DIRT_THRESHOLD then
+		global.dirt[key] = 0
 		return true
 	end
 end
@@ -108,15 +106,10 @@ function cleanDirt()
 		log("Dirt Path not initialized!")
 		return
 	end
-	for x, tablex in pairs(global.dirt) do
-		for y in pairs(tablex) do
-			tablex[y] = tablex[y] - 1
-			if tablex[y] <= 0 then
-				tablex[y] = nil
-			end
-		end
-		if tablex ~= nil and next(tablex) == nil then
-			global.dirt[x] = nil
+	for k, v in pairs(global.dirt) do
+		global.dirt[k] = global.dirt[k] - 1
+		if global.dirt[k] <= 0 then
+			global.dirt[k] = nil
 		end
 	end
 end
@@ -125,6 +118,7 @@ function dirt_handler(event)
 	-- if event.tick % 30 == 0 then
 	-- 	dirtDirt()
 	-- end
+	--if (event.tick) % (60 * 2) == 0 then -- debug
 	if (event.tick+500) % (60 * 60 * 30) == 0 then
 		cleanDirt()
 	end
