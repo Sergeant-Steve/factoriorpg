@@ -224,7 +224,7 @@ end
 --Add/rebuild class/level gui
 function rpg_add_gui(event)
 	local player = game.players[event.player_index]
-	local flow = mod_gui.get_frame_flow(player)
+	local flow = mod_gui.get_button_flow(player)
 	if flow.rpg then
 		flow.rpg.destroy()
 	end
@@ -269,7 +269,7 @@ function rpg_class_picker(player)
 			player.gui.center.picker.container.add{type="button", name="Builder", caption="Builder", tooltip="Extra reach, team turret damage, additional quickbars (at 20 and 50)"}
 			player.gui.center.picker.container.add{type="button", name="Scientist", caption="Scientist", tooltip="Boost combat robots, laboratory speed and productivity, team health, team movement speed, worker robot speed/battery"}
 			player.gui.center.picker.container.add{type="button", name="Miner", caption="Miner", tooltip="Increase explosive damage and mining productivity of your team"}
-			player.gui.center.picker.container.add{type="button", name="Beastmaster", caption="Beastmaster", tooltip="Gain biter pets on nest kills. Reduces evolution scaling.(BETA)"}
+			--player.gui.center.picker.container.add{type="button", name="Beastmaster", caption="Beastmaster", tooltip="Gain biter pets on nest kills. Reduces evolution scaling.(BETA)"}
 			player.gui.center.picker.container.add{type="button", name="None", caption="None", tooltip="No bonuses are given to team."}
 			
 			for k, v in pairs(player.gui.center.picker.container.children) do
@@ -334,7 +334,7 @@ end
 
 --Update gui
 function rpg_update_gui(player)
-	local flow = mod_gui.get_frame_flow(player)
+	local flow = mod_gui.get_button_flow(player)
 	if not flow.rpg then
 		rpg_add_gui({player_index=player.index})
 	end
