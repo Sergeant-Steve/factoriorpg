@@ -10,7 +10,7 @@ nougat = {}
 nougat.LOGISTIC_RADIUS = true --Use the logistic radius, else use construction radius.
 nougat.TARGET_RATIO = 0.10 --Aim to keep this proportion of construction bots free.
 nougat.DEFAULT_RATIO = 0.5 --The ratio of choclate to chew.  Err, I mean how many bots we assign to mining.  Starts here, changes later based on bot availability.
-nougat.MAX_ITEMS = 400 --Spawning more than this gets really laggy.
+nougat.MAX_ITEMS = 800 --Spawning more than this gets really laggy.
 nougat.USE_CARGO_COUNT = false --Turning this on is ridiculously OP.
 global.nougat = {roboports = {}, index=1, easy_ores={}, networks={}, optout={}} --Networks is of format {network=network, ratio=ratio}
 
