@@ -1,4 +1,4 @@
-DIRT_THRESHOLD = 8
+DIRT_THRESHOLD = 10
 
 if MODULE_LIST then
 	module_list_add("Dirt Path")
@@ -63,11 +63,13 @@ function dirtDirt(event)
 					-- 		end
 					-- 	end
 					-- end
+
+					dirtAdd(tile.position.x, tile.position.y) --Wear the center tile out one additional step.
 					local dirt = {}
 					for xx = 0, 1, 1 do
 					 	for yy = 0, 1, 1 do
 							if not (math.abs(xx) == math.abs(yy)) or xx == 0 then
-
+								-- Check twice at xx == 0, yy == 0
 								if dirtAdd(tile.position.x + xx, tile.position.y + yy) then
 
 									local validTile = p.surface.get_tile(tile.position.x + xx, tile.position.y + yy)
