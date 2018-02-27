@@ -33,7 +33,7 @@ end
 function antigrief.banhammer(player)
     --If player is > level 5, then warn first.
     --What permission group is the player in?
-    if player.permissions_group.name == "trusted" then --Kick first.
+    if player.permission_group.name == "trusted" then --Kick first.
         if not global.antigrief.warned[player.name] then
             global.antigrief.warned[player.name] = true
             game.kick_player(player, "griefing (automoderator)")
@@ -208,7 +208,7 @@ function antigrief.check_size_loginet_size(event)
         end
     end
 
-    if math.abs(maxx-minx) > 2000 or math.abs(maxy-miny) then
+    if math.abs(maxx-minx) > 2000 or math.abs(maxy-miny) > 2000 then
         antigrief.alert(event.entity.last_user.name .. "has placed a roboport in a large network.", event.entity)
     end
 end
