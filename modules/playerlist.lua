@@ -190,7 +190,7 @@ local function player_list_show(player, sort_by)
 	frame.style.bottom_padding = 8
 
 
-	local player_list_panel_header_table = frame.add { type = "table", name = "player_list_panel_header_table", column_count = 5 }
+	local player_list_panel_header_table = frame.add { type = "table", name = "player_list_panel_header_table", column_count = 6 }
 
 	local label = player_list_panel_header_table.add { type = "label", name = "player_list_panel_header_1", caption = "    " .. #game.connected_players }
 	label.style.font = "default-game"
@@ -223,13 +223,13 @@ local function player_list_show(player, sort_by)
 	label.style.maximal_width = 100
 --]]
 
-	-- str = ""
-	-- if sort_by == "fish_asc" then str = symbol_asc .. " " end
-	-- if sort_by == "fish_desc" then str = symbol_desc .. " " end
-	-- local label = player_list_panel_header_table.add { type = "label", name = "player_list_panel_header_fish", caption = str .. "Fish" }
-	-- label.style.font_color = { r=0.98, g=0.66, b=0.22}
-	-- label.style.minimal_width = 80
-	-- label.style.maximal_width = 80
+	str = ""
+	if sort_by == "fish_asc" then str = symbol_asc .. " " end
+	if sort_by == "fish_desc" then str = symbol_desc .. " " end
+	local label = player_list_panel_header_table.add { type = "label", name = "player_list_panel_header_fish", caption = str .. "Class" }
+	label.style.font_color = { r=0.98, g=0.66, b=0.22}
+	label.style.minimal_width = 80
+	label.style.maximal_width = 80
 
 	str = ""
 	if sort_by == "deaths_asc" then str = symbol_asc .. " " end
@@ -250,7 +250,7 @@ local function player_list_show(player, sort_by)
 	player_list_panel_table.style.maximal_height = 650
 
 
-	player_list_panel_table = player_list_panel_table.add { type = "table", name = "player_list_panel_table", column_count = 5 }
+	player_list_panel_table = player_list_panel_table.add { type = "table", name = "player_list_panel_table", column_count = 6 }
 
 	local player_list = get_sorted_list(sort_by)
 
@@ -277,9 +277,9 @@ local function player_list_show(player, sort_by)
 		label.style.minimal_width = 100
 		label.style.maximal_width = 100
 --]]
-		-- local label = player_list_panel_table.add { type = "label", name = "player_list_panel_player_fish" .. i, caption = global.fish_market_fish_caught[player_list[i].player_index] .. " / " .. global.fish_market_fish_spent[player_list[i].player_index] }
-		-- label.style.minimal_width = 80
-		-- label.style.maximal_width = 80
+		local label = player_list_panel_table.add { type = "label", name = "player_list_panel_player_fish" .. i, caption = global.rpg_tmp[player_list[i].name].level .. " " .. global.rpg_exp[player_list[i].name].class }
+		label.style.minimal_width = 80
+		label.style.maximal_width = 80
 
 		local label = player_list_panel_table.add { type = "label", name = "player_list_panel_player_deaths" .. i, caption = global.scenario.variables.player_deaths[player_list[i].name] }
 		label.style.minimal_width = 80
