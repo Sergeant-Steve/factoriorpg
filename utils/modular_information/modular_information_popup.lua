@@ -18,17 +18,17 @@ function modular_information_popup_create_gui(p)
 end
 	
 function modular_information_popup_update_popup(p, i)
-	miip = modular_information_get_information_pane(p)
+	local miip = modular_information_get_information_pane(p)
 	modular_information_set_information_pane_caption_color(p, "IMPORTANT INFORMATION", {r=1,b=0,g=0})
 	miip.clear()
-	mipp = global.modular_information_popup.popups[i]
-	miipl = miip.add {type="label", caption = mipp.text}
+	local mipp = global.modular_information_popup.popups[i]
+	local miipl = miip.add {type="label", caption = mipp.text}
 	miipl.style.maximal_width = 480
 	miipl.style.single_line = false
 end	
 
 function modular_information_popup_add(b, t)
-	popup = {button = b, text = t}
+	local popup = {button = b, text = t}
 	table.insert(global.modular_information_popup.popups, popup)
 	for i, x in ipairs(game.connected_players) do
 		modular_information_popup_show(x)
@@ -42,30 +42,30 @@ function modular_information_popup_show(p)
 end
 
 function modular_information_popup_update_menu(p)
-	mimc = modular_information_get_menu_canvas(p)
+	local mimc = modular_information_get_menu_canvas(p)
 	mimc.style.visible = true
 	mimc.caption = "Popup"
 	--Create a button for each popup
-	mimcsp = mimc.add {type="scroll-pane", name="modular_information_popup_scroll_pane"}
+	local mimcsp = mimc.add {type="scroll-pane", name="modular_information_popup_scroll_pane"}
 	mimcsp.style.top_padding = 0
 	mimcsp.style.left_padding = 0
 	mimcsp.style.right_padding = 0
 	mimcsp.style.bottom_padding = 0
 	mimcsp.style.maximal_height = 255
-	mimcf = mimcsp.add {type="flow", direction="vertical", name="modular_information_popup_flow", style="slot_table_spacing_vertical_flow"}
+	local mimcf = mimcsp.add {type="flow", direction="vertical", name="modular_information_popup_flow", style="slot_table_spacing_vertical_flow"}
 	mimcf.style.top_padding = 0
 	mimcf.style.left_padding = 0
 	mimcf.style.right_padding = 0
 	mimcf.style.bottom_padding = 0
 	if p.admin then
-		mimcb = mimcf.add {type="button", name = "modular_information_popup_create", caption = "New"}
+		local mimcb = mimcf.add {type="button", name = "modular_information_popup_create", caption = "New"}
 		mimcb.style.font_color = {r=0, g=0.5, b=0}
 		mimcb.style.minimal_width = 140
 		mimcb.style.maximal_width = 140
 	end
 	for i = #global.modular_information_popup.popups, 1, -1 do
-		p = global.modular_information_popup.popups[i]
-		mimcb = mimcf.add {type="button", name = "modular_information_popup_button_" .. i, caption = p.button}
+		local p = global.modular_information_popup.popups[i]
+		local mimcb = mimcf.add {type="button", name = "modular_information_popup_button_" .. i, caption = p.button}
 		mimcb.style.minimal_width = 140
 		mimcb.style.maximal_width = 140
 	end
@@ -73,19 +73,19 @@ end
 
 function modular_information_popup_show_creator(p) 
 	if p.admin then
-		miip = modular_information_get_information_pane(p)
+		local miip = modular_information_get_information_pane(p)
 		modular_information_set_information_pane_caption_color(p, "Popup Creator", {r=0.8,b=0,g=0})
 		miip.clear()
-		mipntl = miip.add {type="label", name = "modular_information_popup_new_title_label" ,caption = "Popup title"}
-		mipnt = miip.add {type="text-box", name = "modular_information_popup_new_title"}
+		local mipntl = miip.add {type="label", name = "modular_information_popup_new_title_label" ,caption = "Popup title"}
+		local mipnt = miip.add {type="text-box", name = "modular_information_popup_new_title"}
 		mipnt.style.minimal_width = 105
 		mipnt.style.maximal_width = 105
-		mipnml = miip.add {type="label", name = "modular_information_popup_new_message_label" ,caption = "Popup message"}
-		mipnm = miip.add {type="text-box", name="modular_information_popup_new_message"}
+		local mipnml = miip.add {type="label", name = "modular_information_popup_new_message_label" ,caption = "Popup message"}
+		local mipnm = miip.add {type="text-box", name="modular_information_popup_new_message"}
 		mipnm.style.minimal_width = 400
 		mipnm.style.maximal_width = 400
 		mipnm.style.minimal_height = 50
-		mipnc = miip.add {type="button", name = "modular_information_popup_new_create", caption = "Create"}
+		local mipnc = miip.add {type="button", name = "modular_information_popup_new_create", caption = "Create"}
 		mipnc.style.font_color = {r=0, g=0.5, b=0}
 		mipnc.style.minimal_width = 140
 		mipnc.style.maximal_width = 140
@@ -112,7 +112,7 @@ function modular_information_popup_gui_clicked(event)
 		elseif e.name == "modular_information_popup_create" then
 			modular_information_popup_show_creator(p)
 		elseif e.name == "modular_information_popup_new_create" then
-			miip = modular_information_get_information_pane(p)
+			local miip = modular_information_get_information_pane(p)
 			modular_information_popup_add(miip.modular_information_popup_new_title.text, miip.modular_information_popup_new_message.text)
 		end
 	end
@@ -123,7 +123,7 @@ end
 --
 
 Event.register(defines.events.on_player_joined_game, function(event)
-	p = game.players[event.player_index]
+	local p = game.players[event.player_index]
 	modular_information_add_button(p.name, {name="modular_information_popup", order = 5, caption = "Popup"})
 end)
 

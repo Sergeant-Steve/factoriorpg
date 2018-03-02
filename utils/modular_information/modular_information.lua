@@ -30,7 +30,7 @@ global.modular_information.style = mod_gui.button_style
 function modular_information_add_button(player_name, button)
 	global.modular_information.raw[player_name] = global.modular_information.raw[player_name] or {}
 	if button.name ~= nil then
-		nb = {}
+		local nb = {}
 		if button.caption ~= nil then
 			nb.caption = button.caption
 		else
@@ -62,12 +62,12 @@ function modular_information_change_button_order(player_name, button_name, order
 end
 
 function modular_information_gui_changed(p)
-	mimt = modular_information_get_menu(p)
+	local mimt = modular_information_get_menu(p)
 	mimt.clear()
 	modular_information_sort_table(p)
 	local tot = 0
 	for i, button in pairs(global.modular_information.sorted[p.name]) do
-		b = mimt.add {name=button.name, type="button", caption=button.caption}
+		local b = mimt.add {name=button.name, type="button", caption=button.caption}
 		if global.modular_information.active_button[p.name] == button.name then
 			b.style.font_color = {r=0, g=1, b=0}
 		else
@@ -77,17 +77,17 @@ function modular_information_gui_changed(p)
 		tot = tot + 1
 	end
 	if tot == 0 then
-		b = mimt.add {type="label", name="modular_information_no_info", caption="No information available."}
+		local b = mimt.add {type="label", name="modular_information_no_info", caption="No information available."}
 		b.style.font_color = {r=1,g=0,b=0}
 	end
 	if global.modular_information.active_button[p.name] == "none" then
-		miip = modular_information_get_information_pane(p)
+		local miip = modular_information_get_information_pane(p)
 		miip.clear()
-		mini = miip.add {type="label", name="modular_information_no_info", caption="No information selected, use a button on the left to select."}
+		local mini = miip.add {type="label", name="modular_information_no_info", caption="No information selected, use a button on the left to select."}
 		mini.style.font_color = {r=1,g=0,b=0}
 	end
 	modular_information_set_information_pane_caption_color(p, "Information pane", {r=1,g=1,b=1})
-	mimc = modular_information_get_menu_canvas(p)
+	local mimc = modular_information_get_menu_canvas(p)
 	mimc.caption = "NOT SET"
 	mimc.clear()
 	mimc.style.visible = false
@@ -98,12 +98,13 @@ function modular_information_gui_changed(p)
 end
 
 function modular_information_get_menu(p)
-	bf = modular_information_get_flow(p)
+	local bf = modular_information_get_flow(p)
+	local mimt
 	if (bf.modular_information_menu ~= nil) and  (bf.modular_information_menu.modular_information_menu_scroll ~= nil) and (bf.modular_information_menu.modular_information_menu_scroll.modular_information_menu_table ~= nil) then
 		mimt = bf.modular_information_menu.modular_information_menu_scroll.modular_information_menu_table
 	else
-		mim = bf.add {name = "modular_information_menu", type = "frame", direction = "vertical", caption = "Information Menu"}
-		mims = mim.add {name = "modular_information_menu_scroll", type = "scroll-pane"}
+		local mim = bf.add {name = "modular_information_menu", type = "frame", direction = "vertical", caption = "Information Menu"}
+		local mims = mim.add {name = "modular_information_menu_scroll", type = "scroll-pane"}
 		mims.style.top_padding = 0
 		mims.style.left_padding = 0
 		mims.style.right_padding = 0
@@ -120,7 +121,8 @@ function modular_information_get_menu(p)
 end
 
 function modular_information_get_menu_canvas(p)
-	bf = modular_information_get_flow(p)
+	local bf = modular_information_get_flow(p)
+	local mim
 	if (bf.modular_information_menu_canvas ~= nil) then
 		mim = bf.modular_information_menu_canvas
 	else
@@ -130,11 +132,12 @@ function modular_information_get_menu_canvas(p)
 end
 
 function modular_information_get_information_pane(p)
-	mif = modular_information_get_flow(p)
+	local mif = modular_information_get_flow(p)
+	local mips
 	if (mif.modular_information_pane ~= nil) and (mif.modular_information_pane.modular_information_pane_scroll ~= nil) then
 		mips = mif.modular_information_pane.modular_information_pane_scroll
 	else 
-		mip = mif.add {name = "modular_information_pane", type = "frame", direction = "vertical", caption = "Information pane"}
+		local mip = mif.add {name = "modular_information_pane", type = "frame", direction = "vertical", caption = "Information pane"}
 		mips = mip.add {name = "modular_information_pane_scroll", type = "scroll-pane"}
 		mips.style.maximal_height = 200
 		mips.style.minimal_height = 200
@@ -157,7 +160,7 @@ function modular_information_gui_show(p)
 	global.modular_information.visible[p.name] = true
 	topgui_change_button_caption(p.name, "modular_information_toggle_button", "Close Information Screen")
 	topgui_change_button_color(p.name, "modular_information_toggle_button", {r=1, g=0, b=0})
-	mif = modular_information_get_flow(p)
+	local mif = modular_information_get_flow(p)
 	mif.style.visible = global.modular_information.visible[p.name]
 end
 
@@ -165,14 +168,14 @@ function modular_information_gui_hide(p)
 	global.modular_information.visible[p.name] = false
 	topgui_change_button_caption(p.name, "modular_information_toggle_button", "Open Information Screen")
 	topgui_change_button_color(p.name, "modular_information_toggle_button", {r=0, g=1, b=0})
-	mif = modular_information_get_flow(p)
+	local mif = modular_information_get_flow(p)
 	mif.style.visible = global.modular_information.visible[p.name]
 end
 
 function modular_information_sort_table(p)
 	global.modular_information.sorted[p.name] = {}
 	for i, b in pairs(global.modular_information.raw[p.name]) do
-		newtable = {name = i, caption = b.caption, order = b.order, color = b.color}
+		local newtable = {name = i, caption = b.caption, order = b.order, color = b.color}
 		table.insert(global.modular_information.sorted[p.name], newtable)
 	end
 	table.sort(global.modular_information.sorted[p.name], function(t1, t2)
@@ -182,12 +185,12 @@ function modular_information_sort_table(p)
 end
 
 function modular_information_get_flow(p)
-	f = p.gui.center.modular_information_flow
+	local f = p.gui.center.modular_information_flow
 	if f ~= nil then
 		return f
 	else 
-		pgc = p.gui.center
-		mif = pgc.add {type = "table", name = "modular_information_flow", column_count = 3}
+		local pgc = p.gui.center
+		local mif = pgc.add {type = "table", name = "modular_information_flow", column_count = 3}
 		mif.style.horizontal_spacing = 0
 		mif.style.top_padding = 0
 		mif.style.left_padding = 0
@@ -255,7 +258,7 @@ end
 --	EVENTS
 --
 Event.register(defines.events.on_player_joined_game, function(event)
-	p = game.players[event.player_index]
+	local p = game.players[event.player_index]
 	global.modular_information.raw[p.name] = global.modular_information.raw[p.name] or {}
 	global.modular_information.visible[p.name] = global.modular_information.visible[p.name] or false
 	global.modular_information.active_button[p.name] = global.modular_information.active_button[p.name] or "none"

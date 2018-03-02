@@ -109,7 +109,7 @@ Event.register(-1, function(event)
 	end)
 	
 Event.register(defines.events.on_player_joined_game, function(event)
-	p = game.players[event.player_index]
+	local p = game.players[event.player_index]
 	if p.admin then
 		if global.modular_admin_compensate.enabled then
 			if global.modular_admin_compensate.players[p.name] == true then
