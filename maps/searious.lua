@@ -3,6 +3,8 @@
 --MIT license
 --2017
 
+--deep = require "noise"
+
 SEARIOUS_STARTING_RADIUS = 100
 
 if MODULE_LIST then
@@ -27,11 +29,11 @@ function sea_the_world(event)
         for y = lty-1, rby+1 do
             if x^2 + y^2 > SEARIOUS_STARTING_RADIUS^2 then
                 -- Need to add a special check to avoid drawing lines on the edges.
-                -- if event.surface.get_tile(x, y).collides_with("water-tile") and x >= ltx and x < rbx and y >= lty and y < rby then
+                if not event.surface.get_tile(x, y).collides_with("water-tile") then --and x >= ltx and x < rbx and y >= lty and y < rby then
                 --     table.insert(tiles, {name="deepwater", position={x,y}})
                 -- else
                     flood[x][y] = true
-                -- end
+                end
             end
         end
     end
@@ -51,10 +53,11 @@ function sea_the_world(event)
         for y = lty, rby do
             if (flood[x][y]) then
                 -- if not sea_sharp(x, y) then
+                --if event.surface.get_tile_properties({x,y}).elevation < 5 then
+                  --  table.insert(tiles, {name="deepwater", position={x,y}})
+                --else
                     table.insert(tiles, {name="water", position={x,y}})
-                -- else
-                    -- table.insert(tiles, {name="deepwater", position={x,y}})
-                -- end
+                --end
             end
         end
     end
