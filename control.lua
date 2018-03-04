@@ -1,11 +1,11 @@
 --Heavy lifting stuff here.
 require "mod-gui" --Klonan's button prettifier
 require "utils/event" --This is so all of the modules play nice with each other.
--- require "utils/topgui" --Allows reordering guis.  Warning: Pollutes the global table.  Not desync safe.
+require "utils/topgui" --Allows reordering guis.
 require "utils/bot" --Discord integration
 require "utils/antigrief" --Look for suspicious behavior and report it to admins/log it.
---require "utils/modular_admin/modular_admin" --FMMO admin tools 
---require "utils/modular_information/modular_information" --Info windows from FMMO
+require "utils/modular_admin/modular_admin" --FMMO admin tools 
+require "utils/modular_information/modular_information" --Info windows from FMMO
 require "modules/module_list" --Creates and displays a list of active modules on login.
 require "rpg_permissions" --Limit certain actions to players level 5 or greater
 require "rpg" --Award bonuses based on experience earned.
@@ -25,24 +25,26 @@ require "modules/dirtpath" --For some silliness.
 require "modules/seasons" --Let's mess with solar.
 --require "modules/dark harvest" --Only way to get uranium is from biter deaths.
 --require "modules/tOredumonde" --Ore spawns in directions. This must be called before divOresity. NOTE: STONE_BYPRODUCT must be false.
---require "modules/divOresity" --Some ore gets scrambled and must be filtered.
+require "modules/divOresity" --Some ore gets scrambled and must be filtered.
 --require "dark harvest event" --Temp for testing.
 require "modules/bluebuild" --Bluebuild softmod
 require "modules/autofill" --Softmod autofill separated from Oarc
-require "modules/nougatmining" --Logistic mining softmod.
---require "modules/peppermintmining" --Logistic mining softmod.
+--require "modules/nougatmining" --Logistic mining softmod.
+require "modules/peppermintmining" --Logistic mining softmod.
 require "modules/piety" --Way to consume random excess stone.
 --require "belt_limit" --Limits number of belts per player.  Mostly for UPS reasons.
 require "modules/bpmirror" --Adds bpmirror command to flip BPs.
 require "modules/votekick" --Allows users to kick other users.
 --require "modules/infinity" --Infinite ore.  Almost.  Don't recommend with peppermint/Nougat
---require "modules/enhancedbiters" --Adds extra behavior to biters to make them extra nasty.
+require "modules/enhancedbiters" --Adds extra behavior to biters to make them extra nasty.
+require "modules/lazybastard" --Much slower crafting speed
 require "modules/playerlist" --List of online players
+require "modules/rainbow" --Top of the line graphics!
 
 -- World Generators: Most are exclusive.
 --require "maps/prospector" --Radars generate ore
 --require "maps/TTSFN" --This Tank Stops for Nobody!
-require "maps/dangOreus" --Ore is everywhere.  Cannot build on it!
+--require "maps/dangOreus" --Ore is everywhere.  Cannot build on it!
 --require "maps/searious" --Everything not a resource tile is turned into water.
 --require "oarc_events" --Oarc's separate spawn scenario.
 --require "maps/heximaze" --A labyrinth.
