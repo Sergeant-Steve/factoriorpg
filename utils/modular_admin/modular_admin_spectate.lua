@@ -228,8 +228,9 @@ end
 
 function modular_admin_spectate_gui_changed(p)
 	if p.admin then
-		bf = modular_admin_get_flow(p)
+		local bf = modular_admin_get_flow(p)
 		if global.modular_admin_spectate.enabled then
+			local st
 			if bf.modular_admin_spectate_pane ~= nil then
 				st = bf.modular_admin_spectate_pane
 				st.clear()
@@ -237,10 +238,10 @@ function modular_admin_spectate_gui_changed(p)
 				st = bf.add {type = "frame", name = "modular_admin_spectate_pane", caption = "Specate Menu", direction = "vertical"}
 			end
 			st.style.visible = global.modular_admin_spectate.visible[p.name]
-			sm = st
+			local sm = st
 			if global.modular_admin_spectate.player_spectator_state[p.index] == true then
-				srb = sm.add {type = "button", name = "modular_admin_spectate_return_button", caption = "Return"}
-				stb = sm.add {type = "button", name = "modular_admin_spectate_teleport_button", caption = "Teleport"}
+				local srb = sm.add {type = "button", name = "modular_admin_spectate_return_button", caption = "Return"}
+				local stb = sm.add {type = "button", name = "modular_admin_spectate_teleport_button", caption = "Teleport"}
 				srb.style.minimal_width = 150
 				stb.style.minimal_width = 150
 				if global.modular_admin_spectate.follow_target[p.index] ~= nil then
@@ -251,16 +252,16 @@ function modular_admin_spectate_gui_changed(p)
 					stb.style.font_color = {r = 1, b = 0, g = 0}
 				end
 			else
-				ssb = sm.add {type = "button", name = "modular_admin_spectate_spectate_button", caption = "Start spectating"}
+				local ssb = sm.add {type = "button", name = "modular_admin_spectate_spectate_button", caption = "Start spectating"}
 				ssb.style.font_color = {r = 0, b = 0, g = 1}
 				ssb.style.minimal_width = 150
 			end
 			if global.modular_admin_spectate.follow_target[p.index] ~= nil then
 				local labeltext = "You are spectating: " .. game.players[global.modular_admin_spectate.follow_target[p.index]].name
-				sfl = sm.add {type = "label", name = "modular_admin_spectate_follow_label", caption = labeltext}
+				local sfl = sm.add {type = "label", name = "modular_admin_spectate_follow_label", caption = labeltext}
 				sfl.style.maximal_width = 150
 				sfl.style.single_line = false
-				ssfb = sm.add {type = "button", name = "modular_admin_spectate_stop_follow_button", caption = "Stop following"}
+				local ssfb = sm.add {type = "button", name = "modular_admin_spectate_stop_follow_button", caption = "Stop following"}
 				ssfb.style.font_color = {r = 1, b = 0, g = 0}
 				ssfb.style.minimal_width = 150
 			end
@@ -318,7 +319,7 @@ Event.register(-1, function(event)
 	end)
 	
 Event.register(defines.events.on_player_joined_game, function(event)
-	p = game.players[event.player_index]
+	local p = game.players[event.player_index]
 	global.modular_admin_spectate.visible[p.name] = global.modular_admin_spectate.visible[p.name] or false
 	modular_admin_spectate_update_menu_button(p)
 end)

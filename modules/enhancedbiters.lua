@@ -9,6 +9,8 @@ end
 global.zombies = {}
 global.capsules = {}
 
+ENHANCED_SCALE = 1 --1 means 50% turret damage after 24h.  2 means 12h.
+
 --Unique behaviors
 function splitters(event)
 	if not global.zombies then
@@ -77,11 +79,14 @@ end
 
 function tech_nerf(event)
 	local force = event.force
-	local factor = 5184000 / (5184000 + game.tick) --Decrease by 50% per day.
+	local scale = 5184000 / ENHANCED_SCALE
+	local factor = scale / (scale + game.tick) --Decrease by 50% per 12h.
 	local turret_types = {"gun-turret", "laser-turret", "flamethrower-turret", "flamethrower-turret", "artillery-turret"} --Flamethrower turret is in here twice intentionally.  🔥 OP
 	for k,v in pairs(turret_types) do
 		force.set_turret_attack_modifier(v, (force.get_turret_attack_modifier(v) + 1) * factor - 1)
 	end
+	--For extra fun, let's buff biters.
+	game.forces.enemy.set_ammo_damage_modifier("melee", 0.5 + (2 * scale + game.tick) / (2 * scale) )
 end
 
 --Currently we rely upon the RPG module to call this often.

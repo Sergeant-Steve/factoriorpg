@@ -95,7 +95,7 @@ Event.register(-1, function(event)
 	end)
 	
 Event.register(defines.events.on_player_joined_game, function(event)
-	p = game.players[event.player_index]
+	local p = game.players[event.player_index]
 	if p.admin then
 		if global.modular_admin_tag.enabled then
 			modular_admin_add_button(p.name, {name="modular_admin_tag_button", caption="Admin Tag", order = 100})

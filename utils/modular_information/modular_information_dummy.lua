@@ -11,17 +11,17 @@ global.modular_information_dummy = global.modular_information_dummy or {}
 --	FUNCTIONS
 --
 function modular_information_dummy_create_gui(p)
-	miip = modular_information_get_information_pane(p)
+	local miip = modular_information_get_information_pane(p)
 	miip.clear()
 	miip.add {type="label", caption = "This is here to test only!"}
-	mimc = modular_information_get_menu_canvas(p)
+	local mimc = modular_information_get_menu_canvas(p)
 	mimc.style.visible = true
 	mimc.add {type="label", caption = "Hello World!"}
 	mimc.caption = "Dummy Module"
-	mimctb = mimc.add {type="text-box", name = "modular_information_dummy_text-box"}
+	local mimctb = mimc.add {type="text-box", name = "modular_information_dummy_text-box"}
 	mimctb.style.minimal_width = 105
 	mimctb.style.maximal_width = 105
-	mimcb = mimc.add {type="button", name = "modular_information_dummy_button", caption = "1234567890123"}
+	local mimcb = mimc.add {type="button", name = "modular_information_dummy_button", caption = "1234567890123"}
 	mimcb.style.minimal_width = 140
 	mimcb.style.maximal_width = 140
 end
@@ -40,7 +40,7 @@ function modular_information_dummy_gui_clicked(event)
 				modular_information_dummy_create_gui(p)
 			end
 		elseif e.name == "modular_information_dummy_button" then
-			mimc = modular_information_get_menu_canvas(p)
+			local mimc = modular_information_get_menu_canvas(p)
 			mimc.modular_information_dummy_button.caption = mimc["modular_information_dummy_text-box"].text
 		end
 	end
@@ -51,7 +51,7 @@ end
 --
 
 Event.register(defines.events.on_player_joined_game, function(event)
-	p = game.players[event.player_index]
+	local p = game.players[event.player_index]
 	modular_information_add_button(p.name, {name="modular_information_dummy", order = 1, caption = "Test"})
 end)
 

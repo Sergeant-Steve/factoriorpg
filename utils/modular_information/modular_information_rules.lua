@@ -24,23 +24,24 @@ global.modular_information_rules.list = global.modular_information_rules.list or
 --
 function modular_information_rules_show_rule(p, r)
 	if global.modular_information_rules.list[r] ~= nil then
-		rule = global.modular_information_rules.list[r]
+		local rule = global.modular_information_rules.list[r]
 		if rule.short ~= nil then
-			miip = modular_information_get_information_pane(p)
+			local miip = modular_information_get_information_pane(p)
 			miip.clear()
 			if rule.nr ~= nil then
 				modular_information_set_information_pane_caption(p, "Rule number " .. rule.nr)
 			else 
 				modular_information_set_information_pane_caption(p, "Rules Pane")
 			end
-			mirt = miip.add{type="table", name="modular_information_rules_table", column_count=1}
+			local mirt = miip.add{type="table", name="modular_information_rules_table", column_count=1}
 			mirt.style.vertical_spacing = 0
 			mirt.style.top_padding = 0
 			mirt.style.left_padding = 0
 			mirt.style.right_padding = 0
 			mirt.style.bottom_padding = 0
-			short  = mirt.add{type="label", name="modular_information_rules_short_label", caption = rule.short}
+			local short  = mirt.add{type="label", name="modular_information_rules_short_label", caption = rule.short}
 			short.style.single_line = false
+			local long
 			if rule.long ~= nil then
 				long = mirt.add{type="label", name="modular_information_rules_long_label", caption = rule.long}
 				long.style.single_line = false
@@ -55,18 +56,18 @@ function modular_information_rules_show_rule(p, r)
 end
 
 function modular_information_rules_create_gui(p)
-	miip = modular_information_get_information_pane(p)
+	local miip = modular_information_get_information_pane(p)
 	miip.clear()
 	modular_information_set_information_pane_caption(p, "Rules Pane")
-	mirt = miip.add{type="table", name="modular_information_rules_table", column_count=1}
+	local mirt = miip.add{type="table", name="modular_information_rules_table", column_count=1}
 	mirt.style.vertical_spacing = 0
 	mirt.style.top_padding = 0
 	mirt.style.left_padding = 0
 	mirt.style.right_padding = 0
 	mirt.style.bottom_padding = 0
-	i = 1
+	local i = 1
 	for k, r in pairs(global.modular_information_rules.list) do
-		b = mirt.add{type="button", caption= i .. ". " .. r.short, name = "modular_information_rules_button_" .. k}
+		local b = mirt.add{type="button", caption= i .. ". " .. r.short, name = "modular_information_rules_button_" .. k}
 		b.style.top_padding = 0
 		b.style.left_padding = 5
 		b.style.right_padding = 0
@@ -91,7 +92,7 @@ function modular_information_rules_gui_clicked(event)
 				modular_information_rules_create_gui(p)
 			end
 		elseif e.name:find("modular_information_rules_button_") ~= nil then
-			r = e.name:sub(34)
+			local r = e.name:sub(34)
 			if global.modular_information_rules.list[r] ~= nil then
 				modular_information_rules_show_rule(p, r)
 			end
@@ -106,7 +107,7 @@ end
 --
 
 Event.register(defines.events.on_player_joined_game, function(event)
-	p = game.players[event.player_index]
+	local p = game.players[event.player_index]
 	modular_information_add_button(p.name, {name="modular_information_rules", order = 1, caption = "Rules"})
 	modular_information_set_active_button(p, "modular_information_rules")
 	modular_information_gui_show(p)

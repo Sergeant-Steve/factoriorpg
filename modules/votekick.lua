@@ -7,7 +7,7 @@ if MODULE_LIST then
 end
 
 
-votekick = { VOTEKICK_COUNT = 3, KICKED_MESSAGE = "You have been kicked.  To appeal, " }
+votekick = { VOTEKICK_COUNT = 3, KICKED_MESSAGE = "You have been kicked.  To appeal, message on discord." }
 global.votekick = {}
 
 --Note, this command looks for a hardcoded group named "trusted" and uses that to qualify the ability to vote.

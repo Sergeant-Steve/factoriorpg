@@ -59,13 +59,15 @@ end
 
 function modular_admin_boost_gui_changed(p)
 	if p.admin then
-		bf = modular_admin_get_flow(p)
+		local bf = modular_admin_get_flow(p)
 		if global.modular_admin_boost.enabled then
+			local mabpa
 			if bf.modular_admin_boost_pane ~= nil then
 				mabpa = bf.modular_admin_boost_pane
 			else
 				mabpa = bf.add {type = "frame", name = "modular_admin_boost_pane", caption = "Character Menu", direction = "vertical"}
 			end
+			local mabp
 			if mabpa.modular_admin_boost_flow ~= nil then
 				mabp = mabpa.modular_admin_boost_flow
 				mabp.clear()
@@ -73,7 +75,8 @@ function modular_admin_boost_gui_changed(p)
 				mabp = mabpa.add {type = "flow", name = "modular_admin_boost_flow", direction = "vertical",  style = "slot_table_spacing_vertical_flow"}
 			end
 			mabpa.style.visible = global.modular_admin_boost.visible[p.name]
-			pbs = global.modular_admin_boost.bonus_state[p.name]
+			local pbs = global.modular_admin_boost.bonus_state[p.name]
+			local bpb
 			if pbs.pickup then
 				bpb = mabp.add {type = "button", name = "modular_admin_boost_pickup_button", caption = "Reset Pickup"}
 				bpb.style.font_color = global.modular_admin_boost.active_color
@@ -81,6 +84,7 @@ function modular_admin_boost_gui_changed(p)
 				bpb = mabp.add {type = "button", name = "modular_admin_boost_pickup_button", caption = "Boost Pickup"}
 				bpb.style.font_color = global.modular_admin_boost.inactive_color 
 			end
+			local bmb
 			if pbs.mining then
 				bmb = mabp.add {type = "button", name = "modular_admin_boost_mining_button", caption = "Reset Mining"}
 				bmb.style.font_color = global.modular_admin_boost.active_color
@@ -88,6 +92,7 @@ function modular_admin_boost_gui_changed(p)
 				bmb = mabp.add {type = "button", name = "modular_admin_boost_mining_button", caption = "Boost Mining"}
 				bmb.style.font_color = global.modular_admin_boost.inactive_color 
 			end
+			local bcb
 			if pbs.crafting then
 				bcb = mabp.add {type = "button", name = "modular_admin_boost_crafting_button", caption = "Reset Crafting"}
 				bcb.style.font_color = global.modular_admin_boost.active_color
@@ -95,6 +100,7 @@ function modular_admin_boost_gui_changed(p)
 				bcb = mabp.add {type = "button", name = "modular_admin_boost_crafting_button", caption = "Boost Crafting"}
 				bcb.style.font_color = global.modular_admin_boost.inactive_color 
 			end
+			local brb
 			if pbs.reach then
 				brb = mabp.add {type = "button", name = "modular_admin_boost_reach_button", caption = "Reset Reach"}
 				brb.style.font_color = global.modular_admin_boost.active_color
@@ -102,6 +108,7 @@ function modular_admin_boost_gui_changed(p)
 				brb = mabp.add {type = "button", name = "modular_admin_boost_reach_button", caption = "Boost Reach"}
 				brb.style.font_color = global.modular_admin_boost.inactive_color 
 			end
+			local bib
 			if pbs.invincible then
 				bib = mabp.add {type = "button", name = "modular_admin_boost_invincible_button", caption = "Disable Invincible"}
 				bib.style.font_color = global.modular_admin_boost.active_color
@@ -109,11 +116,11 @@ function modular_admin_boost_gui_changed(p)
 				bib = mabp.add {type = "button", name = "modular_admin_boost_invincible_button", caption = "Enable Invincible"}
 				bib.style.font_color = global.modular_admin_boost.inactive_color 
 			end
-			bwl = mabp.add {type = "label", name = "modular_admin_boost_walking_label", caption = "Walking"}
-			bwt = mabp.add {type = "table", name = "modular_admin_boost_walking_table", column_count = 3}
-			bwdb = bwt.add {type = "button", name = "modular_admin_boost_walking_decrease_button", caption = "-"}
-			bwrb = bwt.add {type = "button", name = "modular_admin_boost_walking_reset_button", caption = pbs.walking}
-			bwib = bwt.add {type = "button", name = "modular_admin_boost_walking_increase_button", caption = "+"}
+			local bwl = mabp.add {type = "label", name = "modular_admin_boost_walking_label", caption = "Walking"}
+			local bwt = mabp.add {type = "table", name = "modular_admin_boost_walking_table", column_count = 3}
+			local bwdb = bwt.add {type = "button", name = "modular_admin_boost_walking_decrease_button", caption = "-"}
+			local bwrb = bwt.add {type = "button", name = "modular_admin_boost_walking_reset_button", caption = pbs.walking}
+			local bwib = bwt.add {type = "button", name = "modular_admin_boost_walking_increase_button", caption = "+"}
 			if pbs.walking == 0 then
 				bwrb.style.font_color = global.modular_admin_boost.inactive_color 
 			else
@@ -247,7 +254,7 @@ end
 --
 
 Event.register(defines.events.on_player_joined_game, function(event)
-	p = game.players[event.player_index]
+	local p = game.players[event.player_index]
 	if p.admin then
 		global.modular_admin_boost.bonus_state[p.name] = global.modular_admin_boost.bonus_state[p.name] or {pickup = false, mining = false, crafting = false, reach = false, invincible = false, walking = 0}
 		if global.modular_admin_boost.enabled then

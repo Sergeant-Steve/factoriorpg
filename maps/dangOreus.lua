@@ -245,7 +245,7 @@ function divOresity_init()
     
 
 	for k,v in pairs(game.entity_prototypes) do
-		if v.type == "resource" and v.resource_category == "basic-solid" and not (game.surfaces[1].map_gen_settings.autoplace_controls[v.name].size == "none") then
+        if v.type == "resource" and v.resource_category == "basic-solid" then--[ and not (game.surfaces[1].map_gen_settings.autoplace_controls[v.name].size == "none") then
             table.insert(global.diverse_ore_list, v.name)
             if v.mineable_properties.required_fluid == nil then
 			    table.insert(global.easy_ore_list, v.name)
