@@ -66,14 +66,14 @@ function dirtDirt(event)
 
 					dirtAdd(tile.position.x, tile.position.y) --Wear the center tile out one additional step.
 					local dirt = {}
-					for xx = 0, 1, 1 do
-					 	for yy = 0, 1, 1 do
+					for xx = -1, 1, 1 do
+					 	for yy = -1, 1, 1 do
 							if not (math.abs(xx) == math.abs(yy)) or xx == 0 then
 								-- Check twice at xx == 0, yy == 0
 								if dirtAdd(tile.position.x + xx, tile.position.y + yy) then
 
 									local validTile = p.surface.get_tile(tile.position.x + xx, tile.position.y + yy)
-									if validTile.collides_with("ground-tile") and not validTile.hidden_tile and not string.find(validTile.name, "sand") then
+									if not validTile.collides_with("water-tile") and not validTile.hidden_tile and not string.find(validTile.name, "sand") then
 										local newtile = DIRT[validTile.name] or "dirt-6"
 										table.insert(dirt, {name=newtile, position={tile.position.x+xx, tile.position.y+yy}})
 									end
