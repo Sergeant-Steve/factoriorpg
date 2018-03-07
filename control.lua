@@ -52,7 +52,7 @@ require "modules/bpmirror" --Adds bpmirror command to flip BPs.
 require "modules/votekick" --Allows users to kick other users.
 --require "modules/infinity" --Infinite ore.  Almost.  Don't recommend with peppermint/Nougat
 require "modules/enhancedbiters" --Adds extra behavior to biters to make them extra nasty.
-require "modules/lazybastard" --Much slower crafting speed
+--require "modules/lazybastard" --Much slower crafting speed
 require "modules/playerlist" --List of online players
 require "modules/rainbow" --Top of the line graphics!
 
