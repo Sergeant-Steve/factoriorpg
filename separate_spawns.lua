@@ -459,6 +459,15 @@ function SendPlayerToSpawn(player)
     if (DoesPlayerHaveCustomSpawn(player)) then
         player.teleport(global.playerSpawns[player.name], game.surfaces[GAME_SURFACE_NAME])
     else
-        player.teleport(game.forces[MAIN_FORCE].get_spawn_position(GAME_SURFACE_NAME), game.surfaces[GAME_SURFACE_NAME])
+        local surface = game.surfaces[GAME_SURFACE_NAME]
+        local position = surface.find_non_colliding_position("small-biter", game.forces[MAIN_FORCE].get_spawn_position(surface.name), 10, 1)
+        player.teleport(position, surface.name)
+
+        if not global.riverworld_main_teleporter_created then
+            position = surface.find_non_colliding_position("big-biter", game.forces[MAIN_FORCE].get_spawn_position(surface.name), 10, 1)
+            CreateTeleporter(surface.name, position, nil)
+            global.riverworld_main_teleporter_created = true
+        end
+
     end
 end

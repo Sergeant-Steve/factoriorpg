@@ -250,9 +250,9 @@ local function CreateRocketSilo(surface, chunkArea)
             radar.destructible = false
 		end
         
-        if scenario.config.teleporter.enabled then
-            CreateTeleporter(surface, scenario.config.teleporter.siloPosition, nil)
-        end 
+        -- if scenario.config.teleporter.enabled then
+        --     CreateTeleporter(surface, scenario.config.teleporter.siloPosition, nil)
+        -- end 
         
     end
 end
