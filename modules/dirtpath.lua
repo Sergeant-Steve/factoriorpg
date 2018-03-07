@@ -66,8 +66,8 @@ function dirtDirt(event)
 
 					dirtAdd(tile.position.x, tile.position.y) --Wear the center tile out one additional step.
 					local dirt = {}
-					for xx = -1, 1, 1 do
-					 	for yy = -1, 1, 1 do
+					for xx = -1, 1 do
+					 	for yy = -1, 1 do
 							if not (math.abs(xx) == math.abs(yy)) or xx == 0 then
 								-- Check twice at xx == 0, yy == 0
 								if dirtAdd(tile.position.x + xx, tile.position.y + yy) then
