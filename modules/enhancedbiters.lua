@@ -13,32 +13,32 @@ ENHANCED_SCALE = 1 --1 means 50% turret damage after 24h.  2 means 12h.
 
 --Unique behaviors
 function splitters(event)
-	if not global.zombies then
-		global.zombies = {}
-	end
 	if event.entity.force.name ~= "enemy" then
 		return
 	end
+	if not global.zombies then
+		global.zombies = {}
+	end
 	
-	if event.entity.name == "behemoth-spitter" and math.random(1,10) == 10 then
+	if string.find(event.entity.name, "behemoth") and string.find(event.entity.name, "spitter") and math.random() < 0.08 then
 		event.entity.surface.create_entity{name="big-worm-turret", position=event.entity.position}
 	end
-	if event.entity.name == "big-worm-turret" and math.random() < 0.25 then
+	if string.find(event.entity.name, "big") and string.find(event.entity.name, "worm") and math.random() < 0.25 then
 		for i=0, 5, 1 do
 			local pos = event.entity.surface.find_non_colliding_position("medium-biter", event.entity.position, 10, 3)
 			event.entity.surface.create_entity{name="medium-worm-turret", position=pos}
 		end
 	end
-	if event.entity.name == "medium-worm-turret" and math.random(1,2) == 2 then
+	if string.find(event.entity.name, "medium") and string.find(event.entity.name, "worm") and math.random() < 0.5 then
 		for i=0, 5, 1 do
 			local pos = event.entity.surface.find_non_colliding_position("medium-biter", event.entity.position, 10, 2)
 			event.entity.surface.create_entity{name="small-worm-turret", position=pos}
 		end
 	end
-	if event.entity.name == "medium-biter" and math.random() < 0.5 then
+	if string.find(event.entity.name, "medium") and string.find(event.entity.name, "biter") and math.random() < 0.6 then
 		table.insert(global.zombies, {tick=game.tick, position=event.entity.position, surface=event.entity.surface})
 	end
-	if event.entity.name == "big-spitter" and math.random() < 0.2 then
+	if string.find(event.entity.name, "big") and string.find(event.entity.name, "spitter") and math.random() < 0.2 then
 		if event.cause and event.cause.valid then
 			local capsule = event.entity.surface.create_entity{name="acid-projectile-purple", position=event.entity.position, speed=0.5, target=event.cause}
 			table.insert(global.capsules, {entity = capsule, target=event.cause, type="medium-biter", count=2})
@@ -65,7 +65,7 @@ function delayed_spawn()
 		if not (capsule.entity and capsule.entity.valid) then --Projectile found its mark.
 			--game.print("Popping Capsule")
 			for n = 1, capsule.count do
-				if target and target.valid then
+				if capsule.target and capsule.target.valid then
 					local spawnPoint = capsule.target.surface.find_non_colliding_position("small-biter", capsule.target.position, 10, 2)
 					if spawnPoint then
 						capsule.target.surface.create_entity{name=capsule.type, position=spawnPoint}
