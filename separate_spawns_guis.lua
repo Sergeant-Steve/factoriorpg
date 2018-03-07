@@ -46,11 +46,11 @@ function DisplayWelcomeTextGui(player)
             msg = string.sub(msg,4)
         end
         wGui.add{name = name, type = "label", caption=msg}
-        if msg == "" then
-            ApplyStyle(wGui[name], my_spacer_style)
-        else
-            ApplyStyle(wGui[name], style)
-        end
+        -- if msg == "" then
+        --    ApplyStyle(wGui[name], my_spacer_style)
+        -- else
+        --  ApplyStyle(wGui[name], style)
+        -- end
         ix = ix + 1
     end
 
