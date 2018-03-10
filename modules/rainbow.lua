@@ -27,7 +27,7 @@ function rainbow()
             }
             player.color = color
             for k,v in pairs(color) do
-                color[k] = 127 + v/2
+                color[k] = 63 + v*3/4
             end
             player.chat_color = color
         end
