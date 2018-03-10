@@ -10,7 +10,25 @@ end
 piety = {}
 piety.THRESHHOLD = 20000 --How much landfill must a loginet have to trigger?
 piety.DIVISOR = 15 --Consume 1 / this landfill per event.
-piety.ORE_LIST = {"iron-ore", "copper-ore", "coal"} --This is the list of ores that landfill can spawn.  Need to replace this with an auto-generated list for mod compatability.
+--piety.ORE_LIST = {"iron-ore", "copper-ore", "coal"} --This is the list of ores that landfill can spawn.  Need to replace this with an auto-generated list for mod compatability.
+global.piety = {}
+
+function piety.third_day(event)
+    global.piety[event.surface.name] = {}
+    for k,v in pairs(event.surface.map_gen_settings.autoplace_controls) do
+        --This logic can select finite liquid resources... What's the worst that could happen?  :trollface:
+        if game.entity_prototypes[k] and game.entity_prototypes[k].infinite_resource == false then
+            if k ~= "stone" then --Intended to block this from being a source of infinite ore, but this only really works in vanilla.
+                table.insert(global.piety[event.surface.name], k)
+            end
+        end
+    end
+end
+
+--Nauvis never gets its surface-created event.
+function piety.init()
+    piety.third_day{surface=game.surfaces[1]}
+end
 
 function piety.tribute(event)
     --Check once per hour, offset by 7 minutes
@@ -33,7 +51,7 @@ function piety.tribute(event)
 
                                 --Find minimum in loginet of iron, coal, copper and grant that.
                                 local least = {"iron-ore", 1000000000}
-                                for k,v in pairs(piety.ORE_LIST) do
+                                for k,v in pairs(global.piety[__]) do
                                      if least[2] > network.get_item_count(v) then
                                         least[1], least[2] = v, network.get_item_count(v)
                                      end
@@ -76,7 +94,7 @@ function piety.bless(surface, position, resource, amount)
         for y = position.y - radius, position.y + radius do
             local intensity = math.floor(radius^2 - (position.x - x)^2 - (position.y - y)^2)
             if intensity > 0 then
-                local corrected_pos = surface.find_non_colliding_position("iron-ore", {x,y}, 5, 1)
+                local corrected_pos = surface.find_non_colliding_position(resource, {x,y}, 10, 1)
                 if corrected_pos ~= nil then
                     surface.create_entity{name=resource, position=corrected_pos, amount=intensity, enable_tree_removal=false, enable_cliff_removal=false}
                 end
@@ -91,4 +109,6 @@ function piety.bless(surface, position, resource, amount)
     end
 end
 
+Event.register(-1, piety.init)
+Event.register(defines.events.on_surface_created, piety.init)
 Event.register(defines.events.on_tick, piety.tribute)
