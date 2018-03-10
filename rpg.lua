@@ -876,7 +876,7 @@ function rpg_give_team_bonuses(force)
 		elseif string.find(k, "grenade") or string.find(k, "rocket") or string.find(k, "arti") then
 			force.set_ammo_damage_modifier(k, minerbonus / 100 + force.get_ammo_damage_modifier(k) * 0.8 - 0.2)
 		else --Bullets, shells, flamethrower
-			force.set_ammo_damage_modifier(k, soldierbonus / 100 + force.get_ammo_damage_modifier(k) * 0.8 - 0.2)
+			force.set_ammo_damage_modifier(k, soldierbonus / 50 + force.get_ammo_damage_modifier(k) * 0.8 - 0.2)
 		end
 	end
 
