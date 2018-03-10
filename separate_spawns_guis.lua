@@ -83,8 +83,8 @@ function DisplaySpawnOptions(player)
                             direction = "vertical",
                             caption="Spawn Options"}
     local sGui = player.gui.center.spawn_opts
-    sGui.style.maximal_width = SPAWN_GUI_MAX_WIDTH
-    sGui.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
+    -- sGui.style.maximal_width = SPAWN_GUI_MAX_WIDTH
+    -- sGui.style.maximal_height = SPAWN_GUI_MAX_HEIGHT
 --    sGui.style.maximal_width = SPAWN_GUI_MIN_WIDTH
 --    sGui.style.maximal_height = SPAWN_GUI_MIN_HEIGHT
 
@@ -94,8 +94,8 @@ function DisplaySpawnOptions(player)
                     caption="This is your ONLY chance to choose a spawn option. Choose carefully..."}
     sGui.add{name = "warning_spacer", type = "label",
                     caption=" "}
-    ApplyStyle(sGui.warning_lbl1, my_warning_style)
-    ApplyStyle(sGui.warning_spacer, my_spacer_style)
+    -- ApplyStyle(sGui.warning_lbl1, my_warning_style)
+    -- ApplyStyle(sGui.warning_spacer, my_spacer_style)
 
     sGui.add{name = "spawn_msg_lbl1", type = "label",
                     caption=SPAWN_MSG1}
@@ -105,10 +105,10 @@ function DisplaySpawnOptions(player)
                     caption=SPAWN_MSG3}
     sGui.add{name = "spawn_msg_spacer", type = "label",
                     caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
-    ApplyStyle(sGui.spawn_msg_lbl1, my_label_style)
-    ApplyStyle(sGui.spawn_msg_lbl2, my_label_style)
-    ApplyStyle(sGui.spawn_msg_lbl3, my_label_style)
-    ApplyStyle(sGui.spawn_msg_spacer, my_spacer_style)
+    -- ApplyStyle(sGui.spawn_msg_lbl1, my_label_style)
+    -- ApplyStyle(sGui.spawn_msg_lbl2, my_label_style)
+    -- ApplyStyle(sGui.spawn_msg_lbl3, my_label_style)
+    -- ApplyStyle(sGui.spawn_msg_spacer, my_spacer_style)
 
 
     if ENABLE_DEFAULT_SPAWN then
@@ -121,17 +121,17 @@ function DisplaySpawnOptions(player)
                         caption="You join the default team in the center of the map."}
         sGui.add{name = "normal_spawn_lbl3", type = "label",
                         caption="(Back by popular request...)"}
-        ApplyStyle(sGui.normal_spawn_lbl1, my_label_style)
-        ApplyStyle(sGui.normal_spawn_lbl2, my_label_style)
-        ApplyStyle(sGui.normal_spawn_lbl3, my_label_style)
+        -- ApplyStyle(sGui.normal_spawn_lbl1, my_label_style)
+        -- ApplyStyle(sGui.normal_spawn_lbl2, my_label_style)
+        -- ApplyStyle(sGui.normal_spawn_lbl3, my_label_style)
     else
         sGui.add{name = "normal_spawn_lbl1", type = "label",
                         caption="Default spawn is disabled in this mode."}
-        ApplyStyle(sGui.normal_spawn_lbl1, my_warning_style)
+        -- ApplyStyle(sGui.normal_spawn_lbl1, my_warning_style)
     end
     sGui.add{name = "normal_spawn_spacer", type = "label",
                     caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
-    ApplyStyle(sGui.normal_spawn_spacer, my_spacer_style)
+    -- ApplyStyle(sGui.normal_spawn_spacer, my_spacer_style)
 
     if GetNumberOfAvailableSoloSpawns() > 0 then  
         -- The main spawning options. Solo near and solo far.
@@ -147,13 +147,13 @@ function DisplaySpawnOptions(player)
                         caption="You will still be part of the default team."}
         sGui.add{name = "isolated_spawn_spacer", type = "label",
                         caption="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"}
-        ApplyStyle(sGui.isolated_spawn_lbl1, my_label_style)
-        ApplyStyle(sGui.isolated_spawn_lbl2, my_label_style)
-        ApplyStyle(sGui.isolated_spawn_spacer, my_spacer_style)
+        -- ApplyStyle(sGui.isolated_spawn_lbl1, my_label_style)
+        -- ApplyStyle(sGui.isolated_spawn_lbl2, my_label_style)
+        -- ApplyStyle(sGui.isolated_spawn_spacer, my_spacer_style)
     else
         sGui.add{name = "isolated_spawn_lbl1", type = "label",
                         caption="There are no more solo spawns available."}
-        ApplyStyle(sGui.normal_spawn_lbl1, my_warning_style)
+        -- ApplyStyle(sGui.normal_spawn_lbl1, my_warning_style)
     end
 
 
@@ -172,17 +172,17 @@ function DisplaySpawnOptions(player)
                             caption="This choice is final and you will not be able to create your own spawn later."}
             sGui.add{name = "join_other_spawn_spacer", type = "label",
                             caption=" "}
-            ApplyStyle(sGui.join_other_spawn_lbl1, my_label_style)
-            ApplyStyle(sGui.join_other_spawn_lbl2, my_label_style)
-            ApplyStyle(sGui.join_other_spawn_lbl3, my_label_style)
-            ApplyStyle(sGui.join_other_spawn_spacer, my_spacer_style)
+            -- ApplyStyle(sGui.join_other_spawn_lbl1, my_label_style)
+            -- ApplyStyle(sGui.join_other_spawn_lbl2, my_label_style)
+            -- ApplyStyle(sGui.join_other_spawn_lbl3, my_label_style)
+            -- ApplyStyle(sGui.join_other_spawn_spacer, my_spacer_style)
         else
             sGui.add{name = "join_other_spawn_lbl1", type = "label",
                             caption="There are currently no shared bases availble to spawn at."}
             sGui.add{name = "join_other_spawn_spacer", type = "label",
                             caption=" "}
-            ApplyStyle(sGui.join_other_spawn_lbl1, my_warning_style)
-            ApplyStyle(sGui.join_other_spawn_spacer, my_spacer_style)
+            -- ApplyStyle(sGui.join_other_spawn_lbl1, my_warning_style)
+            -- ApplyStyle(sGui.join_other_spawn_spacer, my_spacer_style)
             sGui.add{name = "join_other_spawn_check",
                             type = "button",
                             caption="Check Again"}
@@ -190,7 +190,7 @@ function DisplaySpawnOptions(player)
     else
         sGui.add{name = "join_other_spawn_lbl1", type = "label",
                         caption="Shared spawns are disabled in this mode."}
-        ApplyStyle(sGui.join_other_spawn_lbl1, my_warning_style)
+        -- ApplyStyle(sGui.join_other_spawn_lbl1, my_warning_style)
     end
 
     -- Some final notes
@@ -202,7 +202,7 @@ function DisplaySpawnOptions(player)
     if MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN then
         sGui.add{name = "shared_spawn_note1", type = "label",
                     caption="If you create your own spawn point you can allow up to " .. MAX_ONLINE_PLAYERS_AT_SHARED_SPAWN-1 .. " other online players to join." }
-        ApplyStyle(sGui.shared_spawn_note1, my_note_style)
+        -- ApplyStyle(sGui.shared_spawn_note1, my_note_style)
     end
 --    sGui.add{name = "note_lbl1", type = "label",
 --                    caption="Near spawn is between " .. NEAR_MIN_DIST*CHUNK_SIZE .. "-" .. NEAR_MAX_DIST*CHUNK_SIZE ..  " tiles away from the center of the map."}
@@ -214,10 +214,10 @@ function DisplaySpawnOptions(player)
                     caption=" "}
 --    ApplyStyle(sGui.note_lbl1, my_note_style)
 --    ApplyStyle(sGui.note_lbl2, my_note_style)
-    ApplyStyle(sGui.note_lbl3, my_note_style)
-    ApplyStyle(sGui.note_spacer1, my_spacer_style)
-    ApplyStyle(sGui.note_spacer2, my_spacer_style)
-    ApplyStyle(sGui.note_spacer3, my_spacer_style)
+    -- ApplyStyle(sGui.note_lbl3, my_note_style)
+    -- ApplyStyle(sGui.note_spacer1, my_spacer_style)
+    -- ApplyStyle(sGui.note_spacer2, my_spacer_style)
+    -- ApplyStyle(sGui.note_spacer3, my_spacer_style)
 end
 
 
