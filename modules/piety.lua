@@ -16,8 +16,8 @@ global.piety = {}
 function piety.third_day(event)
     global.piety[event.surface.name] = {}
     for k,v in pairs(event.surface.map_gen_settings.autoplace_controls) do
-        --This logic can select finite liquid resources... What's the worst that could happen?  :trollface:
-        if game.entity_prototypes[k] and game.entity_prototypes[k].infinite_resource == false then
+        local prototype = game.entity_prototypes[k]
+        if prototype and prototype.infinite_resource == false and prototype.resource_category == "basic-solid" then
             if k ~= "stone" then --Intended to block this from being a source of infinite ore, but this only really works in vanilla.
                 table.insert(global.piety[event.surface.name], k)
             end
