@@ -10,6 +10,7 @@ end
 piety = {}
 piety.THRESHHOLD = 20000 --How much landfill must a loginet have to trigger?
 piety.DIVISOR = 15 --Consume 1 / this landfill per event.
+piety.SCATTER = false --Scatter roboport contents?
 --piety.ORE_LIST = {"iron-ore", "copper-ore", "coal"} --This is the list of ores that landfill can spawn.  Need to replace this with an auto-generated list for mod compatability.
 global.piety = {}
 
@@ -68,11 +69,20 @@ function piety.tribute(event)
                                 --     res = "copper-ore"
                                 -- end
 
-                                local amount = math.floor(network.get_item_count("landfill") / piety.DIVISOR)
+                                local amount = math.floor(network.get_item_count("landfill") / piety.DIVISOR) * 20
                                 --Landfill costs 20 stone, so the blessing should be 20x the amount of landfill taken.
-                                piety.bless(cell.owner.surface, cell.owner.position, res, amount * 20)
+                                
                                 network.remove_item{name="landfill", count=amount}
-                                cell.owner.die()
+                                --Check if dangOreus is active and turn off ghosts.
+                                if dangOre then
+                                    local ttl = force.ghost_time_to_live
+                                    force.ghost_time_to_live = 0
+                                    piety.scatter(cell.owner, amount)
+                                    force.ghost_time_to_live = ttl
+                                else
+                                    piety.scatter(cell.owner, amount)
+                                end
+                                piety.bless(cell.owner.surface, cell.owner.position, res, amount)
                                 if cell.owner.last_user then
                                     game.print(cell.owner.last_user.name .. " has been blessed by the god of industry.")
                                 end
@@ -89,7 +99,7 @@ end
 --This doesn't actuallge generate (amount) of resources, but close enough and it scales linearly.
 --200k creates zone of amount 164k
 function piety.bless(surface, position, resource, amount)
-    local radius = math.floor(amount^0.24)
+    local radius = math.floor(amount^0.244)
     for x = position.x - radius, position.x + radius do
         for y = position.y - radius, position.y + radius do
             local intensity = math.floor(radius^2 - (position.x - x)^2 - (position.y - y)^2)
@@ -107,6 +117,29 @@ function piety.bless(surface, position, resource, amount)
         v.active = false
         v.active = true
     end
+end
+
+--Scatter the roboport's contents about and destroy it.
+function piety.scatter(roboport, blessing)
+    for i = 1, 3 do
+        local inv = roboport.get_inventory(i)
+        if inv then
+            for n,p in pairs(inv.get_contents()) do
+                if piety.SCATTER then
+                    roboport.surface.spill_item_stack(roboport.position, {name=n, count=p})
+                else
+                    if n == "logistic-robot" then
+                        amount = amount + 50 * p
+                    elseif n == "construction-robot" then
+                        amount = amount + 36 * p
+                    elseif n == "repair-pack" then
+                        amount = amount + 9 * p
+                    end
+                end
+            end
+        end
+    end
+    roboport.die()
 end
 
 Event.register(-1, piety.init)
