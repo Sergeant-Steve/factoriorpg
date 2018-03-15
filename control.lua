@@ -31,7 +31,7 @@ require "modules/bluebuild" --Bluebuild softmod
 require "modules/autofill" --Softmod autofill separated from Oarc
 --require "modules/nougatmining" --Logistic mining softmod.
 require "modules/peppermintmining" --Logistic mining softmod.
-require "modules/piety" --Way to consume random excess stone.
+require "modules/piety" --Way to consume excess stone.
 --require "belt_limit" --Limits number of belts per player.  Mostly for UPS reasons.
 require "modules/bpmirror" --Adds bpmirror command to flip BPs.
 require "modules/votekick" --Allows users to kick other users.
@@ -44,7 +44,7 @@ require "modules/rainbow" --Top of the line graphics!
 -- World Generators: Most are exclusive.
 --require "maps/prospector" --Radars generate ore
 --require "maps/TTSFN" --This Tank Stops for Nobody!
---require "maps/dangOreus" --Ore is everywhere.  Cannot build on it!
+require "maps/dangOreus" --Ore is everywhere.  Cannot build on it!
 --require "maps/searious" --Everything not a resource tile is turned into water.
 --require "oarc_events" --Oarc's separate spawn scenario.
 --require "maps/heximaze" --A labyrinth.

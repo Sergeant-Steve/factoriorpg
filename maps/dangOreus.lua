@@ -1,5 +1,6 @@
-STARTING_RADIUS = 100
+STARTING_RADIUS = 80
 EASY_ORE_RADIUS = 200
+ORE_SCALING = 0.77 --Exponent for ore amount.
 
 if MODULE_LIST then
 	module_list_add("dangOreus")
@@ -94,7 +95,7 @@ function gOre(event)
         for y = event.area.left_top.y, event.area.left_top.y + 31 do
             local bbox = {{ x, y}, {x+0.5, y+0.5}}
             if event.surface.get_tile(x,y).collides_with("ground-tile") and event.surface.count_entities_filtered{type="cliff", area=bbox} == 0 then
-                local amount = (x^2 + y^2)^0.75 / 8
+                local amount = (x^2 + y^2)^ORE_SCALING / 8
                 if x^2 + y^2 >= STARTING_RADIUS^2 then
                     --Build the ore list.  Uranium can only appear in uranium chunks.
                     local ore_list = {}
@@ -327,6 +328,6 @@ Event.register(defines.events.on_built_entity, dangOre)
 Event.register(defines.events.on_robot_built_entity, dangOre)
 Event.register(defines.events.on_chunk_generated, gOre)
 Event.register(defines.events.on_entity_died, ore_rly)
-Event.register(defines.events.on_tick, unchOret)
+--Event.register(defines.events.on_tick, unchOret)
 Event.register(defines.events.on_tick, flOre_is_lava)
 Event.register(-1, divOresity_init)
