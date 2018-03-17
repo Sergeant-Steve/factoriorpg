@@ -182,7 +182,7 @@ function rpg_remote_save(event)
 	end
 	--Now repeat for the bank.
 	if global.rpg_exp[player.name].bank < global.rpg_tmp[player.name].bank then
-		data = data .. '"' .. v .. '":' .. global.rpg_exp[player.name].bank-global.rpg_tmp[player.name].bank ..","
+		data = data .. '"bank":' .. global.rpg_exp[player.name].bank - global.rpg_tmp[player.name].bank ..","
 		global.rpg_tmp[player.name].bank = global.rpg_exp[player.name].bank
 	end
 
