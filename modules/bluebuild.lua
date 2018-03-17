@@ -222,7 +222,7 @@ function bluebuild.demo(builder)
 	--Now calculate mining time and destroy
 	for index, ent in pairs(areaListCleaned) do
 		if ent.name == "deconstructible-tile-proxy" then --In case we're trying to demo floor tiles.
-			ent = ent.surface.get_tile(ent.position)
+			local tile = ent.surface.get_tile(ent.position)
 			if builder.mine_tile(tile) then
 				return true
 			end
