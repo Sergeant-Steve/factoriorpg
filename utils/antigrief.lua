@@ -101,16 +101,15 @@ end
 --Kick or ban, depending on conditions.
 function antigrief.kick(player, reason)
     reason = reason or "griefing (automoderator)"
-    if game.permissions["trusted"] and not global.antigrief.warned[player.index] then
-        if player.permission_group.name == "trusted" then
+    if player.permission_group.name == "trusted" or player.online_time > antigrief.TROLL_TIMER then
+        if not global.antigrief.warned[player.name] then
             global.antigrief.warned[player.name] = true
             game.kick_player(player, reason)
-        else
-            game.ban_player(player, reason .. " to appeal message on discord.")
+            return
         end
-    elseif player.online_time < antigrief.TROLL_TIMER then
-        game.ban_player(player, reason .. " to appeal message on discord.")
     end
+    --still here?  We have not yet found a reason to only kick, so ban.
+    game.ban_player(player, reason .. " to appeal message on discord.")
 end
 
 -- function antigrief.banhammer(player)
@@ -126,7 +125,6 @@ end
 --         game.ban_player(player, "griefing (automoderator)")
 --     end
 -- end
-
 
 --PASSIVE functions
 --Common tactic is to remove pump.  So if someone landfills a pump and removes it... That's a huge red flag.
