@@ -957,7 +957,7 @@ function rpg_bonus_scan(event)
 			end
 		end
 	end
-	local bonus = 32 * (soldierbonus ^ 0.27) --This is the literal size of the area we're scanning.
+	local bonus = 32 * (soldierbonus ^ 0.25) --This is height and width of the area we're scanning.
 	
 	local bbox = {{}, {}}
 	if event.radar.position.x < event.chunk_position.x * 32 then
