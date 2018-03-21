@@ -3,7 +3,7 @@
 --MIT license
 --2017
 
---deep = require "noise"
+require "utils/perlin"
 
 SEARIOUS_STARTING_RADIUS = 100
 
@@ -29,11 +29,11 @@ function sea_the_world(event)
         for y = lty-1, rby+1 do
             if x^2 + y^2 > SEARIOUS_STARTING_RADIUS^2 then
                 -- Need to add a special check to avoid drawing lines on the edges.
-                if not event.surface.get_tile(x, y).collides_with("water-tile") then --and x >= ltx and x < rbx and y >= lty and y < rby then
+                --if not event.surface.get_tile(x, y).collides_with("water-tile") then --and x >= ltx and x < rbx and y >= lty and y < rby then
                 --     table.insert(tiles, {name="deepwater", position={x,y}})
                 -- else
                     flood[x][y] = true
-                end
+                --end
             end
         end
     end
@@ -52,30 +52,22 @@ function sea_the_world(event)
     for x = ltx, rbx do
         for y = lty, rby do
             if (flood[x][y]) then
-                -- if not sea_sharp(x, y) then
-                --if event.surface.get_tile_properties({x,y}).elevation < 5 then
-                  --  table.insert(tiles, {name="deepwater", position={x,y}})
-                --else
-                    table.insert(tiles, {name="water", position={x,y}})
-                --end
+                local type = "water"
+                local noise = perlin.noise(x, y)
+                if noise > 0.2 then
+                    type = "deepwater"
+                elseif noise < -0.8 then
+                    type = "water-green"
+                elseif noise < -0.6 then
+                    type = "grass-1"                  
+                end
+                table.insert(tiles, {name=type, position={x,y}})
             end
         end
     end
 
     --Finally set
     event.surface.set_tiles(tiles, true)
-end
-
---My very own noise generator.
---Shelved for now.
-function sea_sharp(x, y)
-    if (x+y) % 300 / 500 + math.sin((y)/400) > 0.8 then
-        -- if (x - y + game.surfaces[1].map_gen_settings.seed) % 1100 > 700 then
-            return true
-        -- end
-    end
-    -- Still here?  Return false
-    return false
 end
 
 Event.register(defines.events.on_chunk_generated, sea_the_world)

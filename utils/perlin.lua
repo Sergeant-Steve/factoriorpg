@@ -5,6 +5,7 @@
 
 perlin = {}
 perlin.p = {}
+perlin.EXPONENT = 0.8 --This is used to change how the noise scales from the origin.
 
 -- Hash lookup table as defined by Ken Perlin
 -- This is a randomly arranged array of all numbers from 0-255 inclusive
@@ -63,10 +64,18 @@ Event.register(-1, perlin.shuffle)
 
 -- Return range: [-1, 1]
 function perlin.noise(x, y, z)
-    x = x / 60 + 0.001
-    y = y / 60 + 0.001
-    --y = y or 0
+    if x > 0 then
+        x = math.abs(x)^perlin.EXPONENT / 30 + 0.001
+    else
+        x = -math.abs(x)^perlin.EXPONENT / 30 + 0.001
+    end
+    if y > 0 then
+        y = math.abs(y)^perlin.EXPONENT / 30 + 0.001
+    else
+        y = -math.abs(y)^perlin.EXPONENT / 30 + 0.001
+    end
     z = (math.abs(x) + math.abs(y)) * 50 / 10000
+    --z = z or 0
 
     -- Calculate the "unit cube" that the point asked will be located in
     local xi = bit32.band(math.floor(x),255)
