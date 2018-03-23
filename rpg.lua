@@ -81,6 +81,11 @@ commands.add_command("loaddata", "Loads rpg data", function(data)
 			--global.rpg_tmp[player.name][v] = data[v] --Changing this will prevent overwriting current exp if the data server goes down.
 		end
 	end
+	if data.bank and not global.rpg_tmp[player.name].bank_loaded then
+		global.rpg_exp[player.name].bank = data.bank
+		global.rpg_tmp[player.name].bank = data.bank
+		global.rpg_tmp[player.name].bank_loaded = true
+	end
 	if global.rpg_exp[player.name].class == "Engineer" then
 		rpg_class_picker(player)
 		rpg_starting_resources(player)
@@ -175,6 +180,12 @@ function rpg_remote_save(event)
 	for k, v in pairs(rpg.classes) do
 		global.rpg_tmp[player.name][v] = global.rpg_exp[player.name][v]
 	end
+	--Now repeat for the bank.
+	if global.rpg_exp[player.name].bank < global.rpg_tmp[player.name].bank then
+		data = data .. '"bank":' .. global.rpg_exp[player.name].bank - global.rpg_tmp[player.name].bank ..","
+		global.rpg_tmp[player.name].bank = global.rpg_exp[player.name].bank
+	end
+
 	data = data .. "}\n"
 	--Trim the trailing comma
 	data = string.gsub(data, ",}", "}")
@@ -777,8 +788,8 @@ function rpg_give_team_bonuses(force)
 		end
 	end
 	
-	--That entire code block for calculating base bonus can be replaced by this:
 	local inventory_bonus = force.character_inventory_slots_bonus
+	--That entire code block for calculating base bonus can be replaced by this:
 	force.reset_technology_effects()
 		
 	--For some reason this stops current research.  So let's save and reset it.
@@ -871,18 +882,18 @@ function rpg_give_team_bonuses(force)
 	for k, v in pairs(game.ammo_category_prototypes) do
 		if string.find(k, "turret") then
 			force.set_ammo_damage_modifier(k, builderbonus / 100 + force.get_ammo_damage_modifier(k) * 0.85 - 0.15)
+		--Note, this does NOT include laser turrets!  Those were already buffed by builders!
 		elseif string.find(k, "robot") or string.find(k, "capsule") or string.find(k, "laser")  then
 			force.set_ammo_damage_modifier(k, scientistbonus / 100 + force.get_ammo_damage_modifier(k) * 0.8 - 0.2)
 		elseif string.find(k, "grenade") or string.find(k, "rocket") or string.find(k, "arti") then
 			force.set_ammo_damage_modifier(k, minerbonus / 100 + force.get_ammo_damage_modifier(k) * 0.8 - 0.2)
 		else --Bullets, shells, flamethrower
-			force.set_ammo_damage_modifier(k, soldierbonus / 100 + force.get_ammo_damage_modifier(k) * 0.8 - 0.2)
+			force.set_ammo_damage_modifier(k, soldierbonus / 50 + force.get_ammo_damage_modifier(k) * 0.8 - 0.2)
 		end
 	end
 
 	-- Gun-turrets are handled separately
 	force.set_turret_attack_modifier("gun-turret", force.get_turret_attack_modifier("gun-turret") * 0.85 - 0.15 + builderbonus / 100)
-	
 	
 	--Just for you, Tux0n0
 	force.set_ammo_damage_modifier("railgun", soldierbonus / 25)
@@ -895,6 +906,9 @@ function rpg_give_team_bonuses(force)
 	force.character_running_speed_modifier = scientistbonus / 400
 	force.worker_robots_speed_modifier = scientistbonus / 40 + force.worker_robots_speed_modifier * 0.80 - 0.4
 	force.worker_robots_battery_modifier = scientistbonus / 50
+	if scientistbonus > 50 then
+		force.worker_robots_storage_bonus =  force.worker_robots_storage_bonus + 1
+	end
 	
 	--This one can't decrease, or players logging out would cause stuff to drop!
 	--Disabling this because I can't make it stop dropping stuff.
@@ -943,7 +957,7 @@ function rpg_bonus_scan(event)
 			end
 		end
 	end
-	local bonus = 32 * (soldierbonus ^ 0.3) --This is the literal size of the area we're scanning.
+	local bonus = 32 * (soldierbonus ^ 0.25) --This is height and width of the area we're scanning.
 	
 	local bbox = {{}, {}}
 	if event.radar.position.x < event.chunk_position.x * 32 then
@@ -976,6 +990,13 @@ end
 function rpg_im_too_smart_to_die(event)
 	local player = game.players[event.player_index]
 	if global.rpg_exp[player.name].class == "Scientist" and global.rpg_tmp[player.name].level >= 50 then
+		if not global.rpg_tmp[player.name].clonejump then
+			global.rpg_tmp[player.name].clonejump = game.tick
+		elseif global.rpg_tmp[player.name].clonejump + 60 * 60 * 60 > game.tick then --1 hour cooldown
+			return
+		end
+
+		global.rpg_tmp[player.name].clonejump = game.tick
 		player.character.health = 1
 		
 		--This interacts with Oarc.  Need to use player's spawn location.

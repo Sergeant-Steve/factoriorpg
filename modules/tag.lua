@@ -48,8 +48,6 @@ function tag_expand_gui(player)
 	end
 end
 
-
-
 function tag_on_gui_click(event)
 	if not (event and event.element and event.element.valid) then return end
 	local player = game.players[event.element.player_index]
@@ -84,6 +82,6 @@ end)
 if rpg then
 	Event.register(rpg.on_rpg_gui_created, tag_create_gui)
 else
-	Event.register(defines.events.on_player_joined_game, tag_create_gui)
+	Event.register(defines.events.on_player_created, tag_create_gui)
 end
 Event.register(defines.events.on_gui_click, tag_on_gui_click)

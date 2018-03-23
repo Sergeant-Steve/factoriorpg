@@ -31,7 +31,7 @@ function hexi.init()
     local maze_total_cells = global.maze_settings.maze_width * global.maze_settings.maze_height
     
     global.maze_settings.maze_tile_size = 512
-    global.maze_settings.maze_tile_border = 256
+    global.maze_settings.maze_tile_border = 320
     
     global.maze_settings.maze_width_raw = (global.maze_settings.maze_width+1) * global.maze_settings.maze_tile_size
     global.maze_settings.maze_height_raw = (global.maze_settings.maze_height+1) * global.maze_settings.maze_tile_size

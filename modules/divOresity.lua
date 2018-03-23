@@ -4,7 +4,7 @@
 --Inspired by Ore Chaos
 
 DIVERSITY_QUOTA = 0.20
-EXEMPT_AREA = 200 --This is the radius of the starting area that can't be affected.
+EXEMPT_AREA = 1 --This is the radius of the starting area that can't be affected.
 STONE_BYPRODUCT = false --Delete patches of stone.  Stone only appears as a byproduct.
 STONE_BYPRODUCT_RATIO = 0.25 --If math.random() is between DIVERSITY_QUOTA and this, it's stone.
 

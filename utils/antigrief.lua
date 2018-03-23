@@ -4,12 +4,11 @@
 
 antigrief = {}
 global.antigrief_cooldown = {}
-global.antigrief = {warned = {}}
+global.antigrief = {points = {}, warned = {}}
 
 antigrief.TROLL_TIMER = 60 * 60 * 30 --30 minutes.  Players must be online this long to not throw some warnings.
 antigrief.SPAM_TIMER = 60 * 60 * 2 --10 minutes.  Limit inventory related messages to once per 10m.
-
-
+antigrief.POINT_THRESHHOLD = 100 -- Accumulate this many points and get kicked.
 
 --ACTIVE functions
 function antigrief.arty_remote_ban(event)
@@ -22,28 +21,110 @@ function antigrief.arty_remote_ban(event)
     count = count - ghosts
 
     if event.item.name == "artillery-targeting-remote" and count > 50 then
-        antigrief.banhammer(player)
+        antigrief.kick(player)
         antigrief.alert(player.name .. " is using an artillery remote maliciously.", player.character)
-    elseif string.find(event.item.name, "grenade") and player.surface.count_entities_filtered{force=player.force, area=area, name="steam-engine"} > 20 then --Grenading power
-        antigrief.banhammer(player)
-        antigrief.alert(player.name .. " is using grenading power.", player.character)
+    -- elseif string.find(event.item.name, "grenade") and player.surface.count_entities_filtered{force=player.force, area=area, name="steam-engine"} > 20 then --Grenading power
+    --     antigrief.banhammer(player)
+    --     antigrief.alert(player.name .. " is using grenades on power.", player.character)
     end
 end
 
-function antigrief.banhammer(player)
-    --If player is > level 5, then warn first.
-    --What permission group is the player in?
-    if player.permission_group.name == "trusted" then --Kick first.
+function antigrief.wanton_destruction(event)
+    if not (event.entity and event.entity.valid and event.cause) then
+        return
+    end
+    if not (event.cause.force == event.entity.force) then
+        return
+    end
+
+    local player
+    if event.cause.type == "player" then
+        player = event.cause.player
+    end
+    if event.cause.type == "car" or event.cause.type == "locomotive" then
+        if event.cause.get_driver() then
+            player = event.cause.get_driver().player
+        end
+    end
+    if not player then return end
+
+    --Friendly fire detected!
+    if antigrief.is_well_pump(event.entity) then
+        antigrief.alert(player.name .. " destroyed a well-water pump", event.entity)
+        antigrief.add_points(player, 60)
+        return
+    end
+    --Playerkilling.  Players over the trolltimer get some leeway
+    if event.entity.type == "player" and event.entity.player then
+        antigrief.alert(player.name .. " killed " .. event.entity.player.name, event.entity)
+        if player.online_time < antigrief.TROLL_TIMER then
+            antigrief.add_points(player, 60)
+        else
+            antigrief.add_points(player, 35)
+        end
+        return
+    end
+    --Power production
+    if event.entity.type == "boiler" or event.entity.type == "generator" or event.entity.type == "reactor" then
+        antigrief.alert(player.name .. " is destroying power.", event.entity)
+        antigrief.add_points(player, 40)
+    end
+    if antigrief.check_cooldown(player.index, "destruction") then
+        antigrief.alert(player.name .. " is destroying friendly entites.", event.entity)
+        antigrief.add_points(player, 3)
+        return
+    end
+end
+
+function antigrief.add_points(player, amount)
+    amount = amount or 2
+    if not global.antigrief.points[player.index] then
+        global.antigrief.points[player.index] = 0
+    end
+    global.antigrief.points[player.index] = global.antigrief.points[player.index] + amount
+    if global.antigrief.points[player.index] >= antigrief.POINT_THRESHHOLD then
+        antigrief.kick(player)
+        global.antigrief.points[player.index] = math.floor(global.antigrief.points[player.index] / 2)
+    end
+end
+
+--Reduce grief points by 1 per minute
+function antigrief.point_cooloff()
+    if game.tick % 3600 ~= 0 then return end
+    for k in pairs(global.antigrief.points) do
+        if global.antigrief.points[k] > 0 then
+            global.antigrief.points[k] = global.antigrief.points[k] - 1
+        end
+    end
+end
+
+--Kick or ban, depending on conditions.
+function antigrief.kick(player, reason)
+    reason = reason or "griefing (automoderator)"
+    if player.permission_group.name == "trusted" or player.online_time > antigrief.TROLL_TIMER then
         if not global.antigrief.warned[player.name] then
             global.antigrief.warned[player.name] = true
-            game.kick_player(player, "griefing (automoderator)")
+            game.kick_player(player, reason)
             return
         end
-    else
-        game.ban_player(player, "griefing (automoderator)")
     end
+    --still here?  We have not yet found a reason to only kick, so ban.
+    game.ban_player(player, reason .. " to appeal message on discord.")
 end
 
+-- function antigrief.banhammer(player)
+--     --If player is > level 5, then warn first.
+--     --What permission group is the player in?
+--     if player.permission_group.name == "trusted" then --Kick first.
+--         if not global.antigrief.warned[player.name] then
+--             global.antigrief.warned[player.name] = true
+--             game.kick_player(player, "griefing (automoderator)")
+--             return
+--         end
+--     else
+--         game.ban_player(player, "griefing (automoderator)")
+--     end
+-- end
 
 --PASSIVE functions
 --Common tactic is to remove pump.  So if someone landfills a pump and removes it... That's a huge red flag.
@@ -257,29 +338,7 @@ function antigrief.is_well_pump(entity)
     end
 end
 
-function antigrief.wanton_destruction(event)
-    if not (event.entity and event.entity.valid) then
-        return
-    end
-    if not (event.cause and event.cause.type == "player") then
-        return
-    end
-    if event.cause.force == event.entity.force then
-        --Friendly fire detected!
-        if antigrief.is_well_pump(event.entity) then
-            antigrief.alert(event.cause.player.name .. " destroyed a well-water pump", event.entity)
-            return
-        end
-        if event.entity.type == "player" and event.entity.player then
-            antigrief.alert(event.cause.player.name .. " killed " .. event.entity.player.name, event.entity)
-            return
-        end
-        if antigrief.check_cooldown(event.cause.player.index, "destruction") then
-            antigrief.alert(event.cause.player.name .. " is destroying friendly entites.", event.entity)
-        end       
-    end
-end
-
+Event.register(defines.events.on_tick, antigrief.point_cooloff)
 Event.register(defines.events.on_player_used_capsule, antigrief.arty_remote_ban)
 Event.register(defines.events.on_player_ammo_inventory_changed, antigrief.da_bomb)
 Event.register(defines.events.on_player_cursor_stack_changed, antigrief.remote)

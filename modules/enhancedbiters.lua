@@ -36,7 +36,18 @@ function splitters(event)
 		end
 	end
 	if string.find(event.entity.name, "medium") and string.find(event.entity.name, "biter") and math.random() < 0.6 then
-		table.insert(global.zombies, {tick=game.tick, position=event.entity.position, surface=event.entity.surface})
+		--Is it on fire?
+		local stickers = event.entity.stickers or {}
+		local isonfire = false
+		for k,v in pairs(stickers) do
+			if v.name == "fire-sticker" then
+				isonfire = true
+				break
+			end
+		end
+		if not isonfire then
+			table.insert(global.zombies, {tick=game.tick, position=event.entity.position, surface=event.entity.surface, name=event.entity.name})
+		end
 	end
 	if string.find(event.entity.name, "big") and string.find(event.entity.name, "spitter") and math.random() < 0.2 then
 		if event.cause and event.cause.valid then
@@ -54,8 +65,13 @@ function delayed_spawn()
 		local zombie = global.zombies[i]
 		if game.tick > zombie.tick + (60*60*2) then
 			local spawnPoint = zombie.surface.find_non_colliding_position("medium-biter", zombie.position, 10, 3)
+			local area = {{zombie.position.x - 2, zombie.position.y -2}, {zombie.position.x + 2, zombie.position.y + 2}}
 			if spawnPoint then
-				zombie.surface.create_entity{name="medium-biter", position=zombie.position}
+				zombie.surface.create_entity{name=zombie.name, position=zombie.position}
+				local corpse = zombie.surface.find_entities_filtered{name=zombie.name .. "-corpse", area=area, limit=1}[1]
+				if corpse then
+					corpse.destroy()
+				end
 			end
 			table.remove(global.zombies, i)
 		end
@@ -87,6 +103,7 @@ function tech_nerf(event)
 	end
 	--For extra fun, let's buff biters.
 	game.forces.enemy.set_ammo_damage_modifier("melee", 0.5 + (2 * scale + game.tick) / (2 * scale) )
+	game.forces.enemy.set_ammo_damage_modifier("biological", (scale + game.tick) / (scale) )
 end
 
 --Currently we rely upon the RPG module to call this often.
