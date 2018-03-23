@@ -6,7 +6,7 @@ require "utils/bot" --Discord integration
 require "utils/antigrief" --Look for suspicious behavior and report it to admins/log it.
 require "utils/modular_admin/modular_admin" --FMMO admin tools 
 require "utils/modular_information/modular_information" --Info windows from FMMO
---require "utils/perlin" --Perlin Noise.
+--require "utils/perlin" --Perlin Noise. NOTE: If a module needs this, it'll call it.
 require "modules/module_list" --Creates and displays a list of active modules on login.
 require "rpg_permissions" --Limit certain actions to players level 5 or greater
 require "rpg" --Award bonuses based on experience earned.
@@ -27,7 +27,6 @@ require "modules/seasons" --Let's mess with solar.
 --require "modules/dark harvest" --Only way to get uranium is from biter deaths.
 --require "modules/tOredumonde" --Ore spawns in directions. This must be called before divOresity. NOTE: STONE_BYPRODUCT must be false.
 require "modules/divOresity" --Some ore gets scrambled and must be filtered.
---require "dark harvest event" --Temp for testing.
 require "modules/bluebuild" --Bluebuild softmod
 require "modules/autofill" --Softmod autofill separated from Oarc
 --require "modules/nougatmining" --Logistic mining softmod.
@@ -37,20 +36,21 @@ require "modules/piety" --Way to consume excess stone.
 require "modules/bpmirror" --Adds bpmirror command to flip BPs.
 require "modules/votekick" --Allows users to kick other users.
 --require "modules/infinity" --Infinite ore.  Almost.  Don't recommend with peppermint/Nougat
-require "modules/enhancedbiters" --Adds extra behavior to biters to make them extra nasty.
+--require "modules/enhancedbiters" --Adds extra behavior to biters to make them extra nasty.
 --require "modules/lazybastard" --Much slower crafting speed
 require "modules/playerlist" --List of online players
 require "modules/rainbow" --Top of the line graphics!
+--require "rpg_pocket_crafter" --Pocket crafting!
 
 -- World Generators: Most are exclusive.
 --require "maps/prospector" --Radars generate ore
 --require "maps/TTSFN" --This Tank Stops for Nobody!
 --require "maps/dangOreus" --Ore is everywhere.  Cannot build on it!
---require "modules/divOresity" --Some ore gets scrambled and must be filtered. Must be called after dangOreus.
---require "maps/searious" --Everything not a resource tile is turned into water.
+--require "modules/divOresity" --Some ore gets scrambled and must be filtered. Must be called after dangOreus if using perlin mode.
+require "maps/searious" --Everything not a resource tile is turned into water.
 --require "oarc_events" --Oarc's separate spawn scenario.
 --require "maps/heximaze" --A labyrinth.
-require "maps/perlinvoid" --Organic void shapes.
+--require "maps/perlinvoid" --Organic void shapes.
 --require "void" --Worldgenerator which randomly generates holes in the world
 --require "nuclear" --worldgenerator for nuclear scenario
 --NOT UPDATED require "grid" --Worldgenerator which devides the world into a grid.
