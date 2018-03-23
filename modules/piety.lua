@@ -129,11 +129,11 @@ function piety.scatter(roboport, blessing)
                     roboport.surface.spill_item_stack(roboport.position, {name=n, count=p})
                 else
                     if n == "logistic-robot" then
-                        amount = amount + 50 * p
+                        blessing = blessing + 50 * p
                     elseif n == "construction-robot" then
-                        amount = amount + 36 * p
+                        blessing = blessing + 36 * p
                     elseif n == "repair-pack" then
-                        amount = amount + 9 * p
+                        blessing = blessing + 9 * p
                     end
                 end
             end
