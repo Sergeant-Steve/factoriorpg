@@ -13,14 +13,14 @@ antigrief.POINT_THRESHHOLD = 100 -- Accumulate this many points and get kicked.
 --ACTIVE functions
 function antigrief.arty_remote_ban(event)
     local player = game.players[event.player_index]
-    local area = {{event.position.x-20, event.position.y-20}, {event.position.x+20, event.position.y+20}}
+    local area = {{event.position.x-10, event.position.y-10}, {event.position.x+10, event.position.y+10}}
     local count = player.surface.count_entities_filtered{force=player.force, area=area}
     local ghosts = player.surface.count_entities_filtered{name="entity-ghost", force=player.force, area=area}
 
     --Ghosts don't count!  They can't be damaged.
     count = count - ghosts
 
-    if event.item.name == "artillery-targeting-remote" and count > 50 then
+    if event.item.name == "artillery-targeting-remote" and count > 30 then
         antigrief.kick(player)
         antigrief.alert(player.name .. " is using an artillery remote maliciously.", player.character)
     -- elseif string.find(event.item.name, "grenade") and player.surface.count_entities_filtered{force=player.force, area=area, name="steam-engine"} > 20 then --Grenading power
