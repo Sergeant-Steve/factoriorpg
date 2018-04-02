@@ -15,32 +15,34 @@ piety.SCATTER = false --Scatter roboport contents?
 global.piety = {}
 
 function piety.third_day(event)
-    global.piety[event.surface.name] = {}
-    for k,v in pairs(event.surface.map_gen_settings.autoplace_controls) do
+    local surface = game.surfaces[event.surface_index]
+    global.piety[surface.name] = {}
+    for k,v in pairs(surface.map_gen_settings.autoplace_controls) do
         local prototype = game.entity_prototypes[k]
         if prototype and prototype.infinite_resource == false and prototype.resource_category == "basic-solid" and prototype.mineable_properties.required_fluid == nil then
             if k ~= "stone" then --Intended to block this from being a source of infinite ore, but this only really works in vanilla.
-                table.insert(global.piety[event.surface.name], k)
+                table.insert(global.piety[surface.name], k)
             end
         end
     end
+    --game.print("Piety: Surface created event parsed for index: " .. event.surface_index .. ", name: " .. surface.name)
 end
 
 --Nauvis never gets its surface-created event.
 function piety.init()
-    piety.third_day{surface=game.surfaces[1]}
+    piety.third_day{surface_index=1}
 end
 
 function piety.tribute(event)
     --Check once per hour, offset by 7 minutes
-    if game.tick % 216000 ~= 25200 then
+    --if game.tick % 216000 ~= 25200 then
     --if game.tick % 600 ~= 0 then --Debug
-        return
-    end
+    --     return
+    -- end
     --Check all forces
     for _, force in pairs(game.forces) do
         if force and force.valid then            
-            for __, surface_list in pairs(force.logistic_networks) do
+            for surface_name, surface_list in pairs(force.logistic_networks) do
                 for ___, network in pairs(surface_list) do
                     if network and network.valid then
                         --Check for overflow
@@ -52,7 +54,7 @@ function piety.tribute(event)
 
                                 --Find minimum in loginet of iron, coal, copper and grant that.
                                 local least = {"iron-ore", 1000000000}
-                                for k,v in pairs(global.piety[__]) do
+                                for k,v in pairs(global.piety[surface_name]) do
                                      if least[2] > network.get_item_count(v) then
                                         least[1], least[2] = v, network.get_item_count(v)
                                      end
@@ -143,5 +145,9 @@ function piety.scatter(roboport, blessing)
 end
 
 Event.register(-1, piety.init)
-Event.register(defines.events.on_surface_created, piety.init)
-Event.register(defines.events.on_tick, piety.tribute)
+Event.register(defines.events.on_surface_created, piety.third_day)
+--Event.register(defines.events.on_tick, piety.tribute)
+script.on_nth_tick(600, piety.tribute)
+
+--if game.tick % 216000 ~= 25200 then
+--if game.tick % 600 ~= 0 then --Debug
