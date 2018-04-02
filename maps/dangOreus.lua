@@ -5,7 +5,7 @@ require "utils/perlin" --Perlin Noise.
 
 STARTING_RADIUS = 80
 EASY_ORE_RADIUS = 200
-ORE_SCALING = 0.77 --Exponent for ore amount.
+ORE_SCALING = 0.78 --Exponent for ore amount.
 DANGORE_MODE = 2 -- 1 == Random, 2 == Perlin
 
 if MODULE_LIST then
@@ -200,7 +200,7 @@ function ore_rly(event)
     local items = {"stone", "coal", "iron-ore", "copper-ore", "uranium-ore"}
     if event.entity.type == "container" or event.entity.type == "cargo-wagon" or event.entity.type == "logistic-container" or event.entity.type == "car" then
         --Let's spill all items instead.
-        for i = 1, 10, do
+        for i = 1, 10 do
             if event.entity.get_inventory(i) then
                 for k,v in pairs(event.entity.get_inventory(i).get_contents()) do
                     event.entity.surface.spill_item_stack(event.entity.position, {name=k, count=v})
