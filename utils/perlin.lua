@@ -25,6 +25,21 @@ global.permutation = {151,160,137,91,90,15,
 }
 global.permutation2 = {}
 
+--This is a measured table of distributions along the X axis.  Measurement taken 11th Aprl 2018 (if algo changes, this will need to be updated)
+perlin.MEASURED = {[-0.8]= 3e-06, [-0.78]= 1.9e-05, [-0.76]= 2.26e-05, [-0.74]= 7.85e-05, [-0.72]= 6.54e-05, [-0.7]= 0.0001065,
+[-0.68]= 0.0001422, [-0.66]= 0.0001748, [-0.64]= 0.0003068, [-0.62]= 0.0005037, [-0.6]= 0.0006998, [-0.58]= 0.0009218, [-0.56]= 0.0015398,
+[-0.54]= 0.002261, [-0.52]= 0.0029764, [-0.5]= 0.0041172, [-0.48]= 0.0074905, [-0.46]= 0.0065377, [-0.44]= 0.0067735, [-0.42]= 0.0071103,
+[-0.4]= 0.0077329, [-0.38]= 0.0086249, [-0.36]= 0.0088168, [-0.34]= 0.0098334, [-0.32]= 0.0121038, [-0.3]= 0.0142444, [-0.28]= 0.0175389,
+[-0.26]= 0.0200083, [-0.24]= 0.0229865, [-0.22]= 0.023516, [-0.2]= 0.0224692, [-0.18]= 0.0218644, [-0.16]= 0.023464, [-0.14]= 0.0295019,
+[-0.12]= 0.0312897, [-0.1]= 0.0300214, [-0.08]= 0.0299038, [-0.06]= 0.0295616, [-0.04]= 0.0300028, [-0.02]= 0.0300583, [0]= 0.0344869,
+[0.02]= 0.0339126, [0.04]= 0.0305977, [0.06]= 0.0292206, [0.08]= 0.0287079, [0.1]= 0.0287141, [0.12]= 0.0292377, [0.14]= 0.0308711,
+[0.16]= 0.0289125, [0.18]= 0.0227944, [0.2]= 0.0221353, [0.22]= 0.0224589, [0.24]= 0.0243225, [0.26]= 0.0243281, [0.28]= 0.0202056,
+[0.3]= 0.0179745, [0.32]= 0.0145356, [0.34]= 0.0117213, [0.36]= 0.0100536, [0.38]= 0.0090039, [0.4]= 0.0083324, [0.42]= 0.0082711,
+[0.44]= 0.0074277, [0.46]= 0.0068863, [0.48]= 0.00662, [0.5]= 0.0070714, [0.52]= 0.0038948, [0.54]= 0.002906, [0.56]= 0.0024376,
+[0.58]= 0.0017182, [0.6]= 0.0013078, [0.62]= 0.000955, [0.64]= 0.0007262, [0.66]= 0.000569, [0.68]= 0.0004113, [0.7]= 0.0002829,
+[0.72]= 0.0001852, [0.74]= 0.0001868, [0.76]= 0.0001051, [0.78]= 6.05e-05, [0.8]= 2.32e-05, [0.82]= 1.84e-05, [0.84]= 4e-06,
+[0.86]= 6.4e-06, [0.88]= 4.5e-06 }
+
 function perlin.shuffle()
     --Now shuffle the table.
     local n = #global.permutation
@@ -132,6 +147,34 @@ function perlin.noise(x, y, z)
             )
         )
     )
+end
+
+-- Iterate from 0 to 10,000,000 and count how many points fall within each range.
+-- Print the table to a file in sequental order of keys so we can paste it back here and use it for determining a table for ore distributions.
+function perlin.measure()
+    local count = {}
+    for i = 0, 10000000 do
+        local noise = perlin.noise(i, 0)
+        for n = -49, 49 do
+            local n2 = n/50
+            if noise < n2 then
+                if not count[n2] then count[n2] = 0 end
+                count[n2] = count[n2] + 1
+                break
+                -- goto break1
+            end
+        end
+    end
+    game.write_file("perlin_data.txt", "{")
+    for n = -49, 49 do
+        local n2 = n/50
+        if count[n2] then
+            game.write_file("perlin_data.txt", "[" .. n2 .. "]= " .. count[n2] / 10000000 .. ", ", true)
+        end
+    end
+    game.write_file("perlin_data.txt", "}", true)
+
+    --game.write_file("perlin_data.txt", serpent.line(count))
 end
 
 -- Gradient function finds dot product between pseudorandom gradient vector

@@ -97,6 +97,101 @@ function gOre(event)
     end
     global.ore_chunks[chunkx][chunky] = {type=chunk_type, biased=biased}
 
+    --For perlin noise auto-mode
+    local perlin_ore_list = {}
+    local ore_ranking_raw = {}
+    local ore_ranking = {}
+    local ore_total = 0
+    
+    for k,v in pairs(global.diverse_ore_list) do
+        local autoplace = event.surface.map_gen_settings.autoplace_controls[v]
+        if autoplace then
+            local adding = 0
+            if autoplace.frequency == "very-low" then
+                adding = 1
+            elseif autoplace.frequency == "low" then
+                adding = 2
+            elseif autoplace.frequency == "normal" then
+                adding = 3
+            elseif autoplace.frequency == "high" then
+                adding = 4
+            elseif autoplace.frequency == "very-high" then
+                adding = 5
+            end
+            if adding > 0 then
+                local amount = adding * game.entity_prototypes[v].autoplace_specification.coverage
+                if game.entity_prototypes[v].mineable_properties.required_fluid then
+                    table.insert(ore_ranking_raw, {name=v, amount=amount})
+                else
+                    table.insert(ore_ranking_raw, 1, {name=v, amount=amount})
+                end
+                ore_total = ore_total + amount
+            end
+        end
+    end
+
+    --Calculate ore distribution from 0 to 1.
+    local last_key = 0
+    local ore_ranking_size = 0 --Essentially #ore_ranking_raw
+    for k,v in pairs(ore_ranking_raw) do
+        local key = last_key + v.amount / ore_total
+        last_key = key
+
+        if key == 1 then key = 0.9999999 end
+        ore_ranking[key] = v.name
+        ore_ranking_size = ore_ranking_size + 1
+    end
+
+    --Now do a pass to scale these numbers according to perlin.MEASURED distribution
+    local last_key_raw = 0
+    last_key = -1
+    local count = 0
+    for k,v in pairs(ore_ranking) do
+        local range = k - last_key_raw
+        last_key_raw = k
+        local measured_sum = 0
+        local perlin_key
+        count = count + 1
+        --The last ore will never get used.  Let's determine if we're at the end of the table and write the last key there.
+        for n, p in pairs(perlin.MEASURED) do
+            --Skip keys we've already iterated over
+            if not (n <= last_key) then
+                measured_sum = measured_sum + p
+                --If I were to get fancy, I could add a LERP here for finer control of perlin_ore_list keys.
+                if count < ore_ranking_size then
+                    if measured_sum > range then
+                        perlin_ore_list[n] = v
+                        last_key = n
+                        break
+                    end
+                else
+                    perlin_ore_list[0.9999999] = v
+                    --game.print(0.88 - n .. "," .. range) --Debug.
+                    break
+                end
+            end
+        end
+
+        -- perlin_ore_list[math.abs(k)^0.5 * sign] = v
+        -- perlin_ore_list[k] = v
+    end
+
+    --For debugging
+    -- global.a = perlin_ore_list
+    -- game.print(serpent.line(ore_list))
+    --game.print(serpent.line(ore_ranking))
+    -- Test perlin/measured.  Should return 1.
+    -- local sum = 0
+    -- for k,v in pairs(perlin.MEASURED) do
+    --     sum = sum + v
+    -- end
+    -- game.print(sum)
+    -- Tested, returns 1.0000001.  Close enough.
+    --Count the number of generated entities to meausre the ratio.
+    --/c game.print(game.player.surface.count_entities_filtered{name="iron-ore"}/game.player.surface.count_entities_filtered{name="copper-ore"})
+    --prototype coverage ratio
+    --/c game.print(game.entity_prototypes["copper-ore"].autoplace_specification.coverage/game.entity_prototypes["zinc-ore"].autoplace_specification.coverage)
+
     for x = event.area.left_top.x, event.area.left_top.x + 31 do
         for y = event.area.left_top.y, event.area.left_top.y + 31 do
             local bbox = {{ x, y}, {x+0.5, y+0.5}}
@@ -122,22 +217,35 @@ function gOre(event)
 
                     local type
                     if DANGORE_MODE == 1 then
-                        local type = ore_list[math.random(#ore_list)]
+                        type = ore_list[math.random(#ore_list)]
                     else
-                    --With noise
-                    --event.surface.create_entity{name=type, amount=amount, position={x, y}, enable_tree_removal=false, enable_cliff_removal=false}
-                    --Using Perlin noise.
+                        --With noise
+                        --Using Perlin noise.
+                        --Using Fixed threshholds
+                        -- local noise = perlin.noise(x,y)
+                        -- if noise > 0.04 then
+                        --     type = "iron-ore"
+                        -- elseif noise > -0.18 then
+                        --     type = "copper-ore"
+                        -- elseif noise > -0.30 then
+                        --     type = "stone"
+                        -- elseif noise > -0.6 then
+                        --     type = "coal"
+                        -- else
+                        --     type = "uranium-ore"
+                        -- end
+
+                        --Using auto threshholds
                         local noise = perlin.noise(x,y)
-                        if noise > 0.05 then
-                            type = "iron-ore"
-                        elseif noise > -0.18 then
-                            type = "copper-ore"
-                        elseif noise > -0.30 then
-                            type = "stone"
-                        elseif noise > -0.6 then
-                            type = "coal"
-                        else
-                            type = "uranium-ore"
+                        for k,v in pairs(perlin_ore_list) do
+                            if noise < k then
+                                type = v
+                                break
+                            end
+                        end
+                        if not type then
+                            local _
+                            _, type = next(perlin_ore_list)
                         end
                     end
 
