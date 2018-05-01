@@ -41,6 +41,7 @@ require "modules/dirtpath" --For some silliness.
 require "modules/seasons" --Let's mess with solar.
 --require "modules/dark harvest" --Only way to get uranium is from biter deaths.
 --require "modules/tOredumonde" --Ore spawns in directions. This must be called before divOresity. NOTE: STONE_BYPRODUCT must be false.
+--require "modules/divOresity" --Some ore gets scrambled and must be filtered.
 require "modules/bluebuild" --Bluebuild softmod
 require "modules/autofill" --Softmod autofill separated from Oarc
 --require "modules/nougatmining" --Logistic mining softmod.
