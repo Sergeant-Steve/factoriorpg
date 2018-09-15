@@ -5,7 +5,7 @@ require "utils/topgui" --Allows reordering guis.
 require "utils/bot" --Discord integration
 require "utils/antigrief" --Look for suspicious behavior and report it to admins/log it.
 require "utils/modular_admin/modular_admin" --FMMO admin tools 
-require "utils/modular_information/modular_information" --Info windows from FMMO
+--require "utils/modular_information/modular_information" --Info windows from FMMO
 --require "utils/perlin" --Perlin Noise. NOTE: If a module needs this, it'll call it.
 require "modules/module_list" --Creates and displays a list of active modules on login.
 require "rpg_permissions" --Limit certain actions to players level 5 or greater
@@ -45,8 +45,8 @@ require "modules/rainbow" --Top of the line graphics!
 -- World Generators: Most are exclusive.
 --require "maps/prospector" --Radars generate ore
 --require "maps/TTSFN" --This Tank Stops for Nobody!
-require "maps/dangOreus" --Ore is everywhere.  Cannot build on it!
--- require "modules/divOresity" --Some ore gets scrambled and must be filtered. Must be called after dangOreus if using perlin mode.
+--require "maps/dangOreus" --Ore is everywhere.  Cannot build on it!
+require "modules/divOresity" --Some ore gets scrambled and must be filtered. Must be called after dangOreus if using perlin mode.
 --require "maps/searious" --Everything not a resource tile is turned into water.
 --require "oarc_events" --Oarc's separate spawn scenario.
 --require "maps/heximaze" --A labyrinth.
