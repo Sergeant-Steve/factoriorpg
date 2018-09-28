@@ -121,14 +121,17 @@ function gOre(event)
             if adding > 0 then
                 local amount = adding * game.entity_prototypes[v].autoplace_specification.coverage
                 if game.entity_prototypes[v].mineable_properties.required_fluid then
-                    table.insert(ore_ranking_raw, {name=v, amount=amount})
-                else
                     table.insert(ore_ranking_raw, 1, {name=v, amount=amount})
+                else
+                    table.insert(ore_ranking_raw, {name=v, amount=amount})
                 end
                 ore_total = ore_total + amount
             end
         end
     end
+
+    --Debug
+    --log(serpent.block(ore_ranking_raw))
 
     --Calculate ore distribution from 0 to 1.
     local last_key = 0
@@ -138,45 +141,71 @@ function gOre(event)
         last_key = key
 
         if key == 1 then key = 0.9999999 end
-        ore_ranking[key] = v.name
-        ore_ranking_size = ore_ranking_size + 1
+        --ore_ranking[key] = v.name
+        table.insert(ore_ranking, {v.name, key})
+        --ore_ranking_size = ore_ranking_size + 1
+        --Debug
+        --log("Ore: " .. v.name .. " portion: " .. key)
+        --According to this, at this stage, uranium should be 2% of all ore.
+    end
+
+    --This next bit requires a lerp
+    --Returns x3
+    local function lerp(x1, x2, dy, y3)
+        return y3 * (x2-x1)/dy + x1
     end
 
     --Now do a pass to scale these numbers according to perlin.MEASURED distribution
-    local last_key_raw = 0
+    local last_ranking_key = 0
     last_key = -1
+    local previous_iter = -1
     local count = 0
     for k,v in pairs(ore_ranking) do
-        local range = k - last_key_raw
-        last_key_raw = k
-        local measured_sum = 0
-        local perlin_key
-        count = count + 1
+        --local range = k - last_ranking_key -- This is the percentage that should appear of this ore type
+        local range = v[2] - last_ranking_key -- This is the percentage that should appear of this ore type
+        last_ranking_key = v[2]
+        local measured_sum = 0 -- This is the range that our perlin steps cover, from last_key to n
+        --log("For ore " .. v[1] .. " using range " .. range)
+        -- count = count + 1 -- This is so we do something special on the last one.  Rounding errors may cause the last ore to not be inserted otherwise.
+        --local perlin_key
         --The last ore will never get used.  Let's determine if we're at the end of the table and write the last key there.
         for n, p in pairs(perlin.MEASURED) do
             --Skip keys we've already iterated over
-            if not (n <= last_key) then
+            if n > last_key then
                 measured_sum = measured_sum + p
                 --If I were to get fancy, I could add a LERP here for finer control of perlin_ore_list keys.
-                if count < ore_ranking_size then
+                --if count < ore_ranking_size then            
                     if measured_sum > range then
-                        perlin_ore_list[n] = v
+                        --log("measured sum is " .. measured_sum .. " and key range is " .. n - last_key)
+                        local x3 = lerp(previous_iter, n, p, range - (measured_sum - p) )
+                        table.insert(perlin_ore_list, {v[1], x3})
+                        --perlin_ore_list[n] = name
                         last_key = n
+                        previous_iter = n
                         break
                     end
-                else
-                    perlin_ore_list[0.9999999] = v
+                --else
+                --    perlin_ore_list[0.9999999] = v
                     --game.print(0.88 - n .. "," .. range) --Debug.
-                    break
-                end
+                    --break
+                --end
+                previous_iter = n
             end
         end
+
+        --Are we still here?  Insert at the last key.
+        if not perlin_ore_list[k] then
+            table.insert(perlin_ore_list, {v[1], 1})
+        end
+        
+        --perlin_ore_list[0.9999999] = v
 
         -- perlin_ore_list[math.abs(k)^0.5 * sign] = v
         -- perlin_ore_list[k] = v
     end
 
-    --For debugging
+    -- For debugging
+    --log(serpent.block(perlin_ore_list))
     -- global.a = perlin_ore_list
     -- game.print(serpent.line(ore_list))
     --game.print(serpent.line(ore_ranking))
@@ -237,15 +266,26 @@ function gOre(event)
 
                         --Using auto threshholds
                         local noise = perlin.noise(x,y)
+                        -- local upper_limit = 1
+                        -- for k,v in pairs(perlin_ore_list) do
+                        --     if noise < k and noise < upper_limit then
+                        --         type = v
+                        --         upper_limit = k
+                        --     end
+                        -- end
+                        type = perlin_ore_list[1][1]
                         for k,v in pairs(perlin_ore_list) do
-                            if noise < k then
-                                type = v
+                            if noise < v[2] then
+                                type = v[1]
                                 break
                             end
                         end
+                        --log(noise .. " , " .. upper_limit)
                         if not type then
+                            --Fallback!  This shouldn't happen.
+                            log("Warning: Using fallback.")
                             local _
-                            _, type = next(perlin_ore_list)
+                            _, type = next(perlin_ore_list)[1]
                         end
                     end
 
