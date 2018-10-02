@@ -8,7 +8,7 @@ end
 
 
 votekick = { VOTEKICK_COUNT = 3, KICKED_MESSAGE = "You have been kicked.  To appeal, message on discord." }
-global.votekick = {}
+global.  = {}
 
 --Note, this command looks for a hardcoded group named "trusted" and uses that to qualify the ability to vote.
 --Name is case insensitive.
@@ -37,8 +37,16 @@ commands.add_command("votekick", "Usage: /votekick <player>", function(params)
         global.votekick[name] = {}
         game.print(game.player.name .. " has started a vote to kick player " .. name)
     end
-    if not global.votekick[name][game.player.name] then
-        global.votekick[name][game.player.name] = true
+    --Check for duplicate votes
+    local duplicate = false
+    for k, v in pairs(global.votekick[name][game.player.name]) do
+        if v == game.player.name then
+            duplicate = true
+            break
+        end
+    end
+    if not duplicate then
+        table.insert(global.votekick[name], game.player.name)
         game.player.print("You have voted to kick player " .. name)
         --Must have VOTEKICK_COUNT votes or 2 votes if 3 players online.  Do not want to allow a single user to votekick on a 2 player server.
         if #global.votekick[name] >= votekick.VOTEKICK_COUNT or (#global.votekick[name] == 2 and 3 == #game.connected_players)  then
