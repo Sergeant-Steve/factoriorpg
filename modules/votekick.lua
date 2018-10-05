@@ -8,7 +8,7 @@ end
 
 
 votekick = { VOTEKICK_COUNT = 3, KICKED_MESSAGE = "You have been kicked.  To appeal, message on discord." }
-global.  = {}
+global.votekick  = {}
 
 --Note, this command looks for a hardcoded group named "trusted" and uses that to qualify the ability to vote.
 --Name is case insensitive.
