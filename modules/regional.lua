@@ -124,8 +124,10 @@ function regional.enforcement(entity)
         end
     end
     --Still here?  Shut it down!
+    regional.notify(entity)
     if entity.type == "furnace" then --Can't set_recipe on a furnace, 
         entity.active = false
+        entity.order_deconstruction(entity.force)
         return true
     end
     -- We shouldn't be here anymore if this is a furnace.  Not sure why this is required.
@@ -216,6 +218,11 @@ function regional.init()
     combinator.operable = false
     combinator.minable = false
 
+end
+
+function regional.notify(entity)
+    if not entity.last_user then return end
+    entity.last_user.print("Recipes must be within a matching region!")
 end
 
 function regional.get_range_squared(pos1, pos2)
