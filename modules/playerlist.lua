@@ -277,7 +277,7 @@ local function player_list_show(player, sort_by)
 		label.style.minimal_width = 100
 		label.style.maximal_width = 100
 --]]
-		local label = player_list_panel_table.add { type = "label", name = "player_list_panel_player_fish" .. i, caption = global.rpg_tmp[player_list[i].name].level .. " " .. global.rpg_exp[player_list[i].name].class }
+		local label = player_list_panel_table.add { type = "label", name = "player_list_panel_player_fish" .. i, caption = global.rpg_tmp[player_list[i].name].level .. " " .. global.rpg_data[player_list[i].name].class }
 		label.style.minimal_width = 80
 		label.style.maximal_width = 80
 
