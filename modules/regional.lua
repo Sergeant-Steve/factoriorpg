@@ -7,45 +7,63 @@ if MODULE_LIST then
 end
 
 regional = {
-    RANGE = 64,
-    CHANCE = 8
+    RANGE = 48,
+    CHANCE = 40
 }
 
-global.regional = {registry = {}, index=1}
+global.regional = {registry = {}, index=1} --Duplicate
 
 function regional.region(event)
     --First check if we're spawning one.
     if not (math.random(regional.CHANCE) == regional.CHANCE) then
         return
     end
-    local choice = math.random(#game.forces.player.recipes)
+    local choice = global.regional.categories[math.random(#global.regional.categories)]
+    -- Old per-recipe method
+    -- local count = 1
+    -- local recipe
+    -- for k,v in pairs(game.forces.player.recipes) do
+    --     if count == choice then
+    --         if v.hidden then --Don't show smelting recipes!
+    --             break
+    --         end
+    --         recipe = game.forces.player.recipes[k]
+    --         break
+    --     end
+    --     count = count + 1
+    -- end
+    -- if recipe then
+    --     local signal = {type=recipe.products[1].type, name=recipe.products[1].name}
+    --     local combinator = event.surface.create_entity{name="constant-combinator", force=game.forces.player, position={math.random(event.area.left_top.x, event.area.right_bottom.x), math.random(event.area.left_top.y, event.area.right_bottom.y)} }
+    --     combinator.get_or_create_control_behavior().set_signal(1, {signal=signal, count=regional.RANGE})
+    --     combinator.destructible = false
+    --     combinator.operable = false
+    --     combinator.minable = false
+    -- end
+    local combinator = event.surface.create_entity{name="constant-combinator", force=game.forces.player, position={math.random(event.area.left_top.x, event.area.right_bottom.x), math.random(event.area.left_top.y, event.area.right_bottom.y)} }
     local count = 1
-    local recipe
-    for k,v in pairs(game.forces.player.recipes) do
-        if count == choice then
-            if v.hidden then --Don't show smelting recipes!
+    local maxcount = combinator.get_or_create_control_behavior().signals_count
+    for _,r in pairs(global.regional.valid) do
+        local v = game.forces.player.recipes[r]
+        if v.subgroup == choice then
+            local signal = {type = v.products[1].type, name=v.products[1].name}
+            combinator.get_or_create_control_behavior().set_signal(count, {signal=signal, count=regional.RANGE})
+            count = count + 1
+            if count > maxcount then --Crash protection for v0.16
                 break
             end
-            recipe = game.forces.player.recipes[k]
-            break
         end
-        count = count + 1
     end
-    if recipe then
-        local signal = {type=recipe.products[1].type, name=recipe.products[1].name}
-        local combinator = event.surface.create_entity{name="constant-combinator", force=game.forces.player, position={math.random(event.area.left_top.x, event.area.right_bottom.x), math.random(event.area.left_top.y, event.area.right_bottom.y)} }
-        combinator.get_or_create_control_behavior().set_signal(1, {signal=signal, count=regional.RANGE})
-        combinator.destructible = false
-        combinator.operable = false
-        combinator.minable = false
-    end
+    combinator.destructible = false
+    combinator.operable = false
+    combinator.minable = false
     --Multiple may spawn!
     regional.region(event)
 
 end
 
 function regional.register(event)
-    if not(event.created_entity.type == "assembling-machine") then
+    if not(event.created_entity.type == "assembling-machine" or event.created_entity.type == "furnace" or event.created_entity.type == "lab") then
         return
     end
     table.insert(global.regional.registry, event.created_entity)
@@ -63,7 +81,11 @@ function regional.checker(event)
         end
         local entity = global.regional.registry[global.regional.index + i]
         if entity.valid then
-            regional.enforcement(entity)
+            --Check if this was a lab or a furnace, these only need to be checked once ever.
+            local special = regional.enforcement(entity)
+            if special then
+                table.remove(global.regional.registry, global.regional.index + i)
+            end
         else
             table.remove(global.regional.registry, global.regional.index + i)
         end
@@ -75,20 +97,62 @@ function regional.enforcement(entity)
     local area = {{entity.position.x - regional.RANGE, entity.position.y - regional.RANGE}, {entity.position.x + regional.RANGE, entity.position.y + regional.RANGE}}
     local regions = entity.surface.find_entities_filtered{type="constant-combinator", area=area}
     local allowed = {}
+
+    --Special rule for labs
+    if entity.type == "lab" then
+        return true
+    end
+
     for k,v in pairs(regions) do
         if v.operable == false then
-            table.insert(allowed, {position = v.position, recipe=v.get_control_behavior().get_signal(1).signal.name})
+            local signal = v.get_control_behavior().get_signal(1)
+            if not signal then
+                log("Error, no signal found!")
+                return
+            end
+            table.insert(allowed, {position = v.position, recipe=v.get_control_behavior().get_signal(1).signal.name, subgroup = game.forces.player.recipes[v.get_control_behavior().get_signal(1).signal.name].subgroup} )
         end
     end
     for k,v in pairs(allowed) do
+        --Furnaces
+        if entity.type == "furnace" and v.subgroup.name == "raw-material" then
+            return true
+        end
         local recipe = entity.get_recipe()
-        if recipe and recipe.products[1].name == v.recipe and regional.get_range_squared(entity.position, v.position) < regional.RANGE^2 then
+        if recipe and recipe.subgroup == v.subgroup and regional.get_range_squared(entity.position, v.position) < regional.RANGE^2 then
             return
         end
     end
     --Still here?  Shut it down!
-    entity.set_recipe(nil)
+    if entity.type == "furnace" then --Can't set_recipe on a furnace, 
+        entity.active = false
+        return true
+    end
+    -- We shouldn't be here anymore if this is a furnace.  Not sure why this is required.
+    --if entity.type == "assembling-machine" then
+        entity.set_recipe(nil)
+    --end
 end
+
+--Old method per recipe basis
+-- function regional.enforcement(entity)
+--     local area = {{entity.position.x - regional.RANGE, entity.position.y - regional.RANGE}, {entity.position.x + regional.RANGE, entity.position.y + regional.RANGE}}
+--     local regions = entity.surface.find_entities_filtered{type="constant-combinator", area=area}
+--     local allowed = {}
+--     for k,v in pairs(regions) do
+--         if v.operable == false then
+--             table.insert(allowed, {position = v.position, recipe=v.get_control_behavior().get_signal(1).signal.name})
+--         end
+--     end
+--     for k,v in pairs(allowed) do
+--         local recipe = entity.get_recipe()
+--         if recipe and recipe.products[1].name == v.recipe and regional.get_range_squared(entity.position, v.position) < regional.RANGE^2 then
+--             return
+--         end
+--     end
+--     --Still here?  Shut it down!
+--     entity.set_recipe(nil)
+-- end
 
 function regional.discovered(event)
     local force = event.force
@@ -96,12 +160,62 @@ function regional.discovered(event)
     local regions = game.surfaces[event.surface_index].find_entities_filtered{type="constant-combinator", area=area}
     for k,v in pairs(regions) do
         if v.operable == false then
-            log("Adding chart tag")
+            --log("Adding chart tag")
             local signal = v.get_control_behavior().get_signal(1).signal
             force.add_chart_tag(game.surfaces[event.surface_index], {position = v.position, icon=signal} )
             --force.add_chart_tag(game.surfaces[event.surface_index], {position = v.position, text=signal.name} )
         end
     end
+end
+
+function regional.init()
+    global.regional = {registry = {}, index=1, valid = {}, categories = {}, cat_size = 0}
+
+    -- Build a list of recipes with techs that unlock them
+    local valid = {}
+    for k,v in pairs(game.forces.player.recipes) do
+        if v.enabled then
+            table.insert(valid, v.name)
+        end
+    end
+    for _,v in pairs(game.forces.player.technologies) do
+        for __,e in pairs(v.effects) do
+            if e.type == "unlock-recipe" then
+                table.insert(global.regional.valid, e.recipe.name)
+            end
+        end
+    end
+    global.regional.valid = valid
+
+    -- Build a list of categories based on global.regional.valid
+    -- This uses the first found recipe for a given category.
+    for k,v in pairs(global.regional.valid) do
+        local subgroup = game.forces.player.recipes[v].subgroup
+        if not global.regional.categories[subgroup] then
+            table.insert(global.regional.categories, subgroup) --Will have duplicates based on number of number of occurences.  Should bias region generation.
+        end
+    end
+
+    --Guarantee a smelting beacon near the start
+    local combinator = game.surfaces[1].create_entity{name="constant-combinator", force=game.forces.player, position={math.random(-96, 96), math.random(-96, 96)} }
+    local choice = game.forces.player.recipes["iron-plate"].subgroup
+    local count = 1
+    local maxcount = combinator.get_or_create_control_behavior().signals_count
+    --local choice = nil
+    for k,v in pairs(game.forces.player.recipes) do
+        if v.subgroup == choice then
+            local signal = {type = v.products[1].type, name=v.products[1].name}
+            combinator.get_or_create_control_behavior().set_signal(count, {signal=signal, count=regional.RANGE})
+            count = count + 1
+            if count > maxcount then --Crash protection for v0.16
+                break
+            end
+        end
+    end
+    combinator.destructible = false
+    combinator.operable = false
+    combinator.minable = false
+
 end
 
 function regional.get_range_squared(pos1, pos2)
@@ -112,4 +226,5 @@ Event.register(defines.events.on_chunk_generated, regional.region)
 Event.register(defines.events.on_built_entity, regional.register)
 Event.register(defines.events.on_robot_built_entity, regional.register)
 Event.register(defines.events.on_chunk_charted, regional.discovered)
+Event.register(-1, regional.init)
 script.on_nth_tick(60, regional.checker)
