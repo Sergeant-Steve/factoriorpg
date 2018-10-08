@@ -124,7 +124,9 @@ function regional.enforcement(entity)
         end
     end
     --Still here?  Shut it down!
-    regional.notify(entity)
+    if entity.get_recipe() then
+        regional.notify(entity)
+    end
     if entity.type == "furnace" then --Can't set_recipe on a furnace, 
         entity.active = false
         entity.order_deconstruction(entity.force)
@@ -183,7 +185,7 @@ function regional.init()
     for _,v in pairs(game.forces.player.technologies) do
         for __,e in pairs(v.effects) do
             if e.type == "unlock-recipe" then
-                table.insert(global.regional.valid, e.recipe.name)
+                table.insert(valid, e.recipe)
             end
         end
     end
