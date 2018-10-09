@@ -1,18 +1,34 @@
 --Heavy lifting stuff here.
+
+require "lualib/event"
+require "mod-gui" --Klonan's button prettifier required for all other modules
+
+require "lualib/topgui" --utility module to be able to order the buttons in the top left
+require "lualib/char_mod"	--utility module to prevent multiple modules conflicting when modifying player bonus
+require "lualib/bot"	--Discord Integration
+require "lualib/modular_tag/modular_tag" --Module to let players set a tag behind their names to improve teamwork, also allows other modules to get (and use) its canvas.
+require "lualib/modular_admin/modular_admin" --New admin tools
+require "lualib/modular_information/modular_information" --New player information system
+require "lualib/antigrief"
+
+
+--[[ --OLD ADMIN TOOLS
 require "mod-gui" --Klonan's button prettifier
 require "utils/event" --This is so all of the modules play nice with each other.
 require "utils/topgui" --Allows reordering guis.
 require "utils/bot" --Discord integration
 require "utils/antigrief" --Look for suspicious behavior and report it to admins/log it.
-require "utils/modular_admin/modular_admin" --FMMO admin tools 
+require "utils/modular_admin/modular_admin" --FMMO admin tools
 --require "utils/modular_information/modular_information" --Info windows from FMMO
+--require "locale/utils/patreon" --Module to give patreons spectate and a nice unique tag
+--]]
 --require "utils/perlin" --Perlin Noise. NOTE: If a module needs this, it'll call it.
 require "modules/module_list" --Creates and displays a list of active modules on login.
 require "rpg_permissions" --Limit certain actions to players level 5 or greater
 require "rpg" --Award bonuses based on experience earned.
 --require "permissions" --Permission manager
 --require "trusted" --Module to add trusted players to a seperate permission group
---require "locale/utils/patreon" --Module to give patreons spectate and a nice unique tag
+
 require "announcements"	--Module to announce stuff ingame / give the players a welcome message
 require "modules/tag" --Module to let players set a tag behind their names to improve teamwork
 --require "fmcd" --Module to consolidate saving data to an output file for the agent
@@ -23,7 +39,7 @@ require "modules/tag" --Module to let players set a tag behind their names to im
 --Modules
 require "modules/gravemarker" --Mark player death locations on map for corpse runs.
 require "modules/dirtpath" --For some silliness.
--- require "modules/seasons" --Let's mess with solar. --Causes desyncs until 0.17
+--require "modules/seasons" --Let's mess with solar. --Causes desyncs until 0.17
 --require "modules/dark harvest" --Only way to get uranium is from biter deaths.
 --require "modules/tOredumonde" --Ore spawns in directions. This must be called before divOresity. NOTE: STONE_BYPRODUCT must be false.
 --require "modules/divOresity" --Some ore gets scrambled and must be filtered.
